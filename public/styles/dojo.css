@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+
+.record-deleted .dijitBorderContainer-dijitContentPane,
+.record-deleted .dijitTabContainerTop-dijitContentPane {
+	background: #ffeeee;
+	background-color: #ffeeee;
+}
+
+.dijitBorderContainer-child,
+.dijitSplitContainer-child {
+	border-width: 0 !important;
+}
+
+.dijitBorderContainer,
+.dijitSplitContainer-dijitContentPane,
+.dijitBorderContainer-dijitContentPane,
+.dijitTabContainerTop-dijitContentPane {
+	padding: 0 !important;
+	border-width: 0 !important;
+}
+
+.dijitGutterH {
+	display: none;
+}
+
+.dijitTabContainerTopStrip {
+	padding: 0 !important;
+}
+
+.dijitTabContainerTopStrip {
+	margin-top: 0 !important;
+}
+
+table.dojoDndAvatar {
+	width: auto !important;
+}
+
+tr.dojoDndAvatarHeader td {
+	padding: 0 0 0 21px !important;
+	background: transparent !important;
+}
+
+.dijitToggleButton, .dijitButton, .dijitDropDownButton, .dijitComboButton {
+	margin: 0.1em !important;
+}
+
+.dijitTextBox.length-short { width: 5em; }
+.dijitTextBox.length-medium { width: 10em; }
+.dijitTextBox.length-normal { width: 15em; }
+.dijitTextBox.length-long { width: 20em; }
+
+/* --- */
+span.dijitContentPane {
+	display: inline;
+}
+
+/* --- */
+.dijitInputContainer input, .dijitTextBox {
+	margin: 0 !important;
+}
+
+.dijitTab *,
+.dijitButton * { 
+	outline: none;
+}
+
+.dijitTab.error .tabLabel {
+	color: #800;
+	font-weight: bold;
+}
+
+
+/* --- */
+.dijitSelect{ margin: 0 !important; }
+
+/* Disabled fields */
+.dj_webkit .dijitTextBoxDisabled input {
+	color: #000;
+}
+
+/* Fields */
+.dijitInputField { line-height: 1em; }
+
+.dijitPlaceHolder { line-height: 1.6em !important; }

@@ -1,0 +1,92 @@
+@CHARSET "UTF-8";
+
+.title.table {
+	background-color: #E1EBFB;
+	padding: 2px 5px;
+	color: #333;
+	margin: 0;
+}
+
+.dojoxGrid + .title.table {
+	border-top: 1px solid #ccc;
+}
+
+/* Generic table styling */
+
+table:not([role]) { 
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	
+	border-spacing: 1px;
+	border-collapse: separate;
+}
+
+table:not([role]) th,
+table:not([role]) td {
+	background: #F2F2F2;
+	padding: 0.2em 1em 0.2em 0.5em;
+}
+
+table:not([role]) th {
+	font-weight: bold;
+	color: #111;
+}
+
+table:not([role]) tr:hover th,
+table:not([role]) tr:hover td {
+	background-color: #e0e0e0;
+}
+
+table:not([role]) thead th {
+	background-color: #d0d0d0;
+}
+
+/* Vertical tables (1rst column is headers, 2nd values) */
+
+table.vertical:not([role]) th {
+	font-weight: normal;
+	font-style: oblique;
+	text-align: left;
+	white-space: nowrap;
+}
+table.vertical:not([role]) th:after {
+	content: ":";
+}
+table.vertical:not([role]) td {
+	width: 100%;
+}
+
+/* Tables in forms */
+
+form table:not([role]) th,
+form table:not([role]) td{
+	background-color: transparent;
+	padding: 0;
+}
+
+.dojoxGrid td {
+	background: white;
+}
+
+
+/* Printable */
+
+table.printable {
+	border-collapse: collapse;
+}
+
+table.printable th,
+table.printable td {
+	border-bottom:1px solid black;
+}
+
+table.printable td {
+	background:white none repeat scroll 0 0;
+	padding: 5px;
+}
+
+table.printable tfoot td {
+	background: #F2F2F2;
+	font-weight: bold;
+}

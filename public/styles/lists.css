@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+
+ul {
+	margin: 0;
+}
+
+li {
+	list-style: disc;
+	margin-left: 2em;
+}

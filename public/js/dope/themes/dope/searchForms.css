@@ -1,0 +1,59 @@
+@CHARSET "UTF-8";
+
+.dopeSearchForm .field {
+	display: inline-block;
+	white-space: nowrap;
+	margin-right: 3px;
+	vertical-align: middle;
+}
+
+.dopeSearchForm .dijitButton {
+	vertical-align: middle !important;
+}
+
+.dopeSearchFormFilter {
+	position: relative;
+	padding: 3px 0;
+	border-top: 1px solid #eee;
+	/* background: #e1ebfb; */
+}
+
+.dopeSearchFormFilter .text {
+	display: inline-block;
+	margin: 0 1em;
+	vertical-align: middle;
+	background-color: rgba(255, 255, 255, 0.5);
+	border: 1px solid #EEE;
+	padding: 1px 7px;
+	min-width: 7em;
+	box-shadow: 0 0 0px #EEE;
+	border-radius: 10px;
+	color: #888;
+}
+
+.dopeSearchFormFilter .container {
+	display: inline-block;
+	margin: 0 4px;
+}
+
+.dopeSearchFormFilterValues {
+	display: none;
+}
+
+.dopeSearchFormFilterValue {
+	display: inline;
+	padding: 3px 0px;
+	margin: 1px 0;
+}
+
+/*
+ * Buttons
+ */
+
+.dopeSearchFormFilter .dijitButton .dijitButtonNode {
+	min-width: inherit;
+}
+
+.dopeSearchFormFilter .addValue .dijitButtonNode {
+	background-color: #eee;
+}

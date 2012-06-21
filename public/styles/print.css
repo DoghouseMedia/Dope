@@ -1,0 +1,127 @@
+@CHARSET "UTF-8";
+
+.clear {
+	clear: both;
+}
+
+body, html {
+	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif !important;
+	font-size: 8pt !important;
+	
+	background: #fff !important;
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
+
+form {
+	display: none;
+}
+
+table { 
+	width: 100%;
+	margin: 0;
+}
+
+table td {
+	border-bottom: thin solid #000000;
+	padding: 5px;
+}
+
+table th {
+	padding: 5px;
+	text-align: left;
+}
+
+table tr,
+table td {
+	page-break-inside: avoid;
+}
+
+.boxes li {
+	list-style-type: circle;
+}
+
+.timerun {
+	display: none;
+}
+
+/* Hide and seek */
+
+.dijitBorderContainer {
+	background-color: #fff !important;
+	overflow: visible !important;
+}
+
+#leftSide,
+#tabsys-main-container_tablist,
+.dijitSplitter,
+.dijitGutter,
+.dijitTabSpacer,
+.dijitContentPane {
+	display: none !important;
+}
+
+#mainPane,
+.dijitTabContainer,
+.dijitTabPaneWrapper,
+.dijitLayoutContainer
+.dijitVisible {
+	display: block !important;
+	border: 0 !important; 
+	overflow: visible !important; 
+	clear: both !important;
+	width: 100% !important;
+}
+.dijitVisible .inner {
+	display: block !important;
+}
+
+#mainPane { 
+	top: 0 !important; 
+	right: 0 !important; 
+	bottom: 0 !important; 
+	left: 0 !important;
+}
+#tabsys-main-container { 
+	height: 100% !important; 
+	width: 100% !important;
+}
+
+.dijitTabContainerTop-container { border-top: 0 !important; }
+.dijitSplitContainer-child,
+.dijitBorderContainer-child { border: 0 !important; }
+
+.dijitContentPane { 
+	overflow: visible !important; 
+	clear: both !important; 
+	width: auto !important; 
+	height: auto !important;
+}
+
+.dijitAccordionChildWrapper,
+.dijitHidden {
+	display: block !important;
+}
+
+/*
+ * Align tab content at top
+ */
+#tabsys-main-container div.dijitTabPaneWrapper {
+	top: 0 !important;
+}
+
+/*
+ * Hide "loading" text
+ */
+#layout-loading {
+	display: none;
+}
+
+/*
+ * Hide topAction bar
+ */
+.topAction {
+	display: none;
+}
+

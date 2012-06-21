@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+
+.dopeEntityPaginator {
+	display: inline-block;
+	margin-right: 5px;
+}
+.dopeEntityPaginator .text {
+	margin: 0 3px;
+}
+.dopeEntityPaginator .dijitButton .dijitButtonNode {
+	min-width: inherit;
+}

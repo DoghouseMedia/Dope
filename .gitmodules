@@ -1,0 +1,9 @@
+[submodule "lib/Zend"]
+	path = lib/Zend
+	url = https://github.com/dmelo/Zend-1.11
+[submodule "lib/ZF1-D2"]
+	path = lib/ZF1-D2
+	url = git://github.com/guilhermeblanco/ZendFramework1-Doctrine2.git
+[submodule "lib/doctrine2"]
+	path = lib/doctrine2
+	url = git://github.com/doctrine/doctrine2.git

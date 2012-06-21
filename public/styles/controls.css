@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+
+.separator-before {
+	padding-left: 8px;
+	border-left: 1px solid #666;
+	border-left: 2px solid #94B4E6;
+	margin-left: 7px !important;
+}
+
+.tool-action {
+	float: right;
+	box-shadow: 2px 2px 5px #ccc;
+	border: 1px solid #ccc;
+	margin: 1em;
+	background-color: #fff;
+}
+
+.tool-action h4 {
+	background-color: #ddd;
+	padding: 3px;
+}
+
+.tool-action .outer-container {
+	display: inline-block;
+	float: left;
+	padding: 5px;
+}

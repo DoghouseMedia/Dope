@@ -1,0 +1,128 @@
+@CHARSET "UTF-8";
+
+/* ----- Generic form elements ----- */
+
+label {
+	display: inline-block;
+	text-align: left;
+	color: #222;
+}
+
+input, select {
+	vertical-align: middle;
+	padding: 3px;
+}
+
+textarea {
+	vertical-align: top;
+}
+
+form p.description {
+	margin: 0 0 1ex 0;
+	color: #444;
+	font-weight: bold;
+	font-style: oblique;
+}
+
+form .field {
+	margin: 4px 0;
+	overflow: auto;
+}
+
+.dopeForm .field {
+	padding: 3px 0 7px 0;
+	border-bottom: 1px solid #F0F0F0;
+}
+.dopeForm .field:first-of-type {
+	margin-top: 0;
+}
+.dopeForm .field:last-of-type {
+	border-bottom: none;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
+.dopeForm label {
+	width: 10em;
+}
+
+.dopeForm .dijitBorderContainer-dijitContentPane {
+	padding: 8px !important;
+}
+
+
+.dopeFormQuick .field {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+/* ----- Field dimensions ----- */
+.dopeForm .dijitTextArea {
+	width: 100%;
+	min-height: 4em;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+
+
+.dopeFormGroupProxyContainer {
+	
+}
+.dopeFormGroupProxyFields {
+	float: left;
+	margin-right: 2em;
+}
+.dopeFormGroupProxyFields:last-of-type {
+	margin-right: 0;
+}
+
+
+
+.dopeTabError.dijitTabChecked .dijitTabInnerDiv {
+	background-color: #ff9999;
+}
+.dopeTabError .dijitTabInnerDiv .dijitTabContent {
+	border-color: #cc9999;
+	color: #cc0000;
+}
+.dopeTabError.dijitTabChecked .dijitTabInnerDiv .dijitTabContent {
+	border-color-top: #cc9999;
+	border-color-left: #cc9999;
+	border-color-bottom: #cc9999;
+}
+
+
+
+/*
+ * NEEDS CLEANING FROM HERE ON...
+ */
+
+
+
+
+
+
+/* ----- Related subforms ----- */
+.dopeForm .related-subform {
+	border: 1px solid #ccc;
+	display: inline-block;
+	padding: 1em !important;
+	margin: 1em 0;
+	box-shadow: 2px 2px 5px #ccc;
+}
+
+.dopeForm a.related-form-link {
+	float: right;
+}
+
+.dopeForm .related-subform h3 {
+	margin-bottom: 0;
+}
+.dopeForm .related-subform h4 {
+	margin-bottom: 1ex;
+	color: #999;
+}
+
+/* Margins for buttons inside vertical tabbed forms */
+.dijitTabContainerLeft-container .dijit.fat { margin: 0 0 10px 0 !important; }

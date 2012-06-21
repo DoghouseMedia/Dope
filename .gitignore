@@ -1,0 +1,18 @@
+
+# Eclipse stuff
+.project
+.settings
+.buildpath
+.externalToolBuilders
+.zfproject.xml
+
+# PhpStorm
+/.idea/
+
+# Mac OSX
+.DS_Store
+
+# Libraries
+/library/Bisna
+/library/Zend
+/library/doctrine2

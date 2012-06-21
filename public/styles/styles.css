@@ -1,0 +1,399 @@
+
+.shade { box-shadow: 2px 2px 3px #eee; }
+.important { font-weight: bold !important; }
+.unpublished { background-color: #fff6f6 !important; }
+
+strong {
+	font-weight: bolder;
+}
+
+em {
+	font-style: oblique;
+}
+
+body, html {
+	font-size: 12px;
+	font-weight: normal;
+	line-height: normal;
+	font-family: auto, "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	
+	background: #fff;
+	
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-weight: bold;
+}
+h1,h2,h3 {
+	margin-bottom: 1em;
+}
+h1 {
+	font-size: 1.6em;
+}
+h2 {
+	font-size: 1.2em;
+}
+h3 {
+	text-transform: uppercase;
+}
+
+a {
+	text-decoration: none;
+	color: #0000cc;
+}
+a:visited { color: #0000cc; }
+
+a:hover {
+	text-decoration: underline;
+}
+
+p {
+	margin: 1em 0 0 0;
+}
+
+hr {
+	border-width: 1px 0 0 0;
+	border-color: #eee;
+	border-style: solid;
+	
+}
+
+#layout {
+    width:  100%;
+    height: 100%;
+    display: none;
+}
+#layout.dijitContainer {
+	display: block;
+}
+
+#layout-loading {
+	display: block;
+	padding: 3em;
+	font-size: 3em;
+	color: #666;
+	text-align: center;
+}
+body.loaded #layout-loading {
+	display: none;
+}
+
+#navPane {
+    width: 200px;
+}
+
+#list {
+    height: 25em;
+    width: 80%;
+}
+
+#logo {
+	float: left;
+	padding: 5px;
+	float: left;
+	padding: 1px;
+	background-color: rgba(255, 255, 255, 0.8);
+	margin: 5px 25px 5px 5px;
+	border: 1px solid #DDD;
+	box-shadow: 0 0 2px #ccc;
+}
+
+#navPane {
+    width: 225px;
+    margin-left: 1em;
+    margin-top: 1em;
+    padding-left: 1em;
+}
+
+#footer {
+    visibility: collapse;
+    height: 1.5em;
+    background-color: #CCCCCC;
+}
+
+#footer p {
+    margin: 0;
+    padding: 0 0 0 0.5em;
+}
+
+/*
+ * Layout CSS 
+ */
+
+.float-left { float: left; }
+.float-right { float: right; }
+.clear { clear: both; }
+
+
+.job-details { float: left; }
+.job-categories { float: left; }
+
+/*
+ * Reports styling
+ */
+ 
+.reports { 
+	background: #ffffff !important;
+}
+
+p.timerun {
+	margin: 0;
+	padding: 1em;
+	background-color: #fff;
+	color: #666;
+	font-style: oblique;
+}
+
+
+/**
+ * Notifications
+ */
+.success{ color: #00ff00; }
+.error{ color: #cc0000; }
+.debug{ color: #666; }
+.info{ color: #000099; }
+.soft{ color: #999; }
+
+div.error,
+p.error { 
+	background-color: #ffcccc;
+	border: 1px solid #cc0000;
+	padding: 1em;
+	box-shadow: 0 0 4px #ccc;
+	margin: 0 0 1em 0;
+	border-radius: 5px;
+}
+
+div.debug,
+p.debug {
+	background-color: #eeeeee;
+	border: 1px solid #666666;
+	padding: 1em;
+	box-shadow: 0 0 4px #ccc;
+	margin: 0 0 1em 0;
+	border-radius: 5px;
+}
+div.info,
+p.info {
+	background-color: #eeeeff;
+	border: 1px solid #9999cc;
+	padding: 1em;
+	box-shadow: 0 0 4px #ccc;
+	margin: 0 0 1em 0;
+	border-radius: 5px;
+}
+div.info > p:first-child {
+	margin-top: 0;
+}
+
+/**
+ * Quick nav
+ */
+div.quick-nav{
+	right: 0;
+	position: fixed; 
+	margin: 20px 45px 0 0;
+
+	border: 1px solid #ccc;
+	background-color: #fff;
+}
+
+div.quick-nav h3{
+	color: #373941;
+	margin: 0;
+	padding: 5px 15px;
+	background-color: #eee;
+}
+
+div.quick-nav ul{
+	padding: 0;
+	border-bottom: 1px solid #eee;
+}
+
+div.quick-nav ul li{
+	border-top: 1px solid #eee;
+	list-style-type: none;
+	background-color: #fff;
+	margin: 0;
+}
+
+div.quick-nav ul li a{
+	display: block;
+	padding: 5px 15px;
+	
+	color: #666;
+	text-decoration: none;
+}
+div.quick-nav ul li a:hover,
+div.quick-nav ul li a:active,
+div.quick-nav ul li a.hover,
+div.quick-nav ul li a.active
+{
+	text-decoration: underline;
+}
+
+div.quick-nav .buttons {
+	text-align: center;
+}
+div.quick-nav .buttons .dijit {
+	margin: 5px;
+}
+div.quick-nav .buttons .dijit .dijitButtonNode {
+	padding: 0;
+}
+div.quick-nav .buttons .dijit .dijitButtonContents {
+	padding: 3px 15px;
+}
+
+#overlay-box{ width: 800px !important; }
+#overlay-box .dijitDialogPaneContent{ width: auto !important; padding: 0; }
+
+
+/* Waiter spinner (Forms) */
+.waiter{
+	background: url(../images/waiting.gif) 0 0 no-repeat;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	margin: 0 0 0 5px;
+	display: inline-block;
+}
+
+/* Sortables */
+.sort{ text-decoration: none; }
+.sort:hover{ text-decoration: underline; }
+.sort-asc{ }
+.sort-desc{ }
+.sort-current{ text-decoration: underline; }
+
+/* Email form */
+.emailForm{ margin: 1em; }
+.emailForm .dijitTextBox {	width: 60%; padding: 4px; }
+.emailForm .cannedresponse-injector{ float: right; margin: 0.2em 0 1em; width: auto; }
+
+/* File drop */
+.filedrop {
+	display: none;
+}
+.filedrop-show {
+	border: 3px dashed #ccc;
+
+	margin: 3px;
+	padding: 5px;
+  
+	text-align: center;
+	vertical-align: center;
+
+	font-size: 2em;
+	font-weight: bold;
+	
+	text-transform: uppercase;
+
+	color: #ccc;
+
+	display: block;
+}
+.filedrop:hover,
+.filedrop-hover {
+	border-color: #999;
+	color: #999;
+}
+
+/* Browser */
+form.browser input[type="url"]{
+	width: 90%;
+}
+
+/* Loading disabler */
+.dopeLoadingDisabler {
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 998;
+	padding: 1em;
+	font-size: 1.2em;
+	
+	background-color: #fff;
+	background: rgba(255,255,255,0.5);
+}
+.dopeLoadingDisabler.active {
+	display: block;
+}
+
+
+/* Contacts */
+.contact-item{
+	background: #F2F2F2;
+	margin-top: 2px;
+	padding: 0.2em 1em 0.2em 0.5em;
+}
+.contact-item strong{
+	color: #333;
+	margin-right: 1em;
+}
+
+.space { margin: 1em; }
+
+/* Columns */
+.column-1{ width: 98%; margin: 1%; }
+
+.column-2{ width: 48.5%; float:left; }
+.column-2-1{ margin: 1% 0% 1% 1%; }
+.column-2-2{ margin: 1% 1% 1% 1%; }
+
+.column-3{ width: 32%; float:left; }
+.column-3.span-2{ width: 65%; float:left; }
+.column-3-1{ margin: 1% 0% 1% 1%; }
+.column-3-2{ margin: 1% 0% 1% 1%; }
+.column-3-3{ margin: 1% 1% 1% 1%; }
+
+
+/* Top bar */
+
+
+/* Top Paginator */
+.tab .dijitContentPane[region='top'] {
+	background: transparent;
+
+	/*
+	top: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+	*/
+	padding: 5px !important;
+
+	border-width: 0 0 1px 0 !important;
+	background-color: #F0F4FC !important;
+}
+.tab .dijitContentPane[region='top'] .buttons {
+	height: 25px;
+	line-height: 25px;
+}
+.tab .dijitContentPane[region='top'] .dijitButton,
+.tab .dijitContentPane[region='top'] .paginationControl {
+	display: inline-block;
+	vertical-align:top;
+}
+
+/* Items */
+.item {
+	border-top: thin solid #eee;
+
+	padding: 5px 0;
+	margin: 0 5px 1em 0;
+}
+.item .dates { float: right; color: #666; }
+.item a.more { float: right; }
+.item div.more { display: none; margin-top: 1em; }
+.item p { color: #666; }
+
+/* CK Editor */
+.cke_skin_kama .cke_editor {
+	width:100%;
+}

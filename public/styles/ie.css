@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+#menu li a {
+	display: inline-block;
+}
+
+#menu li div {
+	display: inline;
+}
+
+div.quick-nav{
+	display: none;
+}

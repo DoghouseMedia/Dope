@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+
+.dopeGridDataGrid {
+	padding: 0 !important;
+}
+
+.dopeGridDataGrid .dojoxGridHeader th {
+	white-space: nowrap;
+}

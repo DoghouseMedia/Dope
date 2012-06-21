@@ -1,0 +1,58 @@
+@CHARSET "UTF-8";
+
+.dopeLayoutButtons {
+	box-shadow: 0 0px 2px #ccc;
+	z-index: 9;
+	padding: 4px !important;
+
+	background-color: #f6f9ff;
+	background-image: linear-gradient(bottom, rgb(255,255,255) 30%, rgb(246,249,255) 65%);
+	background-image: -o-linear-gradient(bottom, rgb(255,255,255) 30%, rgb(246,249,255) 65%);
+	background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 30%, rgb(246,249,255) 65%);
+	background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 30%, rgb(246,249,255) 65%);
+	background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 30%, rgb(246,249,255) 65%);
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.3, rgb(255,255,255)),
+		color-stop(0.65, rgb(246,249,255))
+	);
+}
+
+.dopeLayoutButtonsTop {
+	padding: 4px !important;
+
+	background-color: #f6f9ff;
+	background-image: linear-gradient(bottom, rgb(246,249,255) 30%, rgb(255,255,255) 65%);
+	background-image: -o-linear-gradient(bottom, rgb(246,249,255) 30%, rgb(255,255,255) 65%);
+	background-image: -moz-linear-gradient(bottom, rgb(246,249,255) 30%, rgb(255,255,255) 65%);
+	background-image: -webkit-linear-gradient(bottom, rgb(246,249,255) 30%, rgb(255,255,255) 65%);
+	background-image: -ms-linear-gradient(bottom, rgb(246,249,255) 30%, rgb(255,255,255) 65%);
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.3, rgb(246,249,255)),
+		color-stop(0.65, rgb(255,255,255))
+	);
+}
+
+.dopeLayoutButtons form {
+	display: inline;
+}
+
+.dopeLayoutButtons .separator {
+	display: inline-block;
+	vertical-align: middle;
+	width: 1px;
+	height: 20px;
+	background-color: #8BA0BD;
+	margin: auto 7px;
+	box-shadow: 0px 1px 3px #ccc;
+}
+
+
+.dopeLayoutButtons .dijitButton .dijitButtonNode {
+	min-width: 5em;
+}
