@@ -11,8 +11,3 @@
 
 # Mac OSX
 .DS_Store
-
-# Libraries
-/library/Bisna
-/library/Zend
-/library/doctrine2
