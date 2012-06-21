@@ -10,13 +10,13 @@ defined('APPLICATION_PATH') || define('APPLICATION_PATH',
 	realpath(dirname(__FILE__) . '/../application')
 );
 
-set_include_path(APPLICATION_PATH . '/../dope/lib');
+set_include_path('../lib');
 
 /* Load classes */
-require_once APPLICATION_PATH . '/../dope/lib/Zend/Application.php';
-require_once APPLICATION_PATH . '/../dope/lib/Zend/Config/Ini.php';
-require_once APPLICATION_PATH . '/../dope/lib/Dope/Config/Helper.php';
-require_once APPLICATION_PATH . '/../dope/lib/Dope/Application.php';
+require_once '../lib/Zend/Application.php';
+require_once '../lib/Zend/Config/Ini.php';
+require_once '../lib/Dope/Config/Helper.php';
+require_once '../lib/Dope/Application.php';
 
 /* Create application */
 $application = new \Dope\Application(
