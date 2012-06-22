@@ -182,9 +182,8 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 	{
 		if ($format) {
 			static::$_cachedContext = $format;
-			return parent::initContext($format);
 		}
 		
-		return false;
+		return parent::initContext($format);
 	}
 }
