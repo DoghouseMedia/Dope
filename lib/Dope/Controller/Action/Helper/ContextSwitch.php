@@ -70,7 +70,7 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 			)
 		);
 		
-		return parent::__construct(array(
+		parent::__construct(array(
 			'contexts' => $contexts	
 		));
 	}
