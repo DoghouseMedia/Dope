@@ -11,8 +11,13 @@
 
 RewriteEngine on
 RewriteBase /
+
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule .* index.php
+RewriteRule ^(.*)$ dope/$1
+
+RewriteCond %{REQUEST_FILENAME} !(.css|.js)$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* dope/index.php
 
 # Gzip CSS and JS by default
 AddOutputFilterByType DEFLATE text/css application/x-javascript
