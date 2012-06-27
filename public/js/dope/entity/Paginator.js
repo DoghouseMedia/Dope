@@ -65,7 +65,10 @@ dojo.declare('dope.entity.Paginator', [dijit._Widget, dijit._Templated, dope._Co
 			dojo.place(dojo.create('div', {className: 'separator'}), this.domNode, 'after');
 		}
 		
-		dojo.fx.wipeIn({'node': this.domNode}).play();
+		dojo.fx.wipeIn({
+			node: this.domNode,
+			onEnd: this.getPane().resize.bind(this.getPane())
+		}).play();
 	},
 	startup: function() {
 		this.inherited(arguments);
