@@ -250,16 +250,6 @@ extends Action
 	 */
 	public function editAction()
 	{
-		/* Assign Json raw data to params */
-		try {
-			$jsonData = \Zend_Json::decode($this->getRequest()->getRawBody(), \Zend_Json::TYPE_OBJECT);
-			if ($jsonData) {
-				foreach($jsonData as $key => $val) {
-					$this->getRequest()->setParam($key, $val);
-				}
-			}
-		} catch(\Exception $e) {}
-		
 		/* Entity */
 		$entity = $this->getEntityRepository()->find(
 			(int) $this->getRequest()->getParam('id', false)
@@ -277,9 +267,10 @@ extends Action
 		if ($this->getRequest()->isPost() OR $this->getRequest()->isPut()) {
 			/* Form was submitted. Get data */
 			$data = $this->getData($form->getValues(true));
-	
+	print_r($this->getRequest()->getParams());
 			if ($form->isValid($this->getRequest()->getParams())) {
 				/* Form is valid. Update entity with form values */
+				print_r((array) $data->getParams());
 				$result = $entity->saveFromArray((array) $data->getParams());
 	
 				if ($result) {
