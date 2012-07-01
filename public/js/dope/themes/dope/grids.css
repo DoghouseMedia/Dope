@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+@import "/js/dojox/grid/enhanced/resources/EnhancedGrid.css";
+@import "/js/dojox/grid/enhanced/resources/EnhancedGrid_rtl.css";
+
+
 .dopeGridDataGrid {
 	padding: 0 !important;
 }

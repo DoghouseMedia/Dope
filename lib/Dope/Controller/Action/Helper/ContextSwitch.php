@@ -67,6 +67,10 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 			'xml' => array(
 				'suffix'	=> 'xml',
 				'headers'   => array('Content-Type' => 'application/xml'),
+			),
+			'csv' => array(
+				'suffix'	=> 'csv',
+				'headers'   => array('Content-Type' => 'text/csv'),
 			)
 		);
 		
@@ -92,7 +96,7 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 	 * Hook into action controller preDispatch() workflow (overriden)
 	 * 
 	 * We've overriden init() in order to dynamically add
-	 * an ActionContext using the current action and all defined contexts.
+	 * an ActionContext using all defined contexts.
 	 *
 	 * @return void
 	 */
@@ -124,55 +128,15 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 	protected function determineContext()
 	{
 		$cInt = static::$_cachedContext;
-		$cExt = $this->getContextFromRequestExtension();
-		$cHead = $this->getContextFromAcceptHeader();
+		$cReq = $this->getRequest()->getContextName();
 
-		if ($cExt) return $cExt;
+		if ($cReq) return $cReq;
 		elseif ($cInt) return $cInt;
-		elseif ($cHead) return $cHead;
 		
 		/* Default to html */
 		return 'html';
 	}
 	
-	public function getContextFromRequestExtension()
-	{
-		if (strpos($this->getRequest()->getActionName(), '.') !== false) {
-			$parts = explode('.', $this->getRequest()->getActionName());
-			$context = array_pop($parts);
-			$this->getRequest()->setActionName(join('.', $parts));
-			return $context;
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * 
-	 */
-	public function getContextFromAcceptHeader()
-	{
-		/* Remove whitespace and explode on commas */
-		$acceptParts = explode(',',
-			str_replace(' ', '', $this->getRequest()->getHeader('Accept')
-		));
-	
-		/* Test for json */
-		if (in_array('application/json', $acceptParts)) {
-			return 'json';
-		}
-	
-		/* Test for dojo */
-		if (in_array('application/x-dojo-json', $acceptParts)) {
-			return 'dojo';
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * 
-	 */
 	protected function hasCurrentContext()
 	{
 		return (bool) $this->_currentContext;

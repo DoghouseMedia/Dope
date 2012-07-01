@@ -5,7 +5,11 @@ dojo.require('dope.data.JsonRestStore');
 dojo.require('dope.utils.Url');
 dojo.require('dope.dialog.Confirm');
 
-dojo.declare('dope.grid.DataGrid', [dojox.grid.DataGrid, dope._Contained], {
+dojo.require("dojox.grid.EnhancedGrid");
+dojo.require("dojox.grid.enhanced.plugins.Search");
+dojo.require("dope.grid.enhanced.plugins.OptionsBar");
+
+dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	baseClass: 'dopeGridDataGrid',
 	region: 'center',
 	query: '',
@@ -18,6 +22,11 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.DataGrid, dope._Contained], {
 	autoload: true,
 	storeController: null,
 	
+	plugins: {
+		search: /* a Boolean value or an argument object */true, //{},
+		optionsbar: {}
+	},
+
 	startup: function() {
 		/* @see http://mail.dojotoolkit.org/pipermail/dojo-interest/2010-March/044230.html */
 		this.formatterScope = this;

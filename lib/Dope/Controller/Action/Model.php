@@ -125,6 +125,7 @@ extends Action
 				case 'dojo':
 				case 'json': $this->_helper->json($collectionArray); break;
 				case 'xml': $this->_helper->xml($collectionArray); break;
+				case 'csv': $this->_helper->csv($collectionArray); break;
 	
 // 				case 'profile':
 // 					$this->view->profiler = $this->getEntityRepository()->getSearch()->getProfiler();
@@ -164,6 +165,7 @@ extends Action
 		switch($this->getHelper('ContextSwitch')->getCurrentContext()) {
 			case 'json': $this->_helper->json($entity->toArray()); break;
 			case 'xml': $this->_helper->xml($entity->toArray()); break;
+			case 'csv': $this->_helper->csv($entity->toArray()); break;
 			case 'pdf': $this->_helper->pdf($entity); break;
 			case 'docx': $this->_helper->docx($entity); break;
 			default:
@@ -267,10 +269,10 @@ extends Action
 		if ($this->getRequest()->isPost() OR $this->getRequest()->isPut()) {
 			/* Form was submitted. Get data */
 			$data = $this->getData($form->getValues(true));
-	print_r($this->getRequest()->getParams());
+	
 			if ($form->isValid($this->getRequest()->getParams())) {
 				/* Form is valid. Update entity with form values */
-				print_r((array) $data->getParams());
+				
 				$result = $entity->saveFromArray((array) $data->getParams());
 	
 				if ($result) {
