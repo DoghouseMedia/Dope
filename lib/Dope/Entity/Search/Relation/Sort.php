@@ -29,12 +29,12 @@ class Sort
 	
 	public function processSelect(QueryBuilder $select)
 	{
-		if(! $this->getRelation()->hasJoin()) {
-			$select->innerJoin(
-				$this->getRelation()->getTableName() . ' ' . $this->getRelation()->getTableAlias()
-			);
-			$this->getRelation()->getTableAlias()->isUsed(true);
-		}
+// 		if(! $this->getRelation()->hasJoin()) {
+// 			$select->innerJoin(
+// 				$this->getRelation()->getTableName() . ' ' . $this->getRelation()->getTableAlias()
+// 			);
+// 			$this->getRelation()->getTableAlias()->isUsed(true);
+// 		}
 			
 // 		$toStringColumnNames = Doctrine_Core::getTable($this->getRelation()->getClassName())->getToStringColumnNames();
 			
