@@ -2,10 +2,10 @@
 
 namespace Dope\Controller\Plugin;
 
-class RawJsonHandler extends \Zend_Controller_Plugin_Abstract
+class RawDataHandler extends \Zend_Controller_Plugin_Abstract
 {
 	/**
-	 * Before dispatching, digest raw JSON request body and set params
+	 * Before dispatching, digest raw request body and set params
 	 *
 	 * @param \Zend_Controller_Request_Abstract $request
 	 */
@@ -28,5 +28,10 @@ class RawJsonHandler extends \Zend_Controller_Plugin_Abstract
 				}
 			}
 		} catch(\Exception $e) {}
+		
+		/* Assign raw query params */
+		$params = array();
+		parse_str($request->getRawBody(), $params);
+		$this->getRequest()->setParams($params);
 	}
 }
