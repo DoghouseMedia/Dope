@@ -63,6 +63,24 @@ dojo.declare("dope.grid.enhanced.plugins._OptionsBar", [dijit._Widget,dijit._Tem
 		/* Dope magic */
 		this.exportBtn.set('disabled', 'disabled');
 		dojo.connect(this.grid, '_setStore', dojo.hitch(this, 'onSetStore'));
+		
+		this.searchBox.destroy();
+//		if (this.grid instanceof dope.search.DataGrid) {
+//			this.searchBox.destroy();
+//		} else {
+//			dojo.connect(this.searchBox, 'onKeyUp', dojo.hitch(this, 'onRefine'));
+//		}
+	},
+	
+	onRefine: function(e) {
+//		var storeUrl = new dope.utils.Url(this.grid.store.target);
+//		storeUrl.set('query', '*' + this.searchBox.get('value') + '*');
+//		
+//		var store = new dope.data.JsonRestStore({
+//			target: String(storeUrl)
+//		});
+//		
+//		this.grid.setStore(store);
 	},
 	
 	onSetStore: function() {

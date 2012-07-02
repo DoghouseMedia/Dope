@@ -6,7 +6,6 @@ dojo.require('dope.utils.Url');
 dojo.require('dope.dialog.Confirm');
 
 dojo.require("dojox.grid.EnhancedGrid");
-dojo.require("dojox.grid.enhanced.plugins.Search");
 dojo.require("dope.grid.enhanced.plugins.OptionsBar");
 
 dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
@@ -23,7 +22,6 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	storeController: null,
 	
 	plugins: {
-		search: /* a Boolean value or an argument object */true, //{},
 		optionsbar: {}
 	},
 
@@ -45,6 +43,8 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		}
 		
 		this.subscribe('/dope/entity/form/add', dojo.hitch(this, 'onEntityAdd'));
+		
+		dojo.connect(this, 'onRowClick', dojo.hitch(this, '_onRowClick'));
 	},
 	setStore: function(store) {
 		dojo.connect(store, 'onDelete', dojo.hitch(this, 'onStoreChange'));
@@ -70,11 +70,13 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 			this.onStoreChange();
 		}
 	},
-	onRowClick: function(e) {
+	_onRowClick: function(e) {
+		console.log('Hello GRID', this);
 		var id = this.getItem(e.rowIndex).id;
 		var url = new dope.utils.Url(this.store.target);
 		url.setAction(id);
 		url.removeSearch();
+		console.log(String(url));
 		
 		dojo.publish('/dope/layout/TabContainerMain/open', [{
 			href: String(url),
