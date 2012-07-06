@@ -180,16 +180,6 @@ extends Action
 	 */
 	public function addAction()
 	{
-		/* Assign Json raw data to params */
-		try {
-			$jsonData = \Zend_Json::decode($this->getRequest()->getRawBody(), \Zend_Json::TYPE_OBJECT);
-			if ($jsonData) {
-				foreach($jsonData as $key => $val) {
-					$this->getRequest()->setParam($key, $val);
-				}
-			}
-		} catch(\Exception $e) {}
-		
 		/* Form */
 		$form = $this->getEntityForm();
 		
