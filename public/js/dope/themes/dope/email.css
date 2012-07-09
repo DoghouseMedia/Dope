@@ -1,0 +1,35 @@
+@CHARSET "UTF-8";
+
+.dopeEmailBox {
+	width: auto;
+}
+
+.dopeEmailBox .dijitInputField {
+	display: inline-block;
+}
+
+.dopeEmailBoxContactContainer {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.dopeEmailBoxContact {
+	display: inline-block;
+	padding: 3px;
+	margin: 2px;
+	border: 1px solid #ccc;
+	background-color: #f6f9ff;
+	color: #333;
+	border-radius: 2px;
+}
+
+.dopeEmailBoxContactRemove {
+	border-radius: 15px;
+	padding: 0px 5px;
+	background-color: #EEE;
+	font-size: smaller;
+	margin-left: 3px;
+	border: 1px solid #CCC;
+	cursor: pointer;
+	vertical-align: baseline;
+}
