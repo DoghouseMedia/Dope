@@ -112,7 +112,6 @@ implements \IteratorAggregate
 	{
 		/*
 		 * @todo PHP5 Strict debug complains here: "Only variables should be passed by reference"
-		 * Probably due to get_class() not assigned to a var first :(
 		 */
 		return strtolower(end(explode('\\', get_class($this))));
 	}

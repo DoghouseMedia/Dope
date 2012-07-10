@@ -9,10 +9,13 @@ use \Doctrine\ORM\Mapping\Annotation;
  */
 final class Index implements Annotation
 {
-	/** @var string */
-	public $entity;
-	/** @var string */
-	public $targetEntity;
 	/** @var array */
-	public $fields = array();
+	public $value = array();
+	
+	/** @var string */
+// 	public $entity;
+	/** @var string */
+// 	public $targetEntity;
+	/** @var array */
+// 	public $fields = array();
 }

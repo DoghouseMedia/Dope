@@ -75,20 +75,22 @@ class Definition extends \ReflectionClass
 		return $fields;
 	}
 	
-	public function hasIndexAnnotation()
+	public function hasIndexAnnotations()
 	{
-		if (! $this->getIndexAnnotation()) {
+		$indexAnnotations = $this->getIndexAnnotations();
+		
+		if (! $indexAnnotations) {
 			return false;
 		}
 	
-		if (! $this->getIndexAnnotation()->entity) {
+		if (! $indexAnnotations[0]->entity) {
 			return false;
 		}
 	
 		return true;
 	}
 	
-	public function getIndexAnnotation()
+	public function getIndexAnnotations()
 	{
 		return $this->getAnnotation('\Dope\Doctrine\ORM\Mapping\Index');
 	}

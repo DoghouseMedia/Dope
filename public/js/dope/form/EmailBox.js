@@ -7,34 +7,48 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 	startup: function() {
 		this.inherited(arguments);
 		dojo.addClass(this.domNode, 'dopeEmailBox');
-		this.reset();
-		this.addContact('jonathan@dhmedia.com.au');
 		dojo.connect(this, 'onKeyUp', this._onKeyUp.bind(this));
-		//this.parseValueForContacts.bind(this));
+		this.reset();
 	},
 	_onKeyUp: function(e) {
-		/* Enter or space */
-		if (e.keyCode == 32 || e.keyCode == 13) {
-			this.parseValueForContacts();
+		switch (e.keyCode) {
+			case 32: // enter
+			case 13: // space
+				this.parseValueForContacts();
+				break;
+			case 8: // backspace
+				var contact = this.contacts[this.contacts.length-1];
+				this.removeContact(contact);
+				break;
 		}
 	},
 	onChange: function(newValue) {
-		console.log(this.get('value'), newValue);
 		this.parseValueForContacts();
 	},
 	parseValueForContacts: function() {
-		var values = this.get('value').split(/[,\s]/);
-		//this.clearContacts();
-		dojo.forEach(values, this.addContact.bind(this));
+		this.addContact(this.get('value'));
+		this.set('value', '');
 	},
 	addContact: function(value) {
+		if (! value) {
+			return;
+		}
+		
 		this.contacts.push(new dope.form.EmailBox.Contact({
 			'value': value,
 			'emailBox': this
 		}));
 	},
 	removeContact: function(contact) {
-		alert('Remove');
+		var _contacts = [];
+		dojo.forEach(this.contacts, function(_contact) {
+			if (_contact == contact) {
+				contact.destroy();
+			} else {
+				_contacts.push(_contact);
+			}
+		});
+		this.contacts = _contacts;
 	},
 	clearContacts: function() {
 		dojo.forEach(this.contacts, dojo.destroy);
@@ -67,8 +81,6 @@ dojo.declare('dope.form.EmailBox.Contact', [dijit._Widget, dijit._Templated], {
 		this.inherited(arguments);
 		this.emailNode.innerHTML = this.get('value');
 		dojo.connect(this.removeNode, 'onclick', this.remove.bind(this));
-		
-		console.log(this, this.domNode, this.emailBox, this.emailBox.contactContainerNode);
 		dojo.place(this.domNode, this.emailBox.contactContainerNode, 'last');
 	},
 	remove: function() {

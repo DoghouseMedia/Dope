@@ -160,7 +160,8 @@ extends Action
 		$entity = $this->getEntityRepository()->find(
 			(int) $this->getRequest()->getParam('id')
 		);
-
+		echo '<pre>';
+		print_r($entity->getDefinition()->getIndexAnnotations()); die;
 		/* Assign to view */
 		switch($this->getHelper('ContextSwitch')->getCurrentContext()) {
 			case 'json': $this->_helper->json($entity->toArray()); break;
