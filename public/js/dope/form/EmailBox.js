@@ -1,7 +1,7 @@
 dojo.provide('dope.form.EmailBox');
-dojo.require('dijit.form.TextBox');
+dojo.require('dijit.form.ValidationTextBox');
 
-dojo.declare('dope.form.EmailBox', dijit.form.TextBox, {
+dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 	contacts: [],
 	
 	startup: function() {
@@ -9,13 +9,20 @@ dojo.declare('dope.form.EmailBox', dijit.form.TextBox, {
 		dojo.addClass(this.domNode, 'dopeEmailBox');
 		this.reset();
 		this.addContact('jonathan@dhmedia.com.au');
-		dojo.connect(this, 'onKeyUp', this.parseValueForContacts.bind(this));
+		dojo.connect(this, 'onKeyUp', this._onKeyUp.bind(this));
+		//this.parseValueForContacts.bind(this));
+	},
+	_onKeyUp: function(e) {
+		/* Enter or space */
+		if (e.keyCode == 32 || e.keyCode == 13) {
+			this.parseValueForContacts();
+		}
 	},
 	onChange: function(newValue) {
 		console.log(this.get('value'), newValue);
-		this.parseValueForContacts(true);
+		this.parseValueForContacts();
 	},
-	parseValueForContacts: function(useLastPart) {
+	parseValueForContacts: function() {
 		var values = this.get('value').split(/[,\s]/);
 		//this.clearContacts();
 		dojo.forEach(values, this.addContact.bind(this));
