@@ -41,10 +41,6 @@ class Indexer
 	
 	public function add($fieldName, $value)
 	{
-		$storageFieldName = ($this->targetEntity == $this->entity)
-			? $fieldName
-			: '_' . $this->entity->getEntityKey() . '_' . $this->entity->id;
-		
 		/* Analyze content */
 		$terms = Analyzer::analyze($value);
 		
@@ -54,7 +50,7 @@ class Indexer
 			$indexEntry->keyword = $term;
 			$indexEntry->position = $pos;
 			$indexEntry->id = $this->targetEntity->id;
-			$indexEntry->field = $storageFieldName;
+			$indexEntry->field = $this->getStorageFieldname($fieldName);
 			
 			Doctrine::getEntityManager()->persist($indexEntry);
 			Doctrine::flush($indexEntry);
@@ -68,9 +64,7 @@ class Indexer
 		);
 		
 		if ($fieldName) {
-			$findByConditions['field'] = ($this->targetEntity == $this->entity)
-				? $fieldName
-				: '_' . $this->entity->getEntityKey() . '_' . $this->entity->id;
+			$findByConditions['field'] = $this->getStorageFieldname($fieldName);
 		}
 		
 		$entities = $this->indexRepository->findBy($findByConditions);
@@ -79,5 +73,12 @@ class Indexer
 			Doctrine::getEntityManager()->remove($entity);
 		}
 		Doctrine::flush();
+	}
+	
+	protected function getStorageFieldname($fieldName)
+	{
+		return ($this->targetEntity == $this->entity)
+			? $fieldName
+			: '_' . $this->entity->getEntityKey() . '_' . $this->entity->id;
 	}
 }
