@@ -6,6 +6,7 @@ use \Doctrine\ORM\Mapping\Annotation;
 /**
  * @Annotation
  * @Target("CLASS")
+ * @todo Is this not deprecated?
  */
 final class Index implements Annotation
 {

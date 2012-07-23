@@ -1,6 +1,6 @@
 <?php
 
-namespace Dope\Entity\Index;
+namespace Dope\Entity\Indexer;
 
 require_once 'Dope/Form/Element/Phone.php';
 require_once 'Dope/Form/Element/Email.php';

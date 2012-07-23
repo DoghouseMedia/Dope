@@ -14,71 +14,123 @@ class Indexer
 	 */
 	protected $entity;
 	
-	/**
-	 * @var \Dope\Entity
+	protected $target;
+	
+	/** 
+	 * @var array
 	 */
-	protected $targetEntity;
+	public $fields = array();
 	
 	/**
 	 * @param \Dope\Entity $entity
+	 * @param array $indexerAnnotation
 	 */
-	public function __construct(Entity $entity)
+	public function __construct(Entity $entity, $indexerAnnotation)
 	{
 		$this->entity = $entity;
-		
-		$indexAnnotation = $this->entity->getDefinition()->getIndexAnnotation();
-		$this->indexRepository = Doctrine::getRepository($indexAnnotation->entity);
-		$this->targetEntity = $indexAnnotation->targetEntity
-			? $this->entity->{$indexAnnotation->targetEntity}
+		$this->indexRepository = Doctrine::getRepository($indexerAnnotation['entity']);
+		$this->target = isset($indexerAnnotation['target'])
+			? $this->entity->{$indexerAnnotation['target']}
 			: $this->entity;
-			
-		if ($this->targetEntity instanceof Proxy) {
-			$this->targetEntity->__load();
+				
+		if ($this->target instanceof Proxy) {
+			$this->target->__load();
 		}
-		
-		return $this;
 	}
 	
 	public function add($fieldName, $value)
 	{
 		/* Analyze content */
-		$terms = Analyzer::analyze($value);
+		$terms = Indexer\Analyzer::analyze($value);
 		
-		/* Save index */
-		foreach ($terms as $pos => $term) {
-			$indexEntry = $this->indexRepository->newInstance();
-			$indexEntry->keyword = $term;
-			$indexEntry->position = $pos;
-			$indexEntry->id = $this->targetEntity->id;
-			$indexEntry->field = $this->getStorageFieldname($fieldName);
+		foreach ($this->getEntriesByTarget($fieldName) as $id => $storageFieldname) {
+			$this->debug("ADD " . $storageFieldname . " = " . join(',', $terms));
 			
-			Doctrine::getEntityManager()->persist($indexEntry);
-			Doctrine::flush($indexEntry);
+			/* Save index */
+			foreach ($terms as $pos => $term) {
+				$indexEntry = $this->indexRepository->newInstance();
+				$indexEntry->keyword = $term;
+				$indexEntry->position = $pos;
+				$indexEntry->id = $id;
+				$indexEntry->field = $storageFieldname;
+				
+				$this->debug(join(' - ', array(
+					'ADD', $storageFieldname, $id, $pos, $term, get_class($indexEntry)
+				)));
+				
+				Doctrine::getEntityManager()->persist($indexEntry);
+				Doctrine::isFlushing(false);
+				Doctrine::flush($indexEntry);
+			}
 		}
+		
+		return $this;
 	}
 	
 	public function remove($fieldName=null)
 	{
-		$findByConditions = array(
-			'id' => $this->targetEntity->id
-		);
-		
-		if ($fieldName) {
-			$findByConditions['field'] = $this->getStorageFieldname($fieldName);
-		}
-		
-		$entities = $this->indexRepository->findBy($findByConditions);
+		foreach ($this->getEntriesByTarget($fieldName) as $id => $storageFieldname) {
+			$this->debug("REMOVE $fieldName ($storageFieldname) BY ID $id");
 			
-		foreach ($entities as $entity) {
-			Doctrine::getEntityManager()->remove($entity);
+			$qb = $this->indexRepository->createQueryBuilder('i');
+			
+			$qb->where('i.id = :id');
+			$qb->setParameter('id', $id);
+
+			if ($fieldName) {
+				$qb->andWhere('i.field = :field');
+				$qb->setParameter('field', $storageFieldname);
+			}
+			else {
+				$qb->andWhere('i.field LIKE :field');
+				$qb->setParameter('field', $storageFieldname.'%');
+			}
+			
+			$entities = $qb->getQuery()->execute();
+
+			foreach ($entities as $entity) {
+				Doctrine::getEntityManager()->remove($entity);
+			}
 		}
+		
+		Doctrine::isFlushing(false);
 		Doctrine::flush();
+		return $this;
 	}
 	
-	protected function getStorageFieldname($fieldName)
+	protected function getEntriesByTarget($fieldName=null)
 	{
-		return ($this->targetEntity == $this->entity)
-			? $fieldName
-			: '_' . $this->entity->getEntityKey() . '_' . $this->entity->id;
+		if ($this->target == $this->entity) {
+			return array(
+				$this->target->id => $fieldName
+			);
+		}
+		
+		$entityFieldname = join('', array(
+			'_' . $this->entity->getEntityKey() .
+			'_' . $this->entity->id .
+			'_' . $fieldName
+		));
+		
+		if ($this->target instanceof \Doctrine\ORM\PersistentCollection) {
+			$entries = array();
+			foreach ($this->target as $_target) {
+				$entries[$_target->id] = $entityFieldname;
+			}
+			return $entries;
+		}
+		
+		if ($this->target instanceof \Dope\Entity) {
+			return array(
+				$this->target->id => $entityFieldname
+			);
+		}
+		
+		return false;
+	}
+	
+	protected function debug($msg) {
+		//echo '[' . $this->indexRepository->getClassName() . ']' . $msg . " <br>\n";
+		\Dope\Log::console('[' . $this->indexRepository->getClassName() . ']' . $msg);
 	}
 }

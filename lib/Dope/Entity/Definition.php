@@ -75,24 +75,29 @@ class Definition extends \ReflectionClass
 		return $fields;
 	}
 	
-	public function hasIndexAnnotation()
+	public function hasIndexersAnnotation()
 	{
-		$indexAnnotation = $this->getIndexAnnotation();
+		$indexesAnnotation = $this->getIndexersAnnotation();
 		
-		if (! $indexAnnotation) {
+		if (! $indexesAnnotation) {
 			return false;
 		}
 	
-		if (! $indexAnnotation->entity) {
+		if (count($indexesAnnotation) == 0) {
 			return false;
 		}
 	
 		return true;
 	}
 	
-	public function getIndexAnnotation()
+	public function getIndexersAnnotation()
 	{
-		return $this->getAnnotation('\Dope\Doctrine\ORM\Mapping\Index');
+		if ($this->getAnnotation('\Dope\Doctrine\ORM\Mapping\Indexers')) {
+			return $this->getAnnotation('\Dope\Doctrine\ORM\Mapping\Indexers')->value;
+		}
+		else {
+			return array();
+		}
 	}
 	
 	public function getField($columnName)

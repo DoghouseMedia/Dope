@@ -286,8 +286,9 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		/* Apply terms */
 		if ($hasQuery) {
 			/*
-			 * This (the next 300 lines) is our search implementation, using doctrine's index table
-			 * If we keep this, we should move it to our own Searchable class (and set Doctrine to use it)
+			 * This (the next 300 lines) is our search implementation.
+			 * If we keep this, we should move it to our own
+			 * Searchable class and set Doctrine to use it.
 			 */
 			
 			$modelIndexTable = 'index_' . $this->getModelAlias();
@@ -362,12 +363,10 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 				}
 			}
 			
-			$_SQL_keyword = '(';
-			$_SQL_keyword .= "keyword IN ('" . join("','", $_SQL_keyword_exact_array) . "')";
+			$_SQL_keyword = "keyword IN ('" . join("','", $_SQL_keyword_exact_array) . "')";
 			if (count($_SQL_keyword_like_array)) {
 				$_SQL_keyword .= ' OR (' . join(' OR ', $_SQL_keyword_like_array) . ')';
 			}
-			$_SQL_keyword .= ')';
 			
 			$_SQL = "SELECT "; 
 			$_SQL.=	"id, ";
