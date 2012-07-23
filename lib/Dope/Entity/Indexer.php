@@ -5,7 +5,7 @@ namespace Dope\Entity;
 use Dope\Entity,
 	Dope\Doctrine,
 	Doctrine\ORM\Proxy\Proxy,
-	Dope\Entity\Index\Analyzer;
+	Dope\Entity\Indexer\Analyzer;
 
 class Indexer
 {
@@ -41,7 +41,7 @@ class Indexer
 	public function add($fieldName, $value)
 	{
 		/* Analyze content */
-		$terms = Indexer\Analyzer::analyze($value);
+		$terms = Analyzer::analyze($value);
 		
 		foreach ($this->getEntriesByTarget($fieldName) as $id => $storageFieldname) {
 			$this->debug("ADD " . $storageFieldname . " = " . join(',', $terms));

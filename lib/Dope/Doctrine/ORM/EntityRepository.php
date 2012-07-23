@@ -2,6 +2,8 @@
 
 namespace Dope\Doctrine\ORM;
 
+use Doctrine\ORM\Mapping\UniqueConstraint;
+
 use Dope\Entity\Search,
 	Dope\Controller\Data;
 
@@ -291,7 +293,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			 * Searchable class and set Doctrine to use it.
 			 */
 			
-			$modelIndexTable = 'index_' . $this->getModelAlias();
+			$modelIndexTable = 'index_' . $this->getClassMetadata()->getTableName();
 			
 			$modelScoresById = array();
 			$modelIdsByScore = array();
@@ -316,7 +318,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			$termsRequired = array();
 			$termsExcluded = array();
 			
-			$terms = \Dope\Entity\Index\Analyzer::analyze($termString, null, false, false, true, true);
+			$terms = \Dope\Entity\Indexer\Analyzer::analyze($termString, null, false, false, true, true);
 			
 			for ($i=0; $i < count($terms); $i++) {
 				$terms[$i] = str_replace ( '*', '%', $terms[$i] );
@@ -333,7 +335,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			
 			foreach($termsBunnies as $_termBunny) {
 				$termsRequired = array_merge($termsRequired,
-					\Dope\Entity\Index\Analyzer::analyze($_termBunny, null, false, false)
+					\Dope\Entity\Indexer\Analyzer::analyze($_termBunny, null, false, false)
 				);
 			}
 			
@@ -427,7 +429,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 
 				foreach($termsBunnies as $termsBunny) {
 					foreach($_byField as $field => $_data) {
-						$_terms = \Dope\Entity\Index\Analyzer::analyze($termsBunny, null, false, false);
+						$_terms = \Dope\Entity\Indexer\Analyzer::analyze($termsBunny, null, false, false);
 						if (!isset($_terms[0])) continue;
 						
 						$positions = array_keys($_data, $_terms[0]);
@@ -484,7 +486,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 				$params = $this->select->getParameters();
 				
 				/* Define temporary table name */
-				$tmpTableName = 'temp_search_' . time() . '_' . rand(111,999);
+				$tmpTableName = uniqid('temp_search_' . time() . '_' . rand(111,999), true);
 				
 				//$this->getSearch()->getProfiler()->punch('search query pre result search create tmp table pre');
 				
@@ -506,8 +508,12 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 				//$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table');
 				
 				/* Build & Run search query */
-				$SQL_DATA = $this->select->getQuery()->getSQL();
+				$SQL_DATA = $this->select
+					->andWhere('1=1') // ensure there's a WHERE clause
+					->getQuery()
+					->getSQL();
 				//$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table 2');
+				
 				
 				preg_match('/^SELECT .*? FROM [^\s]*? (\w+)/mis', $SQL_DATA, $matches);
 				$modelTableAlias = $matches[1];

@@ -179,7 +179,7 @@ class Data
 		}
 			
 		if ($tabForParams instanceof \Snowwhite\Entity\Tab) {
-			if($tabForParams->state_data instanceof ArrayObject) {
+			if($tabForParams->state_data instanceof \ArrayObject) {
 				foreach($tabForParams->state_data->getArrayCopy() as $key => $value) {
 					if (!isset($this->params[$key])) {
 						$this->params[$key] = $value;
