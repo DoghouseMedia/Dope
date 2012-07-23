@@ -16,6 +16,7 @@ dojo.mixin(dope.dtl.filter.strings, {
 	 * 
 	 * @todo Remove this when dojo is fixed and upgraded
 	 * 
+	 * @see http://bugs.dojotoolkit.org/ticket/15737
 	 * @see http://bugs.dojotoolkit.org/ticket/13669
 	 */
 	_urlquote: function(/*String*/ url, /*String?*/ safe){
@@ -27,7 +28,7 @@ dojo.mixin(dope.dtl.filter.strings, {
 				if(token == " "){
 					return "+";
 				}else{
-					return "%" + String('00' + token.charCodeAt(0).toString(16).toUpperCase()).slice(-2);
+					return encodeURIComponent(token);
 				}
 			}
 			return token;
