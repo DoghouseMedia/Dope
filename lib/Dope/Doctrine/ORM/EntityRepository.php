@@ -467,10 +467,12 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			if (count($modelScoresById)) {
 				$minScore = current($modelScoresById) / 100 * 5;
 				
+				$numValidResults = 0;
 				foreach($modelScoresById as $id => $score) {
-					if ($score < $minScore) {
+					if ($numValidResults >= 100 AND $score < $minScore) {
 						unset($modelScoresById[$id]);
 					}
+					$numValidResults++;
 				}
 			}
 			
