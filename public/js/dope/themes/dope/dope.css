@@ -7,13 +7,16 @@
 @import url(contentPane.css);
 @import url(dnd.css);
 @import url(email.css);
+@import url(font.css);
 @import url(forms.css);
 @import url(grids.css);
 @import url(layoutButtons.css);
+@import url(menu.css);
 @import url(operations.css);
 @import url(paginator.css);
 @import url(searchForms.css);
 @import url(store.css);
+@import url(tabs.css);
 @import url(uploader.css);
 
 .dijitInline {

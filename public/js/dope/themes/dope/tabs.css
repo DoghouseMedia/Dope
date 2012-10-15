@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+
+.dijitTabContainerTop-tabs {
+	
+}
+
+.dijitTabContainerTop-tabs .dijitTab { 
+	opacity: 0.75;
+
+	-webkit-transition: opacity 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	-o-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+}
+
+.dijitTabContainerTop-tabs .dijitTabHover,
+.dijitTabContainerTop-tabs .dijitTabChecked {
+	opacity: 1;	
+}

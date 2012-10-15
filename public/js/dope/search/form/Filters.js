@@ -11,10 +11,17 @@ dojo.declare('dope.search.form.Filters', [dijit._Contained, dijit.layout._Layout
 	startup: function() {
 		this.inherited(arguments);
 		dojo.subscribe('/dope/search/form/filterAddRequest', this, 'onFilterAddRequest');
+		dojo.subscribe('/dope/search/form/store/beforeFetch', this, 'onBeforeStoreFetch');
 	},
 	onFilterAddRequest: function(data) {
 		this.add(data);
 		return this;
+	},
+	onBeforeStoreFetch: function(storeUrl) {
+		dojo.forEach(this.getAsParams(), function(param) {
+			storeUrl.set(param.key, param.value);
+		});
+		console.log(storeUrl, String(storeUrl));
 	},
 	add: function(options) {
 		var filter = new dope.search.form.Filter(dojo.mixin(options, {
@@ -22,6 +29,7 @@ dojo.declare('dope.search.form.Filters', [dijit._Contained, dijit.layout._Layout
 		}));
 
 		this.addChild(filter);
+		this.filters.push(filter);
 		
 		dojo.publish('/dope/search/form/domChange');
 		

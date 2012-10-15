@@ -93,9 +93,9 @@ dojo.declare('dope.search.form.Filter', [
 		dojo.forEach(this.values, function(value) {
 			urlValues.push(value.getValue());
 		});
-		
+
 		return {
-			key: this.options.key,
+			key: this.key,
 			value: this.operatorSelect.get('value') + ':' + urlValues.join(',')
 		};
 	},

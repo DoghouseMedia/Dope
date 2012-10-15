@@ -3,6 +3,8 @@ dojo.require('dijit.form.FilteringSelect');
 dojo.require('dope.data.ItemFileReadStore');
 
 dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
+	searchAttr: "__toString",
+	labelAttr: "__toString",
 	postCreate: function() {
 		this.inherited(arguments);
 		this.fetchStore();
@@ -11,9 +13,12 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 		this.setStoreParam(field.name, value);
 	},
 	setStoreParam: function(key, val) {
-		var url = new dope.utils.Url(this.store.url);
+		var url = new dope.utils.Url(this.getStoreUrl());
 		url.set(key, val);
 		return this.setStoreUrl(String(url));
+	},
+	getStoreUrl: function() {
+		return this.store.url;
 	},
 	setStoreUrl: function(storeUrl) {
 		return this.setStore(new dope.data.ItemFileReadStore({

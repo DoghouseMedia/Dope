@@ -28,11 +28,15 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 			return false;
 		}
 		
+		var storeUrl = new dope.utils.Url(this.domNode.action, 
+			dojo.formToObject(this.domNode)
+		);
+		
+		dojo.publish('/dope/search/form/store/beforeFetch', [storeUrl]);
+		
 		/* Store */
 		this.store = new dope.data.JsonRestStore({
-			target: String(new dope.utils.Url(this.domNode.action, 
-				dojo.formToObject(this.domNode)
-			))
+			target: String(storeUrl)
 		});
 		
 		dojo.publish('/dope/search/form/store/ready', [this]);

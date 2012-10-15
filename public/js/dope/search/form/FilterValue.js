@@ -1,5 +1,5 @@
 dojo.provide("dope.search.form.FilterValue");
-dojo.require("dijit.form.FilteringSelect");
+dojo.require("dope.form.StoreBox");
 dojo.require("dope.data.ItemFileReadStore");
 
 dojo.declare('dope.search.form.FilterValue', [
@@ -12,7 +12,7 @@ dojo.declare('dope.search.form.FilterValue', [
 	filter: null,
 	widgetsInTemplate: true,
 	templateString: '<div>'
-		+ '<div dojoType="dijit.form.FilteringSelect" dojoAttachPoint="valueSelect"></div>'
+		+ '<div dojoType="dope.form.StoreBox" dojoAttachPoint="valueSelect"></div>'
 		+ '</div>',
 	
 	isFirst: function() {

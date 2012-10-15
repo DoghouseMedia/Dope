@@ -310,7 +310,6 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			/* Parse terms */
 			
 			$termString = str_replace("'", '', $data->query); // remove '
-			//$termString = preg_replace("/(\w|\d)-/mis", "$1 ", $termString); // replace - by space
 			
 			preg_match_all($_patternBunnies, $termString, $matches);				
 			
@@ -319,7 +318,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			$termsExcluded = array();
 			
 			$terms = \Dope\Entity\Indexer\Analyzer::analyze($termString, null, false, false, true, true);
-			
+
 			for ($i=0; $i < count($terms); $i++) {
 				$terms[$i] = str_replace ( '*', '%', $terms[$i] );
 				
@@ -509,13 +508,22 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 				
 				//$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table');
 				
+				/*
+				 * Ensure there's a WHERE clause
+				 * 
+				 * Due to our dodgy preg_replace() calls below, we need to make sure
+				 * there's a WHERE clause in our query, otherwise, the replace will fail.
+				 * 
+				 * @todo Clean all this up
+				 */
+				$this->select->andWhere('1=1');
+				
 				/* Build & Run search query */
 				$SQL_DATA = $this->select
-					->andWhere('1=1') // ensure there's a WHERE clause
 					->getQuery()
 					->getSQL();
-				//$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table 2');
 				
+				//$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table 2');
 				
 				preg_match('/^SELECT .*? FROM [^\s]*? (\w+)/mis', $SQL_DATA, $matches);
 				$modelTableAlias = $matches[1];
@@ -561,19 +569,10 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 					$RES_DATA = \Dope\Doctrine::getEntityManager()
 						->getConnection()
 						->executeQuery($SQL_DATA, array($paramsWhere));
-// 						->createQuery($SQL_DATA)
-// 						->setParameter(1, $params['where'])
-// 						->getResult();
-					
+
 					$RES_IDS = \Dope\Doctrine::getEntityManager()
 						->getConnection()
 						->executeQuery($SQL_IDS, array($paramsWhere));
-// 						->createQuery($SQL_IDS)
-// 						->setParameter(1, $params['where'])
-// 						->getResult();
-					//$RES_DATA = \Doctrine_Manager::connection()->execute($SQL_DATA, $params['where']);
-					//$this->getSearch()->getProfiler()->punch('search query pre result search center execution');
-					//$RES_IDS = \Doctrine_Manager::connection()->execute($SQL_IDS, $params['where']);
 				}
 				
 				//$this->getSearch()->getProfiler()->punch('search query pre result search post execution');
@@ -595,8 +594,6 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 					$RES_COUNT = \Dope\Doctrine::getEntityManager()
 						->getConnection()
 						->executeQuery($SQL_COUNT, array($paramsWhere));
-// 						->createQuery($SQL_COUNT)
-// 						->setParameter(1, $params['where']);
 				}
 				
 				//$this->getSearch()->getProfiler()->punch('search query pre result search post execution count');
@@ -686,10 +683,11 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		else {
 			//$this->getSearch()->getProfiler()->punch('search pre populate relations');
 
-			/*
-			 * Load relations
-			 */
+			/* Populate relations */
 			$FINAL_DATA_ARRAY = $this->populateRelations($FINAL_DATA_ARRAY);
+			
+			/* Populate toString field */
+			$FINAL_DATA_ARRAY = $this->populateToString($FINAL_DATA_ARRAY);
 			
 			//$this->getSearch()->getProfiler()->punch('search pre return 2');
 			//$this->debug($FINAL_DATA_ARRAY, "FINAL DATA ARRAY");
@@ -702,13 +700,44 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		}
 	}
 	
+	/**
+	 * This code is stolen/duplicated from Dope\Entity::__toString().
+	 * @todo Clean up
+	 * 
+	 * @param array $collection
+	 * @return array $collection
+	 */
+	protected function populateToString(array $collection)
+	{
+		if (!count($collection)) return $collection;
+		
+		$definition = new \Dope\Entity\Definition($this->getClassName());
+
+		if (count($definition->getToStringColumnNames())) {
+			foreach ($collection as &$record) {
+				$values = array();
+				foreach ($definition->getToStringColumnNames() as $columnName) {
+					if (isset($record[$columnName])) {
+						$values[] = $record[$columnName];
+					}
+				}
+				$record['__toString'] = (string) join(' ', $values);
+			}
+		}
+		else {
+			foreach ($collection as &$record) {
+				$record['__toString'] = ucfirst($this->getModelKey()) . ' ' . $record['id'];
+			}
+		}
+		
+		return $collection;
+	}
+	
 	protected function populateRelations(array $collection)
 	{
-		\Dope\Log::console("PR0");
 		if (!count($collection)) return $collection;
 		
 		$md = $this->getClassMetadata();
-		\Dope\Log::console("PR");
 		foreach ($collection as &$record) {
 			foreach($md->getAssociationMappings() as $alias => $mapping) {
 // 				if (! isset($record[$alias])) {

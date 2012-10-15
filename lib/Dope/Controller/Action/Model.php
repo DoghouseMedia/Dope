@@ -80,7 +80,7 @@ extends Action
 				$collectionIds
 			) = $this->getEntityRepository()->search($data);
 	
-			/* Set Entity IDS Header (used by pagination) */
+			/* Set Entity IDs Header (used by pagination) */
 			$this->_response->setHeader('Dope-Entity-Ids', 
 				\Zend_Json::encode($collectionIds, true)
 			);
@@ -94,7 +94,7 @@ extends Action
 			 * @todo This should be moved somewhere else
 			 */
 			if ($this->_getParam('list_count')) {
-				/*  */
+				/* HTTP Content-Range */
 				$this->_response->setHeader('Content-Range',
 					"items " 
 					. $this->_getParam('list_start', 0) 
@@ -104,12 +104,13 @@ extends Action
 					. $collectionCount
 				);
 					
-				/* If this is partial content (not all entries), set the HTTP header accordingly */
+				/* HTTP 206 Partial Content */
 				if ($this->_getParam('list_count') < $collectionCount) {
 					$this->_response->setHttpResponseCode(206);
 				}
 			}
 			else {
+				/* HTTP Content-Range */
 				$this->_response->setHeader('Content-Range',
 					"items 0-" . $collectionCount . "/" . $collectionCount
 				);
@@ -121,8 +122,7 @@ extends Action
 			}
 				
 			switch ($this->_helper->contextSwitch()->getCurrentContext()) {
-				case 'ajax':
-				case 'dojo':
+				case 'dojo': $this->_helper->autoCompleteDojo($collectionArray); break;
 				case 'json': $this->_helper->json($collectionArray); break;
 				case 'xml': $this->_helper->xml($collectionArray); break;
 				case 'csv': $this->_helper->csv($collectionArray); break;
@@ -335,7 +335,7 @@ extends Action
 		if ($this->getEntityRepository()->hasColumn('created') AND $this->getEntityRepository()->hasColumn('updated')) {
 			/*
 			 * Get max created/updated dates and try 304
-			*/
+			 */
 			$select = \Dope\Doctrine::getEntityManager()->createQueryBuilder()
 				->from($this->getEntityRepository()->getClassName(), 't')
 				->select('MAX(t.created) AS max_created, MAX(t.updated) AS max_updated');
@@ -349,13 +349,13 @@ extends Action
 		}
 	
 		/*
-		 * Doctrine uses a lot of memory.  With 128M, I couldn't load more than 5000 objects/rows
-		 * and dojo autocomplete widgets (Combobox/FilteringSelect) do not seem to implement a start/count out of the box.
+		 * Doctrine uses a lot of memory. With 128M, I couldn't load more than
+		 * 5000 objects/rows and dojo autocomplete widgets (Combobox/FilteringSelect)
+		 * do not seem to implement a start/count out of the box.
 		 *
-		 * To overcome that problem we have forced models to implement a getToStringColumnNames() method.
-		 * Doing so, we can limit the fields Doctrine fetches from DB, and turn off hydration!
-		 *
-		 * If the models do not have the method available, we use default method (slow).
+		 * To overcome that problem, models must implement a @Dope\Stringify annotation.
+		 * Doing so, we can limit the fields Doctrine fetches from DB, and switch from
+		 * object hydration to array hydration.
 		 */
 	
 		$search = new Search($this->getEntityRepository(), $this->getData());
