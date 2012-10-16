@@ -3,6 +3,8 @@
 .important { font-weight: bold !important; }
 .unpublished { background-color: #fff6f6 !important; }
 
+* { outline: none; }
+
 strong {
 	font-weight: bolder;
 }
