@@ -341,27 +341,52 @@ implements \IteratorAggregate
 			}
 			/* Save multiple relation, eg. $this->categories */
 			elseif ($md->hasAssociation($keyPlural) AND $val) {
-				/*
-				 * We don't know which side is owning side, so we save on both.
-				 * @todo Read up on owning side and shorten/simplify this. 
-				 */
-				
-				/* Save our side */
-				$this->{$keyPlural}[] = \Dope\Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
-					->find($val);
-				
-				/* Save other side */
-				$targetField = $md->getAssociationMappedByTargetField($keyPlural);
-				if ($targetField) {
-					$record = \Dope\Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
-						->find($val);
-					
-					if (isset($record->{$targetField})) {
-						$record->{$targetField}[] = $this;
-					} else {
-						throw new \Exception("No field $targetField for $keyPlural on " . get_class($this));
-					}
-				}
+			    
+			    if (strpos($val, ',') !== false) {
+			        $vals = explode(',', $val);
+			    } else {
+			        $vals = array($val);
+			    }
+			    
+			    foreach ($vals as $_val) {
+			        if ($_val == '') {
+			            continue;
+			        }
+			        
+    				/*
+    				 * We don't know which side is owning side, so we save on both.
+    				 * @todo Read up on owning side and shorten/simplify this. 
+    				 */
+    				
+    				$targetRecord = \Dope\Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
+    				    ->find($_val);
+    				
+    				/* Skip duplicates */
+    				if ($this->{$keyPlural} instanceof \Doctrine\Common\Collections\Collection) {
+    				    if ($this->{$keyPlural}->contains($targetRecord)) {
+    				    	continue;
+    				    }
+    				}
+    				elseif (is_array($this->{$keyPlural})) {
+    				    if (in_array($targetRecord, $this->{$keyPlural})) {
+    				    	continue;
+    				    }    
+    				}
+    				
+    				
+    				/* Save our side */
+    				$this->{$keyPlural}[] = $targetRecord;
+    				
+    				/* Save other side */
+    				$targetField = $md->getAssociationMappedByTargetField($keyPlural);
+    				if ($targetField) {
+    					if (isset($targetRecord->{$targetField})) {
+    						$targetRecord->{$targetField}[] = $this;
+    					} else {
+    						throw new \Exception("No field $targetField for $keyPlural on " . get_class($this));
+    					}
+    				}
+			    }
 			}
 			/* this field doesn't exist... */
 			else {

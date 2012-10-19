@@ -38,7 +38,7 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 				break;
 		}
 		
-		return true;
+		return false;
 	},
 	onComplete: function(data, response) {
 		this.inherited(arguments);

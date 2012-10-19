@@ -3,8 +3,8 @@ dojo.require('dijit.Dialog');
 
 dojo.declare('dope.dialog.Dialog', dijit.Dialog, {
 	onExecute: function() { /* Event */ },
-	
-	
+	confirmText: 'OK',
+	showOnCreate: true,
 	widgetsInTemplate: true,
 	title: 'Are you sure?',
 	templateString: '<div class="dijitDialog" role="dialog" aria-labelledby="${id}_title">'
@@ -16,13 +16,16 @@ dojo.declare('dope.dialog.Dialog', dijit.Dialog, {
 		+ '</div>'
 		+ '<div class="dijitDialogPaneContent">'
 			+ '<div dojoAttachPoint="containerNode"></div>'
-			+ '<div data-dojo-type="dijit.form.Button" data-dojo-attach-point="confirmButtonNode" tabIndex="-5">OK</div>'
+			+ '<div data-dojo-type="dijit.form.Button" data-dojo-attach-point="confirmButtonNode" tabIndex="-5">${confirmText}</div>'
 		+ '</div>'
 		+ '</div>',
 	
 	postCreate: function() {
 		this.inherited(arguments);
-		this.show();
+		
+		if (this.showOnCreate) {
+			this.show();
+		}
 	},
 	startup: function() {
 		this.inherited(arguments);

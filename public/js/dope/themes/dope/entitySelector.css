@@ -1,0 +1,5 @@
+@CHARSET "UTF-8";
+
+.dijitDialog .dopeGridDataGrid {
+	height: 300px !important;
+}

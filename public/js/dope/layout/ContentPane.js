@@ -80,6 +80,14 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 		}
 	},
 	onLoad: function() {
+		if ( this.get('href') != String(this.getUrl()) ) {
+			/*
+			 * Handle cases where the back-end redirects
+			 */
+			this.getUrl(true);
+			dojo.publish('/dope/layout/ContentPane/change', [this]);
+		}
+		
 		this.inherited(arguments);
 		this.setModelAlias();
 		dojo.publish('/dope/layout/ContentPane/load', [this]);
@@ -158,5 +166,13 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 	},
 	onModelLoad: function(modelClass) {
 		eval('this.setModel(new ' + modelClass + '(this));');
+	},
+	onGridRowClick: function(params) {
+		dojo.publish('/dope/layout/TabContainerMain/open', [{
+			href: params.href,
+			title: params.title,
+			focus: !params.e.ctrlKey,
+			_data: this.getData()
+		}]);
 	}
 });

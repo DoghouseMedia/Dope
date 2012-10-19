@@ -8,7 +8,22 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 		this.inherited(arguments);
 		dojo.addClass(this.domNode, 'dopeEmailBox');
 		dojo.connect(this, 'onKeyUp', this._onKeyUp.bind(this));
+
+		this.valueNode = dojo.create('input', {name: this.name, type: 'hidden'});
+		this.textbox.name = null;
+		dojo.place(this.valueNode, this.domNode);
+		
 		this.reset();
+	},
+	updateFormValue: function() {
+		this.valueNode.value = this.getContactsValue();
+	},
+	getContactsValue: function() {
+		var contactValues = [];
+		dojo.forEach(this.contacts, function(contact) {
+			contactValues.push(contact.get('value'));
+		});
+		return contactValues.join();
 	},
 	_onKeyUp: function(e) {
 		switch (e.keyCode) {
@@ -38,6 +53,8 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 			'value': value,
 			'emailBox': this
 		}));
+		
+		this.updateFormValue();
 	},
 	removeContact: function(contact) {
 		var _contacts = [];
@@ -49,11 +66,15 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 			}
 		});
 		this.contacts = _contacts;
+		
+		this.updateFormValue();
 	},
 	clearContacts: function() {
 		dojo.forEach(this.contacts, dojo.destroy);
 		dojo.empty(this.contactContainerNode);
 		this.contacts = [];
+		
+		this.updateFormValue();
 	},
 	reset: function() {
 		if (! this.contactContainerNode) {

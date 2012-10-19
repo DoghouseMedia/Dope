@@ -1,7 +1,16 @@
 @CHARSET "UTF-8";
 
+/*
+ * @todo Snowwhite styles should go somewhere else!
+ */
+.snowwhiteFormEmail .dijitTextBox {
+	min-width: 360px;
+	padding: 2px;
+}
+
 .dopeEmailBox {
 	width: auto;
+	
 }
 
 .dopeEmailBox .dijitInputField {
@@ -16,7 +25,7 @@
 .dopeEmailBoxContact {
 	display: inline-block;
 	padding: 3px;
-	margin: 2px;
+	margin: 0 2px 0 0 ;
 	border: 1px solid #ccc;
 	background-color: #f6f9ff;
 	color: #333;

@@ -137,10 +137,12 @@ dojo.declare('dope.utils.Url', null, {
 	_getSearchParams: function() {
 		var params = [];
 		
-		dojo.forEach(this.a.search.substr(1).split('&'), function(param) {
-			var paramParts = param.split('=');
-			params[paramParts[0]] = paramParts[1];
-		});
+		if (this.a.search) {
+			dojo.forEach(this.a.search.substr(1).split('&'), function(param) {
+				var paramParts = param.split('=');
+				params[paramParts[0]] = paramParts[1];
+			});
+		}
 		
 		return params;
 	},
@@ -151,7 +153,7 @@ dojo.declare('dope.utils.Url', null, {
 		for (var key in params) {
 			flatParams += key + '=' + params[key] + '&';
 		}
-
+		
 		this.a.search = '?' + flatParams.replace(/&$/,"");;
 		return this;
 	},

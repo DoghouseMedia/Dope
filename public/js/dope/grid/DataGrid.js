@@ -31,15 +31,20 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		
 		this.inherited(arguments);
 		
-		if (this.autoload || this.getPane().getUrl().get('sender')) {
-			var storeUrl = this.getPane().getUrl();
-			storeUrl.remove('sender');
-			if (this.storeController) {
-				storeUrl.setController(this.storeController);
+		if (this.getPane() && this.getPane().getUrl) {
+			if (!this.storeUrl && (this.autoload || this.getPane().getUrl().get('sender'))) {
+				this.storeUrl = this.getPane().getUrl();
+				this.storeUrl.remove('sender');
+				if (this.storeController) {
+					this.storeUrl.setController(this.storeController);
+				}
 			}
-			this.setStore(new dope.data.JsonRestStore({
-				target: String(storeUrl)
-			}));
+			
+			if (this.storeUrl) {
+				this.setStore(new dope.data.JsonRestStore({
+					target: String(this.storeUrl)
+				}));
+			}
 		}
 		
 		this.subscribe('/dope/entity/form/add', dojo.hitch(this, 'onEntityAdd'));
@@ -49,14 +54,18 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	setStore: function(store) {
 		dojo.connect(store, 'onDelete', dojo.hitch(this, 'onStoreChange'));
 		
-		this.getPane().count
-			.addUrl(store.target)
-			.refresh();
+		if (this.getPane() && this.getPane().count) {
+			this.getPane().count
+				.addUrl(store.target)
+				.refresh();
+		}
 		
 		return this.inherited(arguments);
 	},
 	onStoreChange: function() {
-		this.getPane().count.refresh();
+		if (this.getPane() && this.getPane().count) {
+			this.getPane().count.refresh();
+		}
 	},
 	onEntityAdd: function(form) {
 		if (form.getPane() == this.getPane()) {
@@ -71,19 +80,17 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		}
 	},
 	_onRowClick: function(e) {
-		console.log('Hello GRID', this);
 		var id = this.getItem(e.rowIndex).id;
 		var url = new dope.utils.Url(this.store.target);
 		url.setAction(id);
 		url.removeSearch();
-		console.log(String(url));
 		
-		dojo.publish('/dope/layout/TabContainerMain/open', [{
+		this.getParent().onGridRowClick({
+			id: id,
 			href: String(url),
 			title: url.getController() + ' #' + id,
-			focus: !e.ctrlKey,
-			_data: this.getPane().getData()
-		}]);
+			e: e
+		});
 		
 		return this.inherited(arguments);
 	},

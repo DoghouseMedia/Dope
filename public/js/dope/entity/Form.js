@@ -70,15 +70,17 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 		});
 		
 		if (data.status) {
-			if (dojo.indexOf(['add','edit'], this.getPane().getUrl().getAction()) >= 0) {
+			if (!data.preventRedirect && dojo.indexOf(['add','edit'], this.getPane().getUrl().getAction()) >= 0) {
 				this.getPane().setUrl(
 					new dope.utils.Url(data.controller + '/' + data.id)
 				);
 			}
 			dojo.publish('/dope/entity/form/add', [this]);
 			
-			/* Reset the form */
-			this.reset();
+			if (!data.preventReset) {
+				/* Reset the form */
+				this.reset();
+			}
 		} else {
 			console.log("Something went wrong!", data, response);
 			alert("Something went wrong!");

@@ -6,11 +6,13 @@ dojo.declare('dope._Contained', dijit._Contained, {
 		var current = this;
 		var parent;
 		
-		while (current.domNode && (parent = current.getParent())) {
+		while (current.domNode && current.getParent && (parent = current.getParent())) {
 			if (parent.href) {
 				return parent;
 			}
 			current = parent;
 		}
+		
+		return false;
 	}
 });

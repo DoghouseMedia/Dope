@@ -15,10 +15,12 @@ dojo.declare('dope.search.DataGrid', dope.grid.DataGrid, {
 	_onFetchComplete: function(items, req){
 		this.inherited(arguments);
 		
-		var ids = req.ioArgs.xhr.getResponseHeader('Dope-Entity-Ids');
-		if (typeof(ids) == "string") {
-			ids = dojo.fromJson(ids);
+		if (this.getPane() && this.getPane().setData) {
+			var ids = req.ioArgs.xhr.getResponseHeader('Dope-Entity-Ids');
+			if (typeof(ids) == "string") {
+				ids = dojo.fromJson(ids);
+			}
+			this.getPane().setData('dope-entity-ids', ids);
 		}
-		this.getPane().setData('dope-entity-ids', ids);
 	}
 });
