@@ -813,6 +813,10 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 	
 	protected function debug($object, $title=null)
 	{
+	    /*
+	     * @todo Encapsulate this in \Dope\Env
+	     */
+	    
 // 		$showDebug = (
 // 			\APPLICATION_ENV != '' AND
 // 			!in_array(\APPLICATION_ENV, array('staging','development','production'))

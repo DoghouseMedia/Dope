@@ -3,6 +3,7 @@ dojo.require('dope.form.Form');
 dojo.require('dope.operation.xhrGet');
 dojo.require('dope.operation.xhrPut');
 dojo.require('dope.operation.xhrPost');
+dojo.require('dope.operation.xhrDelete');
 
 dojo.declare('dope.xhr.Form', dope.form.Form, {
 	uploader: null,
@@ -32,6 +33,9 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 				break;
 			case 'put':
 				new dope.operation.xhrPut(params);
+				break;
+			case 'delete':
+				new dope.operation.xhrDelete(params);
 				break;
 			default:
 				new dope.operation.xhrPost(params);
