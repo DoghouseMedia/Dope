@@ -16,7 +16,8 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 	addUrl: function(url) {
 		var url = String(
 			new dope.utils.Url(String(url), {
-				action: 'count'
+				action: 'count',
+				sender: null
 			})
 		);
 		

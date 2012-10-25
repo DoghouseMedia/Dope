@@ -730,6 +730,10 @@ extends Action
 							$this->view->controller = $this->getModelAlias();
 							$this->view->title = (string) $entity;
 							$this->view->messages = array(); //$model->getMessages();
+							
+							if (isset($entity->updated)) {
+							    $this->view->updated = $entity->updated;
+							}
 						}
 	
 // 						if ($this->getData()->getParam('tab')) {

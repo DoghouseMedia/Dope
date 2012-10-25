@@ -79,15 +79,7 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 			_gaq.push(['_trackPageview', String(url)]);
 		}
 	},
-	onLoad: function() {
-		if ( this.get('href') != String(this.getUrl()) ) {
-			/*
-			 * Handle cases where the back-end redirects
-			 */
-			this.getUrl(true);
-			dojo.publish('/dope/layout/ContentPane/change', [this]);
-		}
-		
+	onLoad: function(data, xhr) {
 		this.inherited(arguments);
 		this.setModelAlias();
 		dojo.publish('/dope/layout/ContentPane/load', [this]);
@@ -99,7 +91,6 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 		if (this.getPane() instanceof dope.layout.ContentPane) {
 			this.getPane().resize();
 		}
-		
 	},
 	onClose: function() {
 		dojo.publish('/dope/layout/ContentPane/close', [this]);
@@ -120,10 +111,19 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 		
 		return this._url;
 	},
-	setUrl: function(url) {
-		this.disconnect();
+	setUrl: function(url, noReload) {
+		if (! noReload) {
+			this.disconnect();
+		}
+		
 		this._url = url;
-		this.set('href', String(url));
+		
+		if (noReload) {
+			this.href = String(url);
+		} else {
+			this.set('href', String(url));
+		}
+		
 		dojo.publish('/dope/layout/ContentPane/change', [this]);
 	},
 	getController: function() {

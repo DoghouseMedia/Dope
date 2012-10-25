@@ -181,14 +181,14 @@ implements \IteratorAggregate
 			if ($this->{$key} instanceof \DateTime) {
 				switch ($md->getTypeOfColumn($key)) {
 					case 'time':
-						$array[$key] = $this->$key->format("H:m:i");
+						$array[$key] = $this->$key->format("H:i:s");
 						break;
 					case 'date':
 						$array[$key] = $this->$key->format("Y-m-d");
 						break;
 					case 'datetime':
 					default:
-						$array[$key] = $this->$key->format("Y-m-d H:m:i");
+						$array[$key] = $this->$key->format("Y-m-d H:i:s");
 						break;
 				}
 			}

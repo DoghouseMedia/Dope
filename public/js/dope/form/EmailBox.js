@@ -3,11 +3,17 @@ dojo.require('dijit.form.ValidationTextBox');
 
 dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 	contacts: [],
+	_currentValueLength: 0,
+	_backspaceTimer: null,
+	_parsingBackspace: false,
+	_pausedBackspaces: 0,
+	_numSequentialBackspaces: 0,
 	
 	startup: function() {
 		this.inherited(arguments);
 		dojo.addClass(this.domNode, 'dopeEmailBox');
-		dojo.connect(this, 'onKeyUp', this._onKeyUp.bind(this));
+		dojo.connect(this, 'onKeyDown', dojo.hitch(this, '_onKeyDown'));
+		dojo.connect(this, 'onKeyUp', dojo.hitch(this, '_onKeyUp'));
 
 		this.valueNode = dojo.create('input', {name: this.name, type: 'hidden'});
 		this.textbox.name = null;
@@ -27,21 +33,61 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 	},
 	_onKeyUp: function(e) {
 		switch (e.keyCode) {
-			case 32: // enter
-			case 13: // space
-				this.parseValueForContacts();
-				break;
 			case 8: // backspace
-				var contact = this.contacts[this.contacts.length-1];
-				this.removeContact(contact);
+				this._numSequentialBackspaces = 0;
 				break;
 		}
 	},
+	_onKeyDown: function(e) {
+		switch (e.keyCode) {
+			case 9: // tab
+			case 32: // enter
+			case 13: // space
+			case 186: // semicolon
+			case 188: // comma
+				e.preventDefault();
+				this.parseValueForContacts();
+				return false;
+				break;
+			case 8: // backspace
+				if (this._currentValueLength == 0 && this.contacts.length) {
+					
+					if (this._numSequentialBackspaces > 0 && this._pausedBackspaces < 10) {
+						this._pausedBackspaces++;
+						break;
+					}
+					this._pausedBackspaces = 0;
+					
+					var contact = this.contacts[this.contacts.length-1];
+					this._parsingBackspace = true;
+					this.removeContact(contact);
+					this.set('value', contact.get('value'));
+				}
+				this._calculateValueLength();
+				this._numSequentialBackspaces++;
+				break;
+			default:
+				this._calculateValueLength();
+				break;
+		}
+	},
+	
+	_calculateValueLength: function(add) {
+		this._currentValueLength = this.get('value').length > 0 ? this.get('value').length -1 : 0;
+	},
+	
 	onChange: function(newValue) {
-		this.parseValueForContacts();
+		if (this._parsingBackspace) {
+			this._parsingBackspace = false;
+		} else {
+			this.parseValueForContacts();
+		}
 	},
 	parseValueForContacts: function() {
-		this.addContact(this.get('value'));
+		dojo.forEach(
+			this.get('value').split(/,| /),
+			this.addContact.bind(this)
+		);
 		this.set('value', '');
 	},
 	addContact: function(value) {
