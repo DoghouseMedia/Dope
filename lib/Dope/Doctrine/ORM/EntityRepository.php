@@ -422,12 +422,12 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 					if (!isset($_byField[$field])) $_byField[$field] = array();
 					
 					$_byField[$field][$position] = $keyword;
-					
-					$modelScoresById[$indexRow['id']] += $this->getColumnWeightFactor($field, $data->query_focus);
 				}
 
-				foreach($termsBunnies as $termsBunny) {
-					foreach($_byField as $field => $_data) {
+				foreach($_byField as $field => $_data) {
+				    $modelScoresById[$indexRow['id']] += min(10, count($_data)) * $this->getColumnWeightFactor($field, $data->query_focus);
+				    
+				    foreach($termsBunnies as $termsBunny) {
 						$_terms = \Dope\Entity\Indexer\Analyzer::analyze($termsBunny, null, false, false);
 						if (!isset($_terms[0])) continue;
 						
