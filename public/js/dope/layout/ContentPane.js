@@ -154,7 +154,7 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 		dojo.hitch(this.getModel(), "defaultAction").call();
 		
 		/* Call action specific method */
-		dojo.hitch(this.getModel(), this.getAction() + "Action").call();
+		dojo.hitch(this.getModel(), this.getAction().replace('-', '') + "Action").call();
 	},
 	setModelAlias: function() {
 		/*

@@ -1,0 +1,15 @@
+@CHARSET "UTF-8";
+
+.dopeUiFlashcard {
+    width: 30em;
+    padding: 1em;
+	margin: 1em 1em 0 0;
+	
+	box-shadow: 1px 1px 3px #eee;
+	border: 1px solid #eee;
+	float: left;
+}
+
+.dopeUiFlashcard a {
+    font-size: large;
+}
