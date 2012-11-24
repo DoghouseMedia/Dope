@@ -9,7 +9,7 @@ class Acl extends \Zend_Acl
 {
 	public function __construct(\Zend_Auth $auth = null)
 	{
-		parent::__construct($auth);
+		
 	}
 }
 

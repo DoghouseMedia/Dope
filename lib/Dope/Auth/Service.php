@@ -4,9 +4,9 @@ namespace Dope\Auth;
 use 
 	Dope\Doctrine\Auth\Adapter,
 	\Dope\Auth\Acl,
+	\Dope\Entity\User,
 	\Zend_Auth as Auth,
-	\Zend_Session as Session,
-	\Snowwhite\Entity\User;
+	\Zend_Session as Session;
 
 class Service
 {
@@ -18,6 +18,11 @@ class Service
 	public static function setAppName($appName)
 	{
 	    static::$appName = $appName;
+	}
+	
+	public static function getAclClass()
+	{
+	    return static::$appName . '\Auth\Acl';
 	}
 	
 	public static function getUserEntityClass()
@@ -37,13 +42,19 @@ class Service
 		$authAdapter = new Adapter();
 		$em = \Dope\Doctrine::getEntityManager();
 		
+		$password = call_user_func(
+		    static::getUserEntityClass(),
+		    'encryptPassword',
+		    $password
+		);
+		
 		$authAdapter
 			->setEntityManager($em)
 			->setTableClass(static::getUserEntityClass())
 			->setIdentityColumn('username')
 			->setCredentialColumn('password')
 			->setIdentity($username)
-			->setCredential(User::encryptPassword($password));
+			->setCredential($password);
 
 		$result = Auth::getInstance()->authenticate($authAdapter);
 
@@ -121,7 +132,8 @@ class Service
 	public static function getAcl()
 	{
 		if (! static::$acl instanceof Acl) {
-			static::$acl = new Acl();
+		    $aclClass = static::getAclClass();
+			static::$acl = new $aclClass();
 		}
 		
 		return static::$acl;
