@@ -25,7 +25,8 @@ class Data
 		//'join', 'join_with', // join,
 		'error_handler', //
 		'select', //
-		'_use_value' // used for some autocompletion
+		'_use_value', // used for some autocompletion
+		'_debug' // debug flag
 	);
 	
 	/**

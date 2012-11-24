@@ -1,6 +1,6 @@
 <?php
 
-class Dope_View_Helper_ModelUrl extends Zend_View_Helper_Url
+class Dope_View_Helper_ModelUrl extends Dope_View_Helper_Url
 {
 	/**
 	 * $model \Dope\Entity
@@ -22,9 +22,11 @@ class Dope_View_Helper_ModelUrl extends Zend_View_Helper_Url
 	
 	protected function getUrl()
 	{
-		if (! $this->model instanceof \Dope\Entity) return '';
+		if (! $this->model instanceof \Dope\Entity) {
+		    return '';
+		}
 		
-		return $this->view->url(array(
+		return $this->url(array(
 			'controller' => $this->model->getEntityKey(),
 			'action' => $this->model->id
 		), null, true);
@@ -32,7 +34,9 @@ class Dope_View_Helper_ModelUrl extends Zend_View_Helper_Url
 	
 	public function toHtml($dojoType='dope.link.NewTab')
 	{
-		if (! $this->model instanceof \Dope\Entity) return '';
+		if (! $this->model instanceof \Dope\Entity) {
+		    return '';
+		}
 		
 		$title = (string) $this->model;
 		$label = $this->label ?: (string) $this->model;

@@ -23,19 +23,6 @@ class Dope_View_Helper_Url extends Zend_View_Helper_Url
 	        	array_keys($urlOptions),
 	        	array_map('rawurlencode', array_values($urlOptions))
 	        );
-	        
-// 	        /* Add Tab ID */
-// 	        if (isset($urlOptions['notab'])) {
-// 	        	unset($urlOptions['notab']);
-// 	        }
-// 	        elseif (!isset($urlOptions['tab']) AND $this->view->tabId()) {
-// 	        	$urlOptions['tab'] = $this->view->tabId();
-	        	
-// 		        /* Add Paginator Parent Tab ID */
-// 		        if ($propagateParentTabId AND !isset($urlOptions['parent_tab']) AND isset($this->view->paginator) AND $this->view->paginator->getParentTab()) {
-// 		        	$urlOptions['parent_tab'] = $this->view->paginator->getParentTab();
-// 		        }
-// 	        }
     	}
         
         return parent::url($urlOptions, $name, $reset, $encode);

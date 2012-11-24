@@ -2,7 +2,7 @@
 
 namespace Dope\Report\Form;
 
-class _Base extends \Dope\Form\_Base
+class _Base extends \Dope\Form\Entity\Search
 {
     const DATE_FORMAT = 'Y-m-d';
     
@@ -23,8 +23,7 @@ class _Base extends \Dope\Form\_Base
             'invalidMessage' => 'Invalid date specified.',
             'datePattern' => 'dd/MM/yyyy',
             'value' => $value,
-            'default' => $value,
-            //'decorators' => $this->_getDecorators()
+            'default' => $value
         ));
     
         return $this; //chainable
@@ -32,18 +31,15 @@ class _Base extends \Dope\Form\_Base
     
     protected function _addDateCurrent($name='date', $label='Date to report on (format dd/mm/yyyy):')
     {
-        $this->_addDate($name, $label, date(static::DATE_FORMAT));
-    
-        return $this; //chainable
+        return $this->_addDate($name, $label, date(static::DATE_FORMAT));
     }
     
     protected function _addState()
     {
         $this->addElement('ComboBox', 'state', array(
-            'label'        => 'State:',
-            'multiOptions' => $this->getStates(),
-            'id' => '',
-            //'decorators' => $this->_getDecorators()
+            'label' => 'State:',
+            'multiOptions' => $this->getStates()
+            //'id' => ''
         ));
     
         return $this; //chainable
@@ -59,7 +55,7 @@ class _Base extends \Dope\Form\_Base
     
     protected function _addMultipleSubmitReset(array $arrayOfNameSuffixes)
     {
-        foreach($arrayOfNameSuffixes as $nameSuffix) {
+        foreach ($arrayOfNameSuffixes as $nameSuffix) {
             $this->_addSubmit('submit_' . $nameSuffix);
             $this->_addReset('reset_' . $nameSuffix);
         }
@@ -70,15 +66,13 @@ class _Base extends \Dope\Form\_Base
     protected function _addSubmit($name='submit')
     {
         $this->addElement('submitButton', $name, array(
-            'required'    => false,
-            'ignore'      => true,
-            'label'       => 'Submit',
-            //'decorators' => $this->_getButtonDecorators()
+            'required' => false,
+            'ignore' => true,
+            'label' => 'Submit'
         ));
     
         $this->addElement('hidden', '_submit', array(
-            'value'    => '_submit',
-            //'decorators' => $this->_getButtonDecorators()
+            'value' => '_submit'
         ));
     
         return $this; //chainable
@@ -86,102 +80,71 @@ class _Base extends \Dope\Form\_Base
     
     protected function _addReset($name='reset')
     {
-        $this->addElement('button', $name, array(
+        return $this->addElement('button', $name, array(
                 'label' => 'Reset',
-                //'decorators' => $this->_getButtonDecorators(),
                 'class' => 'reset'
         ));
-    
-        return $this; //chainable
     }
     
     protected function _addAgency()
     {
-        $this->addElement('FilteringSelect', 'agency', array(
-            'label'        => 'Agency:',
-            'storeId' => 'userStore',
-            'storeType'=> 'dojo.data.ItemFileReadStore',
-            'storeParams' => array('url' => '/agency/autocomplete/format/dojo'),
-            'autoComplete'   => 'false',
-            'hasDownArrow'   => 'true',
-            //'decorators' => $this->_getDecorators(),
-            'value' => \Dope\Auth\Service::hasUser() ? \Dope\Auth\Service::getUser()->id : null
+        return $this->addElement('StoreBox', 'agency', array(
+            'label' => 'Agency:'
         ));
-    
-        return $this; //chainable
     }
     
     protected function _addCategory()
     {
-        $this->addElement('FilteringSelect', 'category', array(
-            'label'        => 'Category:',
-            'storeId' => 'categoryStore',
-            'storeType'=> 'dojo.data.ItemFileReadStore',
-            'storeParams' => array( 'url' => '/category/autocomplete/format/dojo'),
-            'autoComplete'   => 'false',
-            'hasDownArrow'   => 'true',
-            //'decorators' => $this->_getDecorators()
+        return $this->addElement('StoreBox', 'category', array(
+            'label' => 'Category:'
         ));
-    
-        return $this; //chainable
     }
     
     protected function _addConsultant($fieldName='user', $label="Consultant:")
     {
-        $this->addElement('FilteringSelect', $fieldName, array(
+        /**
+         * @todo Fix
+         */
+        return $this->addElement('FilteringSelect', $fieldName, array(
             'label'        => $label,
             'storeId' => 'userStore',
             'storeType'=> 'dojo.data.ItemFileReadStore',
             'storeParams' => array('url' => '/user/autocomplete/show_reports/1/format/dojo'),
             'autoComplete'   => 'false',
             'hasDownArrow'   => 'true',
-            //'decorators' => $this->_getDecorators(),
             'value' => null
         ));
-    
-        return $this; //chainable
     }
     
     protected function _addStatsConsultant()
     {
-        $this->addElement('FilteringSelect', 'user', array(
+        /**
+         * @todo Fix
+         */
+        return $this->addElement('FilteringSelect', 'user', array(
             'label'        => 'Consultant:',
             'storeId' => 'userStore',
             'storeType'=> 'dojo.data.ItemFileReadStore',
             'storeParams' => array('url' => '/user/autocomplete/show_stats/1/format/dojo'),
             'autoComplete'   => 'false',
             'hasDownArrow'   => 'true',
-            //'decorators' => $this->_getDecorators(),
             'value' => null
         ));
-    
-        return $this; //chainable
     }
     
     protected function _addOffice()
     {
-        $this->addElement('ComboBox', 'office', array(
+        return $this->addElement('ComboBox', 'office', array(
             'label'        => 'Office:',
-            'multiOptions' => $this->getOffices(),
-            'id' => '',
-            //'decorators' => $this->_getDecorators()
+            'multiOptions' => $this->getOffices()
+            //'id' => ''
         ));
-    
-        return $this; //chainable
     }
     
     protected function _addClient()
     {
-        $this->addElement('FilteringSelect', 'client', array(
-            'label'        => 'Client:',
-            'storeId' => 'clientStore',
-            'storeType'=> 'dojo.data.ItemFileReadStore',
-            'storeParams' => array('url' => '/client/autocomplete/format/dojo'),
-            'autoComplete'   => 'false',
-            'hasDownArrow'   => 'true',
-            //'decorators' => $this->_getDecorators()
+        return $this->addElement('StoreBox', 'client', array(
+            'label' => 'Client:'
         ));
-    
-        return $this; //chainable
     }
 }

@@ -2,29 +2,68 @@
 
 namespace Dope\Report;
 
-class _Base
+abstract class _Base
 {
     const FORM_CLASS = 'Dope\Report\Form\_Base';
+    const DEFAULT_SORT_COLUMN = true;
     
     protected $timeRun;
     protected $timeStart;
     protected $timeEnd;
     
+    protected $defaultSortColumn;
+    protected $columns = array();
     protected $results;
-    
     protected $queryBuilder;
+    
+    /**
+     * @var \Dope\Controller\Action
+     */
+    protected $controller;
     
     /**
      * Form
      *
-     * @var Core_Form
+     * @var \Dope\Report\Form\_Base
      */
     protected $form;
     
     public function __construct(\Dope\Controller\Action $controller)
     {
-        $this->getForm()->setController($controller);
+        $this->setController($controller);
         $this->timeStart();    
+    }
+    
+    public function addColumn(Column $column, $isDefaultSortColumn=false)
+    {
+        $this->columns[] = $column;
+        
+        if ($isDefaultSortColumn) {
+            $this->setDefaultSortColumn($column);
+        }
+        
+        return $this;
+    }
+    
+    public function setDefaultSortColumn(Column $column)
+    {
+        $this->defaultSortColumn = $column;
+        return $this;
+    }
+    
+    /**
+     * @return \Dope\Controller\Action
+     */
+    public function getController()
+    {
+        return $this->controller;
+    }
+    
+    public function setController(\Dope\Controller\Action $controller)
+    {
+        $this->controller = $controller;
+        $this->getForm()->setController($controller);
+        return $this;
     }
     
     public function getTitle()
@@ -51,6 +90,10 @@ class _Base
         return $this->timeEnd - $this->timeStart;
     }
     
+    /**
+     * 
+     * @return \Dope\Report\Form\_Base
+     */
     public function getForm()
     {
         if (! $this->form instanceof \Dope\Report\Form\_Base) {
@@ -64,7 +107,19 @@ class _Base
     public function getResults()
     {
         if (! $this->results) {
+            $sorts = $this->getController()->getData()->sort ?: $this->defaultSortColumn->getSort();
+            $sortOrder = $this->getController()->getData()->sort_order ?: 'ASC';
+            
+            foreach (explode(',', $sorts) as $sort) {
+                $this->getQueryBuilder()->addOrderBy($sort, $sortOrder);
+            }
+            
             $query = $this->getQueryBuilder()->getQuery();
+            
+            if ($this->getController()->getData()->_debug) {
+                echo $query->getSQL();
+                die;
+            }
             
             $query->useResultCache(base64_encode($query->getSQL()));
             $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
@@ -75,6 +130,9 @@ class _Base
         return $this->results;
     }
     
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
     public function getQueryBuilder()
     {
         if (! $this->queryBuilder) {
@@ -100,9 +158,9 @@ class _Base
         $html[] = '<table>';
         $html[] = '<thead>';
         $html[] = '<tr>';
-        foreach (array_keys($this->columns) as $label) {
+        foreach ($this->columns as $column) {
             $html[] = '<th>';
-            $html[] = $label;
+            $html[] = $this->renderLabel($column);
             $html[] = '</th>';
         }
         $html[] = '</tr>';
@@ -110,9 +168,12 @@ class _Base
         $html[] = '<tbody>';
         foreach($this->getResults() as $entity) {
             $html[] = '<tr>';
-            foreach (array_values($this->columns) as $valueRenderer) {
+            foreach ($this->columns as $column) {
                 $html[] = '<td>';
-                $html[] = $valueRenderer($entity, $view);
+                $html[] = $column->render(
+                    $column->getEntityByAccessor($entity),
+                    $view
+                );
                 $html[] = '</td>';
             }
             $html[] = '</tr>';
@@ -122,4 +183,44 @@ class _Base
         
         return join(PHP_EOL, $html);
     }
+    
+    public function renderLabel(Column $column)
+    {
+        $classes = array('sort');
+        $data = clone $this->getController()->getData();
+        
+        $isCurrent = (
+            ($data->sort == $column->getSort()) OR 
+            (!$data->sort AND $this->defaultSortColumn == $column)
+        );
+        
+        if ($isCurrent) {
+            $classes[] = 'sort-current';
+        } else {
+            $data->setParam('sort', $column->getSort());
+        }
+        
+        if ($data->sort_order == 'ASC') {
+            $data->setParam('sort_order', 'DESC');
+            $classes[] = 'sort-desc';
+        } else {
+            $data->setParam('sort_order', 'ASC');
+            $classes[] = 'sort-asc';
+        }
+    
+        $urlParams = (array) $data->getParams(true);
+        $urlParams['sort'] = $data->sort;
+        $urlParams['sort_order'] = $data->sort_order;
+        
+        $url = $this->getForm()->getView()->url(array(), null, false) . '?' . http_build_query($urlParams);
+    
+        //foreach ($urlParams as $k => $v) {
+            //$url .= $this->getForm()->getElementsBelongTo() . '[' . $k . ']=' . urlencode($v) . '&';
+            //$url .= $k . '=' . urlencode($v) . '&';
+        //}
+    
+        return '<a class="' . join(' ', $classes) . '" href="' . $url . '">' . $column::LABEL . '</a>';
+    }
+    
+    abstract public function init();
 }
