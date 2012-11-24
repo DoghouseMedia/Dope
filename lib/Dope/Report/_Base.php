@@ -12,6 +12,8 @@ class _Base
     
     protected $results;
     
+    protected $queryBuilder;
+    
     /**
      * Form
      *
@@ -61,6 +63,63 @@ class _Base
     
     public function getResults()
     {
+        if (! $this->results) {
+            $query = $this->getQueryBuilder()->getQuery();
+            
+            $query->useResultCache(base64_encode($query->getSQL()));
+            $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+            
+            $this->results = $query->getResult(\Doctrine\ORM\Query::HYDRATE_OBJECT);
+        }
+        
         return $this->results;
+    }
+    
+    public function getQueryBuilder()
+    {
+        if (! $this->queryBuilder) {
+            $this->queryBuilder = \Dope\Doctrine::getEntityManager()->createQueryBuilder();
+        }
+        
+        return $this->queryBuilder;
+    }
+    
+    
+    public function render()
+    {
+        $view = $this->getForm()->getController()->view;
+        
+        /*
+         * We'll use an array so we can use join at the end
+         * to insert line breaks, instead of having to concat
+         * every single line with a line break. Probably faster,
+         * and definitely more readable.
+         */
+        $html = array();
+        
+        $html[] = '<table>';
+        $html[] = '<thead>';
+        $html[] = '<tr>';
+        foreach (array_keys($this->columns) as $label) {
+            $html[] = '<th>';
+            $html[] = $label;
+            $html[] = '</th>';
+        }
+        $html[] = '</tr>';
+        $html[] = '</thead>';
+        $html[] = '<tbody>';
+        foreach($this->getResults() as $entity) {
+            $html[] = '<tr>';
+            foreach (array_values($this->columns) as $valueRenderer) {
+                $html[] = '<td>';
+                $html[] = $valueRenderer($entity, $view);
+                $html[] = '</td>';
+            }
+            $html[] = '</tr>';
+        }
+        $html[] = '</tbody>';
+        $html[] = '</table>';
+        
+        return join(PHP_EOL, $html);
     }
 }

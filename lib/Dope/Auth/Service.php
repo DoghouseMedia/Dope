@@ -10,9 +10,27 @@ use
 
 class Service
 {
+    protected static $appName;
 	protected static $user;
 	protected static $acl;
 	protected static $loaded = false;
+	
+	public static function setAppName($appName)
+	{
+	    static::$appName = $appName;
+	}
+	
+	public static function getUserEntityClass()
+	{
+	    return static::$appName . '\Entity\User';
+	}
+	
+	public static function getUserRepository()
+	{
+	    return \Dope\Doctrine::getEntityManager()->getRepository(
+	            static::getUserEntityClass()
+	    );
+	}
 	
 	public static function authenticate($username, $password)
 	{
@@ -21,7 +39,7 @@ class Service
 		
 		$authAdapter
 			->setEntityManager($em)
-			->setTableClass('Snowwhite\Entity\User')
+			->setTableClass(static::getUserEntityClass())
 			->setIdentityColumn('username')
 			->setCredentialColumn('password')
 			->setIdentity($username)
@@ -33,7 +51,7 @@ class Service
 			return false;
 		}
 
-		$user = $em->getRepository('Snowwhite\Entity\User')->findOneBy(array(
+		$user = static::getUserRepository()->findOneBy(array(
 			'username' => $username
 		));
 
@@ -77,12 +95,9 @@ class Service
 		}
 		
 		if (! static::$user) {
-			static::$user = \Dope\Doctrine::getEntityManager()
-				->getRepository('Snowwhite\Entity\User')
-				->findOneBy(array(
-					'username' => Auth::getInstance()->getIdentity()
-				)
-			);
+			static::$user = static::getUserRepository()->findOneBy(array(
+			    'username' => Auth::getInstance()->getIdentity()
+			));
 		}
 		
 		return static::$user;
