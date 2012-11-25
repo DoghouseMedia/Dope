@@ -4,7 +4,7 @@ namespace Dope\Report;
 
 abstract class _Base
 {
-    const FORM_CLASS = 'Dope\Report\Form\_Base';
+    const FORM_CLASS = 'Dope\Report\Form';
     const DEFAULT_SORT_COLUMN = true;
     
     protected $timeRun;
@@ -24,7 +24,7 @@ abstract class _Base
     /**
      * Form
      *
-     * @var \Dope\Report\Form\_Base
+     * @var \Dope\Report\Form
      */
     protected $form;
     
@@ -49,6 +49,18 @@ abstract class _Base
     {
         $this->defaultSortColumn = $column;
         return $this;
+    }
+    
+    public function addFilter(Filter $filter)
+    {
+        $filter->setReport($this);
+        $this->filters[] = $filter;
+        return $this;
+    }
+    
+    public function getUrlKey()
+    {
+        return static::URL_KEY;
     }
     
     /**
@@ -96,7 +108,7 @@ abstract class _Base
      */
     public function getForm()
     {
-        if (! $this->form instanceof \Dope\Report\Form\_Base) {
+        if (! $this->form instanceof \Dope\Report\Form) {
             $formClass = static::FORM_CLASS;
             $this->form = new $formClass;
         }
@@ -115,11 +127,6 @@ abstract class _Base
             }
             
             $query = $this->getQueryBuilder()->getQuery();
-            
-            if ($this->getController()->getData()->_debug) {
-                echo $query->getSQL();
-                die;
-            }
             
             $query->useResultCache(base64_encode($query->getSQL()));
             $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
@@ -142,6 +149,24 @@ abstract class _Base
         return $this->queryBuilder;
     }
     
+    public function toArray()
+    {
+        $array = array();
+        $view = $this->getForm()->getController()->view;
+        
+        foreach($this->getResults() as $entity) {
+            $row = array();
+            foreach ($this->columns as $column) {
+                $row[$column::LABEL] = $column->renderPlain(
+                    $column->getEntityByAccessor($entity),
+                    $view
+                );
+            }
+            $array[] = $row;
+        }
+        
+        return $array;
+    }
     
     public function render()
     {

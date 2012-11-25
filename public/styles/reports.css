@@ -1,5 +1,29 @@
 @CHARSET "UTF-8";
 
+body.reports { 
+	background: #ffffff !important;
+	padding: 1%;
+	width: 98%;
+	height: auto;
+}
+
+body.reports .options {
+	float: right;
+	margin: 1em;
+}
+
+body.reports #logo {
+	margin: 0 15px 0 0;
+}
+
+p.timerun {
+	margin: 0;
+	padding: 1em;
+	background-color: #fff;
+	color: #666;
+	font-style: oblique;
+}
+
 table.printable .item {
 	border-top: thin solid #eee;
 

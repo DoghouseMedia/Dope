@@ -70,5 +70,10 @@ abstract class Column
         }, $this->getSortFields()));
     }
     
+    public function renderPlain (\Dope\Entity $entity, \Zend_View $view)
+    {
+        return $this->render($entity, $view);
+    }
+    
     abstract public function render(\Dope\Entity $entity, \Zend_View $view);
 }

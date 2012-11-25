@@ -3,6 +3,8 @@
 .important { font-weight: bold !important; }
 .unpublished { background-color: #fff6f6 !important; }
 
+.print-only { display: none; }
+
 * { outline: none; }
 
 strong {
@@ -30,6 +32,7 @@ h1,h2,h3,h4,h5,h6 {
 	font-weight: bold;
 }
 h1,h2,h3 {
+	margin-top: 0.5em;
 	margin-bottom: 1em;
 }
 h1 {
@@ -83,10 +86,6 @@ body.loaded #layout-loading {
 	display: none;
 }
 
-#navPane {
-    width: 200px;
-}
-
 #list {
     height: 25em;
     width: 80%;
@@ -129,25 +128,8 @@ body.loaded #layout-loading {
 .float-right { float: right; }
 .clear { clear: both; }
 
-
 .job-details { float: left; }
 .job-categories { float: left; }
-
-/*
- * Reports styling
- */
- 
-.reports { 
-	background: #ffffff !important;
-}
-
-p.timerun {
-	margin: 0;
-	padding: 1em;
-	background-color: #fff;
-	color: #666;
-	font-style: oblique;
-}
 
 
 /**

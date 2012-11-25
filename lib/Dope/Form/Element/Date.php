@@ -11,4 +11,9 @@ extends Zend_Dojo_Form_Element_DateTextBox
 			->setInvalidMessage('Invalid date specified')
 			->setValue(date('Y-m-d'));
 	}
+	
+	public function getHumanValue()
+	{
+	    return date("d M Y", strtotime($this->getValue()));
+	}
 }

@@ -1,10 +1,36 @@
 <?php
 
-namespace Dope\Report\Form;
+namespace Dope\Report;
 
-class _Base extends \Dope\Form\Entity\Search
+class Form extends \Dope\Form\Entity\Search
 {
     const DATE_FORMAT = 'Y-m-d';
+    
+    public function init()
+    {
+        parent::init();
+    
+        $this->setDecorators(array(
+            'FormElements',
+            array('HtmlTag', array('class' => 'main')),
+            /*
+             * @todo Can we use SearchFilters to do something useful for reports?
+             */
+            'SearchFilters',
+            'ReportForm'
+        ));
+        
+        $this->setMethod('GET');
+    }
+    
+    public function render(Zend_View_Interface $view = null)
+    {
+        $this->addSubmitButton();
+        
+        $this->populate();
+        
+        return parent::render($view);
+    }
     
     protected function _addDateRangeOrDateCurrent()
     {
@@ -18,9 +44,8 @@ class _Base extends \Dope\Form\Entity\Search
     
     protected function _addDate($name='date', $label='Date to report on (format dd/mm/yyyy):', $value=null)
     {
-        $this->addElement('DateTextBox', $name, array(
+        $this->addElement('Date', $name, array(
             'label'   => $label,
-            'invalidMessage' => 'Invalid date specified.',
             'datePattern' => 'dd/MM/yyyy',
             'value' => $value,
             'default' => $value
@@ -29,7 +54,7 @@ class _Base extends \Dope\Form\Entity\Search
         return $this; //chainable
     }
     
-    protected function _addDateCurrent($name='date', $label='Date to report on (format dd/mm/yyyy):')
+    public function _addDateCurrent($name='date', $label='Date to report on (format dd/mm/yyyy):')
     {
         return $this->_addDate($name, $label, date(static::DATE_FORMAT));
     }
@@ -45,14 +70,6 @@ class _Base extends \Dope\Form\Entity\Search
         return $this; //chainable
     }
     
-    protected function _addDateRange()
-    {
-        $this->_addDateCurrent('from_date', 'From date:');
-        $this->_addDateCurrent('to_date', 'To date:');
-    
-        return $this; //chainable
-    }
-    
     protected function _addMultipleSubmitReset(array $arrayOfNameSuffixes)
     {
         foreach ($arrayOfNameSuffixes as $nameSuffix) {
@@ -62,30 +79,7 @@ class _Base extends \Dope\Form\Entity\Search
     
         return $this; //chainable
     }
-    
-    protected function _addSubmit($name='submit')
-    {
-        $this->addElement('submitButton', $name, array(
-            'required' => false,
-            'ignore' => true,
-            'label' => 'Submit'
-        ));
-    
-        $this->addElement('hidden', '_submit', array(
-            'value' => '_submit'
-        ));
-    
-        return $this; //chainable
-    }
-    
-    protected function _addReset($name='reset')
-    {
-        return $this->addElement('button', $name, array(
-                'label' => 'Reset',
-                'class' => 'reset'
-        ));
-    }
-    
+
     protected function _addAgency()
     {
         return $this->addElement('StoreBox', 'agency', array(
@@ -138,13 +132,6 @@ class _Base extends \Dope\Form\Entity\Search
             'label'        => 'Office:',
             'multiOptions' => $this->getOffices()
             //'id' => ''
-        ));
-    }
-    
-    protected function _addClient()
-    {
-        return $this->addElement('StoreBox', 'client', array(
-            'label' => 'Client:'
         ));
     }
 }

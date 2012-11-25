@@ -1,8 +1,8 @@
 @CHARSET "UTF-8";
 
-.clear {
-	clear: both;
-}
+.clear { clear: both; }
+.print-only { display: block !important; }
+.hide-from-print { display: none; }
 
 body, html {
 	font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif !important;
