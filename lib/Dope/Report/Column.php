@@ -66,7 +66,11 @@ abstract class Column
     {
         $column = $this;
         return join(',', array_map(function($field) use ($column) {
-            return $column->getAlias() . '.' . $field;
+            if ($column->getAlias()) {
+                return $column->getAlias() . '.' . $field;
+            } else {
+                return $field;
+            }
         }, $this->getSortFields()));
     }
     
