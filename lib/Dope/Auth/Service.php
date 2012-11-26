@@ -37,38 +37,40 @@ class Service
 	    );
 	}
 	
-	public static function authenticate($username, $password)
-	{
-		$authAdapter = new Adapter();
-		$em = \Dope\Doctrine::getEntityManager();
+        public static function authenticate($username, $password)
+        {
+            $authAdapter = new Adapter();
+            $em = \Dope\Doctrine::getEntityManager();
+
+            $password = call_user_func(
+                array(
+                    static::getUserEntityClass(),
+                    'encryptPassword',
+                ),
+                $password
+            );
 		
-		$password = call_user_func(
-		    static::getUserEntityClass(),
-		    'encryptPassword',
-		    $password
-		);
-		
-		$authAdapter
-			->setEntityManager($em)
-			->setTableClass(static::getUserEntityClass())
-			->setIdentityColumn('username')
-			->setCredentialColumn('password')
-			->setIdentity($username)
-			->setCredential($password);
+            $authAdapter
+                ->setEntityManager($em)
+                ->setTableClass(static::getUserEntityClass())
+                ->setIdentityColumn('username')
+                ->setCredentialColumn('password')
+                ->setIdentity($username)
+                ->setCredential($password);
 
-		$result = Auth::getInstance()->authenticate($authAdapter);
+            $result = Auth::getInstance()->authenticate($authAdapter);
 
-		if (! $result->isValid()) {
-			return false;
-		}
+            if (! $result->isValid()) {
+                return false;
+            }
 
-		$user = static::getUserRepository()->findOneBy(array(
-			'username' => $username
-		));
+            $user = static::getUserRepository()->findOneBy(array(
+                'username' => $username
+            ));
 
-		static::setUser($user);
-		return true;
-	}
+            static::setUser($user);
+            return true;
+        }
 	
 	public static function reset()
 	{
