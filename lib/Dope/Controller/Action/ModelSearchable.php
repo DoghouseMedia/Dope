@@ -1,7 +1,9 @@
 <?php 
 
 namespace Dope\Controller\Action;
-use \Dope\Controller\Action;
+
+use \Dope\Controller\Action
+    \Dope\Config\Helper as Config;
 
 abstract class ModelSearchable
 extends Action\Model
@@ -26,7 +28,7 @@ extends Action\Model
 		return $this->getEntityRepository()
 			->getForm(
 				$options,
-				'\Snowwhite\Form\Entity\Search',
+				'\\' . Config::getOption('appnamespace') . '\Form\Entity\Search',
 				null,
 				'\Dope\Form\Entity\Search'
 			)

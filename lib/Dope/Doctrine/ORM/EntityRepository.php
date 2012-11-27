@@ -2,10 +2,10 @@
 
 namespace Dope\Doctrine\ORM;
 
-use Doctrine\ORM\Mapping\UniqueConstraint;
-
-use Dope\Entity\Search,
-	Dope\Controller\Data;
+use Doctrine\ORM\Mapping\UniqueConstraint,
+    Dope\Entity\Search,
+    Dope\Controller\Data,
+    Dope\Config\Helper as Config;
 
 class EntityRepository extends \Doctrine\ORM\EntityRepository
 {
@@ -216,8 +216,13 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 	 * 
 	 * @return \Dope\Form\Entity
 	 */
-	public function getForm(array $options=array(), $prefix='\Snowwhite\Form\Entity', $alias=null, $default='\Dope\Form\Entity', $depth=0)
+	public function getForm(array $options=array(), $prefix = null, $alias=null, $default='\Dope\Form\Entity', $depth=0)
 	{	
+		
+		if (is_null($prefix)) {
+			$prefix = Config::getOption('appnamespace') . '\form\Entity';
+		}
+
 		$alias = $alias ?: $this->getModelAlias($this->getClassName());
 		
 		$form = null;

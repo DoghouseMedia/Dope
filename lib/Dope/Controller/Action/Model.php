@@ -1,9 +1,12 @@
 <?php
 
 namespace Dope\Controller\Action;
+
 use \Dope\Controller\Action,
-	\Dope\Controller\Data,
-	\Dope\Entity\Search;
+    \Dope\Controller\Data,
+    \Dope\Entity\Search,
+    \Dope\Config\Helper as Config;
+        
 
 abstract class Model
 extends Action
@@ -604,7 +607,7 @@ extends Action
 			throw new \Exception('Could not parse controller class name from ' . get_class($this));
 		}
 	
-		$className = 'Snowwhite\\Entity\\' . $matches[1];
+		$className = Config::getOption('appnamespace') . '\\Entity\\' . $matches[1];
 		$classMetadata = \Dope\Doctrine::getEntityManager()->getClassMetadata($className);
 	
 		$useOwnClassName = (empty($params)

@@ -146,7 +146,7 @@ class Search
 		$this->getProfiler()->punch('filter start');
 		
 		/* Get some variables from Doctrine */
-		$modelName = $this->getEntityRepository()->getClassName(); // eg: Snowwhite\Entity\Candidate
+		$modelName = $this->getEntityRepository()->getClassName(); // eg: [App]\Entity\Candidate
 		
 		/* Create SELECT query */
 		$select = \Dope\Doctrine::getEntityManager()->createQueryBuilder();

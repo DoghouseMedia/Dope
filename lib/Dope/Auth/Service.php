@@ -99,7 +99,7 @@ class Service
 	/**
 	 * Get singleton instance of the user
 	 * 
-	 * @return \Snowwhite\Entity\User
+	 * @return \Dope\Entity\User
 	 */
 	public static function getUser()
 	{

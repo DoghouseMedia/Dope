@@ -2,6 +2,8 @@
 
 namespace Dope\Controller;
 
+use Dope\Config\Helper as Config;
+
 class Data
 {
 	const FILTER_RESERVED_PARAMS = true;
@@ -134,9 +136,9 @@ class Data
 		return $this;
 	}
 	
-	protected function _getTab($tabId, \Snowwhite\Entity\User $user)
+	protected function _getTab($tabId, \Dope\Entity\User $user)
 	{
-		return \Dope\Doctrine::getRepository('Snowwhite\Entity\Tab')->findOneBy(array(
+		return \Dope\Doctrine::getRepository(Config::getOption('appnamespace') . '\Entity\Tab')->findOneBy(array(
 			'dom_id' => $tabId,
 			'user' => $user
 		));
@@ -163,13 +165,13 @@ class Data
 		
 		/* If there is parentTab, copy state_data to new tab */
 		if ($parentTabId) {
-			$parentTab = \Dope\Doctrine::getRepository('Snowwhite\Entity\Tab')->findOneBy(array(
+			$parentTab = \Dope\Doctrine::getRepository(Config::getOption('appnamespace') . '\Entity\Tab')->findOneBy(array(
 				'dom_id' => $parentTabId,
 				'user' => $user
 			));
 			
-			if ($parentTab instanceof \Snowwhite\Entity\Tab AND $parentTab->state_data instanceof \ArrayObject) {
-				if ($tab instanceof \Snowwhite\Entity\Tab) {
+			if ($parentTab instanceof \Dope\Entity\Tab AND $parentTab->state_data instanceof \ArrayObject) {
+				if ($tab instanceof \Dope\Entity\Tab) {
 					$tab->cloneStateData($parentTab);
 					$tabForParams = $tab;
 				}
@@ -179,7 +181,7 @@ class Data
 			}
 		}
 			
-		if ($tabForParams instanceof \Snowwhite\Entity\Tab) {
+		if ($tabForParams instanceof \Dope\Entity\Tab) {
 			if($tabForParams->state_data instanceof \ArrayObject) {
 				foreach($tabForParams->state_data->getArrayCopy() as $key => $value) {
 					if (!isset($this->params[$key])) {

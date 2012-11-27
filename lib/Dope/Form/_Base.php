@@ -2,6 +2,8 @@
 
 namespace Dope\Form;
 
+use Dope\Config\Helper as Config;
+
 require_once 'Dope/Form/DisplayGroup.php';
 
 class _Base extends \Zend_Dojo_Form
@@ -46,8 +48,11 @@ class _Base extends \Zend_Dojo_Form
 		$this->addPrefixPath('Dope_Form', 'Dope/Form/')
 			->addElementPrefixPath('Dope_Form_Decorator', 'Dope/Form/Decorator', 'decorator');;
 		
-		/* @todo Why is our Dope library aware of other libraries?!?! Refactor this! */
-		$this->addPrefixPath('Snowwhite_Form', 'Snowwhite/Form/');
+		/* Add application form prefixes */	
+		$this->addPrefixPath(
+			Config::getOption('appnamespace') . '_Form', 
+			Config::getOption('appnamespace') . '/Form/'
+		);
 		
 		parent::__construct($options);
 		
