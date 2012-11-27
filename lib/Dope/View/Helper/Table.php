@@ -164,6 +164,7 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 
 	protected function testIsForeignKey($key)
 	{
+		throw new \Exception('fk_ terminology is outdated and no longer works.  Fix it.');
 		return (bool) preg_match('/^fk_.*_id$/', $key);
 	}
 	

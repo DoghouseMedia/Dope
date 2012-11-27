@@ -19,7 +19,6 @@ extends Entity\_Base
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="User")
-	 * @ORM\JoinColumn(name="fk_user_id")
 	 */
 	protected $user;
 	

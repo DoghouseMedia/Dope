@@ -180,6 +180,7 @@ class Search
 		 */
 		foreach($this->getEntityRepository()->getColumnNames() as $columnName) {
 			/* Normalize */
+			throw new \Exception('fk_ is outdated.  Fix me please. (two references follow)');
 			$isFk = (bool) (substr($columnName,0,3) == 'fk_');
 			
 			$columnKey = $isFk ?
