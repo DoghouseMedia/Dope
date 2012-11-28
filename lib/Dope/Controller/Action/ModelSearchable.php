@@ -2,7 +2,7 @@
 
 namespace Dope\Controller\Action;
 
-use \Dope\Controller\Action
+use \Dope\Controller\Action,
     \Dope\Config\Helper as Config;
 
 abstract class ModelSearchable
