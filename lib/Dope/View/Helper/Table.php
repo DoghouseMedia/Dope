@@ -58,17 +58,6 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			$html .= '>';
 			
 			foreach($this->getRows() as $key => $values) {
-				/*
-				 * Check the key exists on the model.
-				 * This is useful for models that use Doctrine's inheritance pattern.
-				 * ModelTables can set what fields are available in their getColumnNames() method.
-				 */
-// 				if ($this->getRows() instanceof Core_Model) {
-// 					if (! $this->getRows()->getTable()->hasColumn($key)) {
-// 						continue;
-// 					}
-// 				}
-				
 				$html .= '<tr>';
 				if (! is_array($values)) {
 					$values = array($values);
@@ -103,10 +92,6 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		else {
 			$formattedKey = $this->view->escape(str_replace('_', ' ', $key));
 		}
-		
-// 		if ($this->getRows() instanceof Core_Model) {
-// 			$formattedKey = $this->getRows()->getTable()->getColumnTitle($key, $formattedKey);
-// 		}
 		
 		return ucfirst($formattedKey);
 	}

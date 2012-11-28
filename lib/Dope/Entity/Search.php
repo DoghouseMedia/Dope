@@ -179,19 +179,11 @@ class Search
 		 * - Apply where filters
 		 */
 		foreach($this->getEntityRepository()->getColumnNames() as $columnName) {
-			/* Normalize */
-			throw new \Exception('fk_ is outdated.  Fix me please. (two references follow)');
-			$isFk = (bool) (substr($columnName,0,3) == 'fk_');
-			
-			$columnKey = $isFk ?
-				preg_replace('/^fk_(.*)_id$/mis', "$1", $columnName) : 
-				$columnName;
-			
 			/* Apply sort */
 			$select = $this->getSort()->processKeySort(
 				$select,
 				$this->getTableAlias(),
-				$columnKey
+				$columnName
 			);
 			
 			/*
@@ -201,7 +193,7 @@ class Search
 			 * - if val is not foreign key, wrap it in '*'
 			 * - add where clause
 			 */
-			$values = $this->getData()->getParam($columnKey);
+			$values = $this->getData()->getParam($columnName);
 
 			if (! is_array($values)) {
 				$values = array($values);

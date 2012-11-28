@@ -80,11 +80,6 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		return in_array($columnName, $this->getColumnNames());
 	}
 	
-	public function hasColumnReal($columnName)
-	{
-		return in_array($columnName, $this->getColumnNamesReal());
-	}
-	
 	public function getModelAlias($className=null)
 	{
 		$className = $className ?: $this->getClassMetadata()->rootEntityName;
@@ -192,7 +187,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
     		$this->getClassMetadata()->getAssociationNames()
     	);
     }
-    
+
     public function getIrrelevantColumnNames()
     {
     	return array(
