@@ -69,6 +69,9 @@ dojo.declare('dope.utils.Url', null, {
 			case 'action':
 				return this.setAction(val);
 				break;
+			case 'port':
+				return this.setPort(val);
+				break;
 			default:
 				return this.setSearch(key, val);
 				break;
@@ -107,6 +110,15 @@ dojo.declare('dope.utils.Url', null, {
 	
 	setAction: function(action) {
 		return this._setPathPart(2, action);
+	},
+	
+	getPort: function() {
+		return this.a.port;
+	},
+	
+	setPort: function(port) {
+		this.a.port = port;;
+		return this;
 	},
 	
 	removeAction: function() {

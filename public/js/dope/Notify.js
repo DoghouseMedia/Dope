@@ -2,14 +2,15 @@ dojo.provide('dope.Notify');
 dojo.require('dojo.io.script');
 
 dojo.declare('dope.Notify', null, {
-	fayeUrl: null,
 	constructor: function() {
-		var notify = this;
-		dojo.io.script.get({url : notify.fayeUrl + '/client.js'}).then(
+		this.url = new dope.utils.Url('/dope');
+		this.url.set('port', 8181);
+		
+		dojo.io.script.get({url : String(this.url) + '/client.js'}).then(
 			dojo.hitch(this, 'onNotifyReady')
 		);
 	},
 	onNotifyReady: function() {
-		
+		this.client = new Faye.Client(String(this.url));
 	}
 });

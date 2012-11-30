@@ -1,0 +1,10 @@
+{
+  "name": "dope",
+  "description": "Dope stuff",
+  "homepage": "http://github.com/DoghouseMedia/Dope",
+  "version": "0.1.0",
+  "dependencies": {
+    "faye": ">=0.8.2"
+  },
+  "_id": "dope@0.1.0"
+}
