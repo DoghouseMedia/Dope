@@ -111,9 +111,12 @@ implements \IteratorAggregate
 	public function getEntityKey()
 	{
 		/*
-		 * @todo PHP5 Strict debug complains here: "Only variables should be passed by reference"
+		 * end() expects a reference, so we can't "chain" the calls but are forced to assign
+		 * the output of explode() to avariable first
+		 * @see http://stackoverflow.com/questions/4636166/only-variables-should-be-passed-by-reference
 		 */
-		return strtolower(end(explode('\\', get_class($this))));
+	    $classParts = explode('\\', get_class($this));
+		return strtolower(end($classParts));
 	}
 	
 	public function getRepository()

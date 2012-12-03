@@ -3,13 +3,24 @@ dojo.require('dojo.io.script');
 
 dojo.declare('dope.notifications.Engine', null, {
 	retryAfter: null, //minutes
+	authToken: null,
 	
 	constructor: function() {
 		this.reset();
-		this.connect();
+		this.prepareConnect();
 	},
 	reset: function() {
 		this.retryAfter = 1;
+	},
+	prepareConnect: function() {
+		dope.operation.xhrGet({
+			url: '/auth/token',
+			load: dojo.hitch(this, 'onTokenReady')
+		});
+	},
+	onTokenReady: function(data) {
+		this.authToken = data.token;
+		this.connect();
 	},
 	connect: function() {
 		this.url = new dope.utils.Url('/dope');
@@ -24,7 +35,18 @@ dojo.declare('dope.notifications.Engine', null, {
 		);
 	},
 	onEngineReady: function() {
+		var engine = this;
+		
 		this.client = new Faye.Client(String(this.url));
+		this.client.addExtension({
+			outgoing: function(message, callback) {
+				message.ext = {
+					token: engine.authToken
+				};
+				callback(message);
+			}
+		});
+		
 		this.reset();
 	},
 	onEngineError: function() {

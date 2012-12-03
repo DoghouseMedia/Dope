@@ -9,7 +9,7 @@ dojo.declare('dope.menu.Item', dijit.MenuItem, {
 	open: function() {
 		dojo.publish('/dope/layout/TabContainerMain/open', [{
 			href: this.url,
-			title: this.label,
+			title: dojo.trim(this.label),
 			focus: true
 		}]);
 	},

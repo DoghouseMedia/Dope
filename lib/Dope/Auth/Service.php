@@ -3,10 +3,10 @@
 namespace Dope\Auth;
 use 
 	Dope\Doctrine\Auth\Adapter,
-	\Dope\Auth\Acl,
-	\Dope\Entity\User,
-	\Zend_Auth as Auth,
-	\Zend_Session as Session;
+	Dope\Auth\Acl,
+	Dope\Entity\User,
+	Zend_Auth as Auth,
+	Zend_Session as Session;
 
 class Service
 {

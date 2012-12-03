@@ -214,7 +214,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 	public function getForm(array $options=array(), $prefix = null, $alias=null, $default='\Dope\Form\Entity', $depth=0)
 	{	
 		if (is_null($prefix)) {
-			$prefix = Config::getOption('appnamespace') . '\Form\Entity';
+			$prefix = '\\' . Config::getOption('appnamespace') . '\Form\Entity';
 		}
 
 		$alias = $alias ?: $this->getModelAlias($this->getClassName());
