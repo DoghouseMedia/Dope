@@ -1,0 +1,26 @@
+@CHARSET "UTF-8";
+
+.dopeNotificationsSummary {
+	width: 20px;
+	height: 14px;
+}
+
+.dopeNotificationsSummary span {
+	position: absolute;
+	background-color: rgb(108, 132, 255);
+	border-radius: 10px;
+	display: inline-block;
+	width: 11px;
+	height: 11px;
+	margin-top: -3px;
+	padding: 4px;
+	line-height: 1em;
+	text-align: center;
+	box-shadow: 1px 1px 1px #000;
+	color: white;
+	text-shadow: 1px 1px 1px #000;
+}
+
+.dopeNotificationsSummary.active span {
+	background-color: rgb(236, 13, 13);
+}
