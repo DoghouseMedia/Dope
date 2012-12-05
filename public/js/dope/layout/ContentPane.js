@@ -40,7 +40,7 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 	},
 	onShow: function() {
 		this.inherited(arguments);
-		if (this.isLoaded || this.hasModel()) {
+		if (this.isLoaded) {
 			this.activate();
 		} else {
 			this.deactivate();
@@ -81,10 +81,9 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 	},
 	onLoad: function(data, xhr) {
 		this.inherited(arguments);
-		this.setModelAlias();
+		
 		dojo.publish('/dope/layout/ContentPane/load', [this]);
-	},
-	onReady: function() {		
+			
 		this.activate();
 		this.resize();
 		
@@ -138,34 +137,6 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 		} else {
 			return action;
 		}
-	},
-	hasModel: function() {
-		return this._model ? true : false;
-	},
-	getModel: function() {
-		return this._model;
-	},
-	setModel: function(model) {
-		this._model = model;
-		
-		this.onReady();
-		
-		/* Call generic method */
-		dojo.hitch(this.getModel(), "defaultAction").call();
-		
-		/* Call action specific method */
-		dojo.hitch(this.getModel(), this.getAction().replace('-', '') + "Action").call();
-	},
-	setModelAlias: function() {
-		/*
-		 * @todo Why is our Dope library aware of snowwhite?!?! Fix.
-		 */
-		var modelClass = 'snowwhite.entity.' + this.getUrl().get('controller');
-		dojo['require'](modelClass);
-		dojo.addOnLoad(dojo.hitch(this, 'onModelLoad', modelClass));
-	},
-	onModelLoad: function(modelClass) {
-		eval('this.setModel(new ' + modelClass + '(this));');
 	},
 	onGridRowClick: function(params) {
 		dojo.publish('/dope/layout/TabContainerMain/open', [{

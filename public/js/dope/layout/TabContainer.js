@@ -12,25 +12,16 @@ dojo.declare('dope.layout.TabContainer', dijit.layout.TabContainer, {
 		this.addChild(contentPane);
 		
 		if (options.focus) {
-			this.selectChild(contentPane);
+			/*
+			 * Using a minimal delay fixes the bug in Chrome where 
+			 * the browser scrolls back to the top of the grid!! 
+			 */
+			setTimeout(dojo.hitch(this, "selectChild", contentPane), 100);
 		}
 		
 		return contentPane;
 	},
 	selectChild: function(tab) {
-		/*
-		 * Using a minimal delay fixes the bug in Chrome where 
-		 * the browser scrolls back to the top of the grid!! 
-		 * 
-		 * @todo Unfortunately, this breaks the selectChild() logic
-		 * which should return a promise for tab with an href.
-		 * Figure out what's making Chrome behave like that in dojo core,
-		 * and fix that, instead of hacking this. Also, Dojo might have fixed it by now.
-		 * At time of writing, there's a bug that hides the grid when changing tabs,
-		 * so it's impossible to test.
-		 */
-		//setTimeout(dojo.hitch(this, "inherited", arguments), 100);
-		
 		var ret = this.inherited(arguments);
 		this.resize();
 		return ret;

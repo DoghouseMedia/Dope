@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+
+.dopeUiBrowser {
+	white-space: nowrap;
+}
+
+.dopeUiBrowser .dopeLayoutButtons {
+	position: relative;
+	height: 30px;
+}
+
+.dopeUiBrowser .dopeLayoutButtons input {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.dopeUiBrowser iframe {
+	display: block;	
+	width: 100%;
+}
