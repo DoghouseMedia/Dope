@@ -7,3 +7,6 @@
 [submodule "lib/doctrine2"]
 	path = lib/doctrine2
 	url = git://github.com/doctrine/doctrine2.git
+[submodule "public/styles/font-awesome"]
+	path = public/styles/font-awesome
+	url = git://github.com/FortAwesome/Font-Awesome.git
