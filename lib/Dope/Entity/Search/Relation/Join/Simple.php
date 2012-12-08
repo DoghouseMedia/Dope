@@ -14,8 +14,8 @@ class Simple extends \Dope\Entity\Search\Relation\Join
 	public function processSelect(QueryBuilder $select)
 	{
 		$select->innerJoin(
-			$this->getRelation()->mapping['targetEntity'],
-			$this->getRelation()->getTableAlias()
+			(string) $this->getRelation()->mapping['targetEntity'],
+			(string) $this->getRelation()->getTableAlias()
 		);
 		
 		return $select;

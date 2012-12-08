@@ -71,9 +71,9 @@ class WithId extends Search\Relation\Join
 					->getTableAliases()->getNewAlias(true);
 
 				$select->innerJoin(
-					$this->getRelation()->getSearch()->getTableAlias()
+					(string) $this->getRelation()->getSearch()->getTableAlias()
 						. '.' . $this->getRelation()->mapping['fieldName'],
-					$_tableAlias
+					(string) $_tableAlias
 				);
 			
 				$WHERES[] = $_tableAlias . '.id = ' . (int) $id;
@@ -91,9 +91,9 @@ class WithId extends Search\Relation\Join
 		 */
 		foreach ($this->filters['=']['OR'] as $filter) {
 			$select->innerJoin(
-				$this->getRelation()->getSearch()->getTableAlias()
+				(string) $this->getRelation()->getSearch()->getTableAlias()
 					. '.' . $this->getRelation()->mapping['fieldName'],
-				$this->getRelation()->getTableAlias()
+				(string) $this->getRelation()->getTableAlias()
 			);
 			
 			$WHERES = array();
@@ -129,9 +129,9 @@ class WithId extends Search\Relation\Join
 				 * Add an join
 				 */	
 				$select->innerJoin(
-					$this->getRelation()->getSearch()->getTableAlias()
+					(string) $this->getRelation()->getSearch()->getTableAlias()
 						. '.' . $this->getRelation()->mapping['fieldName'],
-					$this->getRelation()->getTableAlias()
+					(string) $this->getRelation()->getTableAlias()
 				);
 
 				$joinAliases = $this->getJoins($this->getRelation()->mapping['targetEntity']);
@@ -148,7 +148,7 @@ class WithId extends Search\Relation\Join
 						->getTableAliases()->getNewAlias(true);
 					
 					$select->andWhere(
-						$this->getRelation()->getSearch()->getTableAlias() . '.id NOT IN'
+						(string) $this->getRelation()->getSearch()->getTableAlias() . '.id NOT IN'
 						. ' (SELECT ' . $_alias . '.' . $this->getRelation()->mapping['joinColumns'][0]['name'] 
 						. ' FROM ' . $this->getRelation()->mapping['targetEntity'] . ' ' . $_alias
 						. ' WHERE ' . $_alias . '.' . $this->getRelation()->mapping['joinColumns'][0]['referencedColumnName']
