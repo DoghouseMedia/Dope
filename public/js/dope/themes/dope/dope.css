@@ -3,7 +3,6 @@
 /*
  * Load the theme's CSS files alphabetically
  */
-@import url(background.css);
 @import url(browser.css);
 @import url(contentPane.css);
 @import url(dnd.css);

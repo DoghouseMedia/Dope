@@ -92,14 +92,24 @@ body.loaded #layout-loading {
 }
 
 #logo {
-	float: left;
-	padding: 5px;
-	float: left;
+	position: absolute;
 	padding: 1px;
 	background-color: rgba(255, 255, 255, 0.8);
-	margin: 5px 25px 5px 5px;
+	margin: 6px;
 	border: 1px solid #DDD;
-	box-shadow: 0 0 2px #ccc;
+	box-shadow: 1px 1px 1px #ccc;
+}
+
+#menubar {
+	padding-left: 80px;
+}
+
+#main {
+	padding-top: 5px;
+}
+
+#main_tablist .dijitTabContainerTop-tabs {
+	padding-left: 58px;
 }
 
 #navPane {
