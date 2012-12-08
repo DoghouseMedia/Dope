@@ -491,12 +491,15 @@ extends Action
 		 */
 		if ($this->getRequest()->getParam('id')) {
 			switch(strtoupper($this->getRequest()->getMethod())) {
+			    default:
 				case 'GET': $this->_forward('read'); break;
 				case 'PUT': $this->_forward('edit'); break;
 				case 'POST': $this->_forward('update'); break;
 				case 'DELETE': $this->_forward('delete'); break;
 	
-				default:
+				case 'HEAD':
+				case 'TRACE':
+				case 'OPTIONS':
 					throw new \Exception("Not implemented");
 					break;
 			}
@@ -504,10 +507,15 @@ extends Action
 		/* This would be invoked by a URL like '/:controller' */
 		else {
 			switch(strtoupper($this->getRequest()->getMethod())) {
+			    default:
 				case 'GET': $this->_forward('browse'); break;
 				case 'POST': $this->_forward('add'); break;
-	
-				default:
+				
+				case 'PUT':
+				case 'DELETE':
+			    case 'HEAD':
+			    case 'TRACE':
+			    case 'OPTIONS':
 					throw new \Exception("Not implemented");
 					break;
 			}
