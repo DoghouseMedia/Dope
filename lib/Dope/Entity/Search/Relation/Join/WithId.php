@@ -115,7 +115,7 @@ class WithId extends Search\Relation\Join
 	public function processSelectPost(QueryBuilder $select)
 	{
 		/*
-		 * Create joins for filters that are inclusive (!=)
+		 * Create joins for filters that are exclusive (!=)
 		 */
 		
 		/*
