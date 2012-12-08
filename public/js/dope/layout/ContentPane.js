@@ -145,5 +145,12 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 			focus: !params.e.ctrlKey,
 			_data: this.getData()
 		}]);
+	},
+	resize: function(changeSize, resultSize, notifyParent) {
+		var r = this.inherited(arguments);
+		if (notifyParent) {
+			this.getParent().resize(); // get the parent to adjust any other children
+		}
+		return r;
 	}
 });
