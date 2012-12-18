@@ -316,7 +316,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			$termsRequired = array();
 			$termsExcluded = array();
 			
-			$terms = \Dope\Entity\Indexer\Analyzer::analyze($termString, null, false, false, true, true);
+			$terms = \Dope\Entity\Indexer\Analyzer::analyze($termString, null, true, false, true, true);
 
 			for ($i=0; $i < count($terms); $i++) {
 				$terms[$i] = str_replace ( '*', '%', $terms[$i] );
@@ -333,7 +333,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			
 			foreach($termsBunnies as $_termBunny) {
 				$termsRequired = array_merge($termsRequired,
-					\Dope\Entity\Indexer\Analyzer::analyze($_termBunny, null, false, false)
+					\Dope\Entity\Indexer\Analyzer::analyze($_termBunny, null, true, false)
 				);
 			}
 			
@@ -427,7 +427,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 				    $modelScoresById[$indexRow['id']] += min(10, count($_data)) * $this->getColumnWeightFactor($field, $data->query_focus);
 				    
 				    foreach($termsBunnies as $termsBunny) {
-						$_terms = \Dope\Entity\Indexer\Analyzer::analyze($termsBunny, null, false, false);
+						$_terms = \Dope\Entity\Indexer\Analyzer::analyze($termsBunny, null, true, false);
 						if (!isset($_terms[0])) continue;
 						
 						$positions = array_keys($_data, $_terms[0]);

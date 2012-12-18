@@ -237,8 +237,10 @@ class Analyzer
 		'yours'
 	);
 	
-	public static function analyze($text, $encoding=null, $forceUseStopwords=false, $keepIndexes=true, $allowAsterisks=false, $allowLeadingSigns=false)
+	public static function analyze($text, $encoding=null, $forceUseStopwords=true, $keepIndexes=false, $allowAsterisks=false, $allowLeadingSigns=false)
 	{
+	    $text = strip_tags($text);
+	    
 		$text = preg_replace('/[\'`�"]/', '', $text);
 		$text = static::unaccent($text);
 	
