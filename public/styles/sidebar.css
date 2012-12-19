@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+
+.snowwhitePaneSidebar {
+	width: 30px;
+	background-color: #f0f0f0;
+}
+
+.snowwhitePaneSidebar .dijitTabContainerLeft-tabs {
+	padding: 5px 0 5px 3px;
+	border-left: 1px solid #b5bcc7; //#aaa; //#A2C5E9;
+}
+
+.snowwhitePaneSidebar .dijitTabContainerLeft-tabs .dijitTab {
+	cursor: pointer;
+}
+
+.snowwhitePaneSidebar .dijitTabPaneWrapper {
+	border-width: 0 0 0 1px;
+}

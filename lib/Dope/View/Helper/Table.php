@@ -86,40 +86,13 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function formatKey($key)
 	{	
-		if ($this->testIsForeignKey($key)) {
-			$formattedKey = $this->getForeignKeyRelationAlias($key);
-		}
-		else {
-			$formattedKey = $this->view->escape(str_replace('_', ' ', $key));
-		}
-		
-		return ucfirst($formattedKey);
+		return ucfirst(
+		    $this->view->escape(str_replace('_', ' ', $key))
+		);
 	}
 	
 	protected function formatValue($key, $value)
 	{
-// 		if ($this->testIsForeignKey($key)) {
-// 			return $this->view
-// 				->modelUrl($this->getRows()->{$this->getForeignKeyRelationAlias($key)})
-// 				->toHtml();
-// 		}
-// 		elseif ($this->testIsBool($key)) {
-// 			return $value ? 'Yes' : 'No';
-// 		}
-// 		elseif ($this->testIsCurrency($key)) {
-// 			return $this->view->currencyFormatter($value);
-// 		}
-// 		elseif ($key == 'id') {
-// 			return (int) $value;
-// 		}
-// 		else {
-// 			return $this->view->fieldFormatter($value);
-// 		}
-// 		return $key . ': ' . (
-// 			is_object($value) ?
-// 				get_class($value) :
-// 				gettype($value)		
-// 		);
 		if ($this->testIsEntity($key)) {
 			return $this->view
 				->modelUrl($this->getRows()->{$key})
@@ -128,6 +101,12 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		elseif ($this->testIsCollection($value)) {
 			return '#' . $value->count();
 		}
+// 		elseif ($this->testIsBool($key)) {
+// 		    return $value ? 'Yes' : 'No';
+// 		}
+// 		elseif ($this->testIsCurrency($key)) {
+// 		    return $this->view->currencyFormatter($value);
+// 		}
 		else {
 			return $this->view->fieldFormatter($value);
 		}
@@ -146,15 +125,11 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	{
 		return (bool) ($value instanceof \Doctrine\Orm\PersistentCollection);
 	}
-
-	protected function testIsForeignKey($key)
-	{
-		throw new \Exception('fk_ terminology is outdated and no longer works.  Fix it.');
-		return (bool) preg_match('/^fk_.*_id$/', $key);
-	}
 	
 	protected function testIsBool($key)
 	{
+	    throw new \Exception("nneds refactoring");
+	    
 		if (! $this->getRows() instanceof Core_Model) {
 			return false;
 		}
@@ -166,6 +141,8 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function testIsCurrency($key)
 	{
+	    throw new \Exception("nneds refactoring");
+	    
 		if (! $this->getRows() instanceof Core_Model) {
 			return false;
 		}
@@ -179,10 +156,5 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		$formElement = $form->getElement($key);
 		
 		return (bool) ($formElement instanceof Zend_Dojo_Form_Element_CurrencyTextBox);
-	}
-	
-	protected function getForeignKeyRelationAlias($key)
-	{
-		return $this->getRows()->getTable()->getForeignKeyRelationAlias($key);
 	}
 }

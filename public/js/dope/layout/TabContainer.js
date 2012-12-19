@@ -1,7 +1,11 @@
 dojo.provide("dope.layout.TabContainer");
 dojo.require("dijit.layout.TabContainer");
+dojo.require('dope.layout._ResizeParent');
 
-dojo.declare('dope.layout.TabContainer', dijit.layout.TabContainer, {
+dojo.declare('dope.layout.TabContainer', [
+	dijit.layout.TabContainer,                          
+	dope.layout._ResizeParent
+], {
 	onShow: function() {
 		this.resize();
 		this.inherited(arguments);

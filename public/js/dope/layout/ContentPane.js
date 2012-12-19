@@ -1,11 +1,16 @@
 dojo.provide('dope.layout.ContentPane');
 dojo.require('dijit.layout.ContentPane');
 dojo.require('dope._Contained');
+dojo.require('dope.layout._ResizeParent');
 dojo.require('dope.xhr.Post');
 dojo.require('dope.layout.LoadingDisabler');
 dojo.require('dope.layout.pane.Count');
 
-dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contained], {
+dojo.declare('dope.layout.ContentPane', [
+	dijit.layout.ContentPane,
+	dope._Contained,
+	dope.layout._ResizeParent
+], {
 	isLayoutContainer: true,
 	isContainer: true,
 	
@@ -145,12 +150,5 @@ dojo.declare('dope.layout.ContentPane', [dijit.layout.ContentPane, dope._Contain
 			focus: !params.e.ctrlKey,
 			_data: this.getData()
 		}]);
-	},
-	resize: function(changeSize, resultSize, notifyParent) {
-		var r = this.inherited(arguments);
-		if (notifyParent) {
-			this.getParent().resize(); // get the parent to adjust any other children
-		}
-		return r;
 	}
 });
