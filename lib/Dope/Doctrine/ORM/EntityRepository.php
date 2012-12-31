@@ -316,7 +316,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 			$termsRequired = array();
 			$termsExcluded = array();
 			
-			$terms = \Dope\Entity\Indexer\Analyzer::analyze($termString, null, true, false, true, true);
+			$terms = \Dope\Entity\Indexer\Analyzer::analyze($termString, null, false, false, true, true);
 
 			for ($i=0; $i < count($terms); $i++) {
 				$terms[$i] = str_replace ( '*', '%', $terms[$i] );
