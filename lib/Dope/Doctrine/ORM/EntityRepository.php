@@ -396,6 +396,14 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 
 			//$this->debug($_SQL, "SELECT ids from $modelIndexTable");
 			
+			/*
+			 * We need to increase "group_concat_max_len"
+			 * to at least 10x 1024. It's default setting (1024)
+			 * is way to low for us.
+			 */
+			$this->getEntityManager()->getConnection()->executeQuery('
+			    SET SESSION group_concat_max_len = 10240;
+			');
 			
 			$indexRows = $this->getEntityManager()->getConnection()->executeQuery($_SQL);
 			//$indexRows = $this->getEntityManager()->createNativeQuery($_SQL);
@@ -434,8 +442,8 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 
 						foreach($positions as $position) {
 							for($i=1, $_termsCount = count($_terms); $i < $_termsCount; $i++) {
-								if (!isset($_data[$position+$i])) continue; // try next pos
-								if ($_data[$position+$i] != $_terms[$i]) continue; // try next pos
+								if (!isset($_data[$position+$i])) continue 2; // try next pos
+								if ($_data[$position+$i] != $_terms[$i]) continue 2; // try next pos
 								
 								if ($i + 1 == $_termsCount) {
 									$matchedBunnies[] = $termsBunny;

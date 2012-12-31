@@ -52,7 +52,6 @@ class Analyzer
 		'could',
 		'course',
 		'd',
-		'dan',
 		'day',
 		'decided',
 		'did',
@@ -108,9 +107,7 @@ class Analyzer
 		'left',
 		'li',
 		'like',
-		'little',
 		'll',
-		'long',
 		'look',
 		'lot',
 		'lt',
@@ -149,8 +146,6 @@ class Analyzer
 		'over',
 		'part',
 		'place',
-		'point',
-		'pretty',
 		'probably',
 		'problem',
 		'put',
@@ -168,11 +163,9 @@ class Analyzer
 		'set',
 		'several',
 		'she',
-		'sherree',
 		'should',
 		'since',
 		'size',
-		'small',
 		'so',
 		'some',
 		'something',
@@ -226,9 +219,7 @@ class Analyzer
 		'where',
 		'which',
 		'while',
-		'white',
 		'who',
-		'will',
 		'with',
 		'would',
 		'yet',
@@ -239,20 +230,24 @@ class Analyzer
 	
 	public static function analyze($text, $encoding=null, $forceUseStopwords=true, $keepIndexes=false, $allowAsterisks=false, $allowLeadingSigns=false)
 	{
-	    $text = strip_tags($text);
+	    /* Strip tags */
+	    $text = preg_replace('/(<[^<>]*?>)+/', ' ', $text);
 	    
+	    /* Strip special characters */
 		$text = preg_replace('/[\'`�"]/', '', $text);
+		
+		/* Strip accents */
 		$text = static::unaccent($text);
 	
 		/* Normalize */
 		
-		if (preg_match('/' . \Dope_Form_Element_Phone::REGEXP . '/mis', $text)) {
+		if (preg_match('/' . \Dope_Form_Element_Phone::REGEXP . '/is', $text)) {
 			$text = preg_replace('/[^0-9]/mis','',$text);
 		}
-		elseif (preg_match('/' . \Dope_Form_Element_Mobile::REGEXP . '/mis', $text)) {
+		elseif (preg_match('/' . \Dope_Form_Element_Mobile::REGEXP . '/is', $text)) {
 			$text = preg_replace('/[^0-9]/mis','',$text);
 		}
-		elseif (preg_match('/' . \Dope_Form_Element_Email::REGEXP . '/mis', $text)) {
+		elseif (preg_match('/' . \Dope_Form_Element_Email::REGEXP . '/is', $text)) {
 			$text = preg_replace('/[^A-Za-z0-9]/mis','',$text);
 		}
 		else {
