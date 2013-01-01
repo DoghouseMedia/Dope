@@ -13,6 +13,7 @@
 @import url(forms.css);
 @import url(grids.css);
 @import url(layoutButtons.css);
+@import url(loadingDisabler.css);
 @import url(menu.css);
 @import url(notifications.css);
 @import url(operations.css);
@@ -22,6 +23,14 @@
 @import url(tabs.css);
 @import url(uploader.css);
 
+/*
+ * Import external resources
+ */
+@import url(../../../../styles/animate.css/animate.min.css);
+
+/*
+ * Things ehat don't belong anywhere go here
+ */
 .dijitInline {
 	vertical-align: middle;
 }

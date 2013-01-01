@@ -4,7 +4,7 @@ dojo.require('dijit._Templated');
 
 dojo.declare('dope.layout.LoadingDisabler', [dijit._Widget, dijit._Templated], {
 	baseClass: 'dopeLoadingDisabler',
-	templateString: '<div>Loading...</div>',
+	templateString: '<div><div><p class="animated flash">Loading...</p></div></div>',
 	
 	postCreate: function() {
 		this.deactivate();
@@ -15,10 +15,8 @@ dojo.declare('dope.layout.LoadingDisabler', [dijit._Widget, dijit._Templated], {
 		this.inherited(arguments);
 	},
 	hide: function() {
-		dojo.fadeOut({
-			node: this.domNode,
-			onEnd: dojo.hitch(this, 'deactivate')
-		}).play();
+		this.deactivate();
+		this.inherited(arguments);
 	},
 	activate: function() {
 		dojo.style(this.domNode, 'display', 'block');

@@ -296,31 +296,6 @@ div.quick-nav .buttons .dijit .dijitButtonContents {
 	color: #999;
 }
 
-/* Browser */
-form.browser input[type="url"]{
-	width: 90%;
-}
-
-/* Loading disabler */
-.dopeLoadingDisabler {
-	display: none;
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 998;
-	padding: 1em;
-	font-size: 1.2em;
-	
-	background-color: #fff;
-	background: rgba(255,255,255,0.5);
-}
-.dopeLoadingDisabler.active {
-	display: block;
-}
-
-
 /* Contacts */
 .contact-item{
 	background: #F2F2F2;
