@@ -98,6 +98,11 @@ dojo.declare('dope.layout.ContentPane', [
 	},
 	onClose: function() {
 		dojo.publish('/dope/layout/ContentPane/close', [this]);
+		
+		if (this._loadingDisabler) {
+			this._loadingDisabler.destroy();
+		}
+		
 		return this.inherited(arguments);
 	},
 	getData: function(key) {
