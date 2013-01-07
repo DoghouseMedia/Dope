@@ -233,25 +233,6 @@ implements \IteratorAggregate
 // 	}
 	
 	/**
-	 * Magic toString method
-	 * 
-	 * We get all the columns from getToSringColumnNames() and join them using a space
-	 * 
-	 * @see library/Doctrine/Doctrine_Record::__toString()
-	 * @return string representation of this object
-	 */
-	public function __toString()
-    {
-    	$values = array();
-    	
-    	foreach($this->getToStringColumnNames() as $columnName) {
-    		$values[] = trim($this->$columnName);
-    	}
-    	
-    	return join(' ', $values);
-    }
-	
-	/**
 	 * Save
 	 * 
 	 * @return \Dope\Entity\_Base
