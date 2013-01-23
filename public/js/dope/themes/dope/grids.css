@@ -4,10 +4,26 @@
 @import "/js/dojox/grid/enhanced/resources/EnhancedGrid_rtl.css";
 
 
+/*
+ * Grids
+ */
+
 .dopeGridDataGrid {
 	padding: 0 !important;
 }
 
 .dopeGridDataGrid .dojoxGridHeader th {
 	white-space: nowrap;
+}
+
+/*
+ * Grid Lists
+ */
+
+.dopeGridDataList {
+	overflow: auto;
+}
+
+.dopeGridDataList .dojoxGridMasterHeader {
+	display: none !important;
 }

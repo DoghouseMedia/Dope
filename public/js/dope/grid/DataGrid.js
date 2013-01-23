@@ -41,15 +41,18 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 			}
 			
 			if (this.storeUrl) {
-				this.setStore(new dope.data.JsonRestStore({
-					target: String(this.storeUrl)
-				}));
+				this.setStoreByUrl(this.storeUrl);
 			}
 		}
 		
 		this.subscribe('/dope/entity/form/add', dojo.hitch(this, 'onEntityAdd'));
 		
 		dojo.connect(this, 'onRowClick', dojo.hitch(this, '_onRowClick'));
+	},
+	setStoreByUrl: function(url) {
+		this.setStore(new dope.data.JsonRestStore({
+			target: String(this.storeUrl)
+		}));
 	},
 	setStore: function(store) {
 		dojo.connect(store, 'onDelete', dojo.hitch(this, 'onStoreChange'));

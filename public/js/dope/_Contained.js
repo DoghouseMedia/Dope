@@ -10,6 +10,11 @@ dojo.declare('dope._Contained', dijit._Contained, {
 			if (parent.href) {
 				return parent;
 			}
+			
+			if (parent.isDopeContainer) {
+				return current;
+			}
+			
 			current = parent;
 		}
 		

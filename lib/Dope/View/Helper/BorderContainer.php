@@ -2,6 +2,18 @@
 
 class Dope_View_Helper_BorderContainer extends Zend_Dojo_View_Helper_BorderContainer
 {
+    /**
+     * Dijit being used
+     * @var string
+     */
+    protected $_dijit  = 'dope.layout.BorderContainer';
+    
+    /**
+     * Dojo module to use
+     * @var string
+     */
+    protected $_module = 'dope.layout.BorderContainer';
+    
 	public function borderContainer($id = null, $content = '', array $params = array(), array $attribs = array())
 	{
 		if (0 === func_num_args()) {

@@ -18,7 +18,7 @@ class Data
 		'format', // ZF context
 		'id',
 		'dojo_preventCache',
-		'tab', 'parent_tab', // DHM tabs
+		//'tab', 'parent_tab', // DHM tabs
 		'sender', //
 		'list_count', 'list_start', // DHM/Doctrine limit
 		'exclude', // DHM/Doctrine exclude filter

@@ -1,14 +1,16 @@
 dojo.provide('dope.form.Form');
 dojo.require('dijit.form.Form');
+dojo.require('dijit.layout._LayoutWidget');
 dojo.require('dope._Contained');
 
 dojo.declare('dope.form.Form', [
 	dijit.form.Form,
+	dijit.layout._LayoutWidget,
 	dope._Contained
 ], {
 	baseClass: 'dopeForm',
 	handles: [],
-	
+
 	startup: function() {
 		this.inherited(arguments);
 		

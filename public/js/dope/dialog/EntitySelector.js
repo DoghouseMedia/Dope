@@ -9,11 +9,6 @@ dojo.declare('dope.dialog.EntitySelector', dope.dialog.Dialog, {
 	confirmText: 'Done',
 	href: null,
 	
-	_onLoadHandler: function() {
-		this.inherited(arguments);
-		this._position(); // re-center after loading
-	},
-	
 	getUrl: function() { 
 		return new dope.utils.Url(this.href);
 	},

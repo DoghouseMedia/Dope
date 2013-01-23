@@ -1,9 +1,11 @@
 dojo.provide('dope.dialog.Dialog');
 dojo.require('dijit.Dialog');
+dojo.require('dijit.layout._LayoutWidget');
 
-dojo.declare('dope.dialog.Dialog', dijit.Dialog, {
+dojo.declare('dope.dialog.Dialog', [dijit.Dialog, dijit.layout._LayoutWidget], {
 	onExecute: function() { /* Event */ },
 	confirmText: 'OK',
+	preload: true,
 	showOnCreate: true,
 	widgetsInTemplate: true,
 	title: 'Are you sure?',
@@ -20,6 +22,11 @@ dojo.declare('dope.dialog.Dialog', dijit.Dialog, {
 		+ '</div>'
 		+ '</div>',
 	
+	_onLoadHandler: function() {
+		this.inherited(arguments);
+		this._position(); // re-center after loading
+	},
+		
 	postCreate: function() {
 		this.inherited(arguments);
 		
@@ -27,10 +34,16 @@ dojo.declare('dope.dialog.Dialog', dijit.Dialog, {
 			this.show();
 		}
 	},
+	
 	startup: function() {
 		this.inherited(arguments);
-		dojo.connect(dijit.byId(this.confirmButtonNode.id), 'onClick', dojo.hitch(this, '_onExecute'));
+		dojo.connect(
+			dijit.byId(this.confirmButtonNode.id), 
+			'onClick', 
+			dojo.hitch(this, '_onExecute')
+		);
 	},
+	
 	_onExecute: function(e) {
 		this.onExecute(e);
 	}

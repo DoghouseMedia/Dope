@@ -70,7 +70,7 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 		});
 		
 		if (data.status) {
-			if (!data.preventRedirect && dojo.indexOf(['add','edit'], this.getPane().getUrl().getAction()) >= 0) {
+			if (this._canRedirect(data)) {
 				this.getPane().setUrl(
 					new dope.utils.Url(data.controller + '/' + data.id)
 				);
@@ -85,5 +85,24 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 			console.log("Something went wrong!", data, response);
 			alert("Something went wrong!");
 		}
+	},
+	_canRedirect: function(data) {
+		if (data.preventRedirect) {
+			return false;
+		}
+		
+		if (! this.getPane()) {
+			return false;
+		}
+		
+		if (! this.getPane().getUrl) {
+			return false;
+		}
+		
+		if (dojo.indexOf(['add','edit'], this.getPane().getUrl().getAction()) < 0) {
+			return false;
+		}
+		
+		return true;
 	}
 });

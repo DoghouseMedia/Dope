@@ -1,5 +1,6 @@
 dojo.provide('dope.notifications.Engine');
 dojo.require('dojo.io.script');
+dojo.require('dope.notifications.VisualNotification');
 
 dojo.declare('dope.notifications.Engine', null, {
 	retryAfter: null, //minutes
@@ -50,7 +51,7 @@ dojo.declare('dope.notifications.Engine', null, {
 		this.reset();
 	},
 	onEngineError: function() {
-		new dope.notifications.Notification({
+		new dope.notifications.VisualNotification({
 			message: 'Unable to reach the notification server.'
 		});
 		

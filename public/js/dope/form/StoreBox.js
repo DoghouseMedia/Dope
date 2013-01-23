@@ -39,22 +39,8 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 	onStoreComplete: function() {
 		this.set('disabled', false);
 		this.set('value', this.value);
-		
-//		dojo.publish(this, 'setValue');
-		
-//		if (dojo.isFunction(onCompleteCallback)) {
-//			/*
-//			 * This is disgusting but we need to wait for the value to be set
-//			 * before hooking onto this, and there's no callback to use.
-//			 * We're using this.set() above but it's not long enough so we have to use setTimeout
-//			 */
-//			setTimeout(function() {
-//				onCompleteCallback(field);
-//			}, 100);
-//		}
 	},
 	onStoreError: function(v1,v2) {
 		if (console) console.log('onStoreError', v1, v2);
-		//snowwhite.ajaxFieldWaiterStop(field);
 	}
 });

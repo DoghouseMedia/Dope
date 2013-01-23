@@ -1,6 +1,5 @@
 dojo.provide('dope.notifications.Summary');
 dojo.require('dijit.PopupMenuBarItem');
-dojo.require('dope.notifications.Notification');
 
 dojo.declare('dope.notifications.Summary', [dijit.PopupMenuBarItem], {
 	baseClass: 'dopeNotificationsSummary',
@@ -10,8 +9,13 @@ dojo.declare('dope.notifications.Summary', [dijit.PopupMenuBarItem], {
 		this.inherited(arguments);
 		
 		dojo.subscribe(
-			'/dope/notifications/notification/new', 
-			dojo.hitch(this, 'onNotificationNew')
+			'/dope/notifications/visualNotification/new', 
+			dojo.hitch(this, 'onVisualNotificationNew')
+		);
+		
+		dojo.subscribe(
+			'/dope/notifications/visualNotification/destroy', 
+			dojo.hitch(this, 'onVisualNotificationDestroy')
 		);
 	},
 	
@@ -20,8 +24,12 @@ dojo.declare('dope.notifications.Summary', [dijit.PopupMenuBarItem], {
 		this.popup._orient = {'BR':'TR'};
 	},
 	
-	onNotificationNew: function(notification) {
-		this.popup.addChild(notification);
+	onVisualNotificationNew: function(visualNotification) {
+		this.popup.addChild(visualNotification);
+		this.updateLabel();
+	},
+	
+	onVisualNotificationDestroy: function() {
 		this.updateLabel();
 	},
 	
