@@ -1,11 +1,11 @@
 dojo.provide('dope.form.Form');
 dojo.require('dijit.form.Form');
-dojo.require('dijit.layout._LayoutWidget');
+dojo.require('dijit._Container');
 dojo.require('dope._Contained');
 
 dojo.declare('dope.form.Form', [
 	dijit.form.Form,
-	dijit.layout._LayoutWidget,
+	dijit._Container,
 	dope._Contained
 ], {
 	baseClass: 'dopeForm',
@@ -70,3 +70,4 @@ dojo.declare('dope.form.Form', [
 		return this.inherited(arguments);
 	}
 });
+//@ sourceURL=/js/dojo/../dope/form/Form.js

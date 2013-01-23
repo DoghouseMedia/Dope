@@ -2,7 +2,7 @@ dojo.provide('dope.layout.BorderContainer');
 dojo.require('dijit.layout.BorderContainer');
 
 dojo.declare('dope.layout.BorderContainer', [
-	dijit.layout.BorderContainer,
+	dijit.layout.BorderContainer
 ], {
 	startup: function() {
 		this.inherited(arguments);
