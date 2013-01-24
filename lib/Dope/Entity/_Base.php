@@ -200,6 +200,7 @@ implements \IteratorAggregate
 			}
 			elseif ($this->$key instanceof Entity) {
 				$array[$key] = (string) $this->$key;
+				$array[$key . '_id'] = (int) $this->$key->id;
 			}
 			else {
 				$array[$key] = $this->$key;
