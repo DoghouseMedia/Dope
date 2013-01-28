@@ -5,7 +5,7 @@
 
 .print-only { display: none; }
 
-* { outline: none; }
+* { outline: none !important; }
 
 strong {
 	font-weight: bolder;
