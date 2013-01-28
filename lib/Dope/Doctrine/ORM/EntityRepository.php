@@ -754,24 +754,39 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 				\Dope\Log::console($alias); //. ': ' . $record[$alias]);
 				\Dope\Log::console($mapping);
 				
-				if (isset($mapping['joinColumns'][0]['name']) AND isset($record[$mapping['joinColumns'][0]['name']])) {
-					$record[$alias] = (string) \Dope\Doctrine::getRepository($mapping['targetEntity'])
-						->find($record[$mapping['joinColumns'][0]['name']]);
-				} else {
-					$record[$alias] = '';
-				}
-						
-// 				switch ($mapping['type']) {
-// 					case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY:
-						
-// 						if (isset($mapping['joinColumns'][0]['name']) AND $record[$mapping['joinColumns'][0]['name']]) {
-// 							$record[$alias] = (string) \Dope\Doctrine::getRepository($mapping['targetEntity'])
-// 								->find($record[$mapping['joinColumns'][0]['name']]);
-// 						} else {
-// 							$record[$alias] = '';
-// 						}
-// 						break;
+// 				if (isset($mapping['joinColumns'][0]['name']) AND isset($record[$mapping['joinColumns'][0]['name']])) {
+// 					$record[$alias] = (string) \Dope\Doctrine::getRepository($mapping['targetEntity'])
+// 						->find($record[$mapping['joinColumns'][0]['name']]);
+// 				} else {
+// 					$record[$alias] = '';
 // 				}
+						
+				switch ($mapping['type']) {
+					case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_ONE:
+					case \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_ONE:
+ 						if (isset($mapping['joinColumns'][0]['name']) AND 
+ 						    isset($record[$mapping['joinColumns'][0]['name']])
+ 						) {
+							$record[$alias] = (string) \Dope\Doctrine::getRepository($mapping['targetEntity'])
+								->find($record[$mapping['joinColumns'][0]['name']]);
+						} else {
+							$record[$alias] = '';
+						}
+						break;
+				
+					case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY:
+					//case \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_MANY:
+					    $record[$alias] = array();
+					    
+				        $_entities = \Dope\Doctrine::getRepository($mapping['targetEntity'])->findBy(array(
+				            $mapping['mappedBy'] => $record['id']
+				        ));
+				        
+				        foreach ($_entities as $_entity) {
+				            $record[$alias][] = $_entity->id;
+				        }
+					    break;
+				}
 			}
 		}
 // 		foreach(array_keys($collection[0]) as $key) {

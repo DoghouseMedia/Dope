@@ -196,7 +196,11 @@ implements \IteratorAggregate
 				}
 			}
 			elseif ($this->$key instanceof \Doctrine\Common\Collections\Collection) {
-				// do nothing
+			    $_key = $key . '_ids';
+			    $array[$_key] = array();
+			    foreach ($this->$key as $_entity) {
+			        $array[$_key][] = $_entity->id;
+			    }
 			}
 			elseif ($this->$key instanceof Entity) {
 				$array[$key] = (string) $this->$key;
