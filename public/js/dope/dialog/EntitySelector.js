@@ -19,7 +19,6 @@ dojo.declare('dope.dialog.EntitySelector', dope.dialog.Dialog, {
 			url: params.href,
 			load: this._onSelect.bind(this)
 		});
-		
 	},
 	
 	_onSelect: function(entity) {

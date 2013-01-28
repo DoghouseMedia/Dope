@@ -25,6 +25,11 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		optionsbar: {}
 	},
 
+	postCreate: function() {
+		this.inherited(arguments);
+		dojo.connect(this, 'onRowClick', dojo.hitch(this, '_onRowClick'));
+	},
+	
 	startup: function() {
 		/* @see http://mail.dojotoolkit.org/pipermail/dojo-interest/2010-March/044230.html */
 		this.formatterScope = this;
@@ -46,8 +51,6 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		}
 		
 		this.subscribe('/dope/entity/form/add', dojo.hitch(this, 'onEntityAdd'));
-		
-		dojo.connect(this, 'onRowClick', dojo.hitch(this, '_onRowClick'));
 	},
 	setStoreByUrl: function(url) {
 		this.setStore(new dope.data.JsonRestStore({
@@ -94,8 +97,6 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 			title: url.getController() + ' #' + id,
 			e: e
 		});
-		
-		return this.inherited(arguments);
 	},
 	
 	/* ---------- Formatters ---------- */

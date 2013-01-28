@@ -19,11 +19,16 @@ dojo.declare('dope.dialog.EntityForm', dope.dialog.Dialog, {
 		this._connectForm();
 	},
 	
-	onFormComplete: function(data, response) {
+	onFormComplete: function(data) {
+		/* Event */
+	},
+	
+	_onFormComplete: function(data, response) {
 		this.inherited(arguments);
 		
 		if (data.status) {
 			this.hide();
+			this.onFormComplete(data);
 		}
 	},
 	
@@ -60,7 +65,7 @@ dojo.declare('dope.dialog.EntityForm', dope.dialog.Dialog, {
 		dojo.connect(
 			form,
 			'onComplete',
-			dojo.hitch(this, 'onFormComplete')
+			dojo.hitch(this, '_onFormComplete')
 		);
 	}
 });
