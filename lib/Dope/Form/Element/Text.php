@@ -8,6 +8,6 @@ extends Dope_Form_Element_ValidationTextBox
 	public function init()
 	{
 		parent::init();
-		$this->setRegExp('\w+.*?');
+		$this->setRegExp('.+');
 	}
 }

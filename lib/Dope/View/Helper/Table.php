@@ -101,9 +101,9 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		elseif ($this->testIsCollection($value)) {
 			return '#' . $value->count();
 		}
-// 		elseif ($this->testIsBool($key)) {
-// 		    return $value ? 'Yes' : 'No';
-// 		}
+ 		elseif ($this->testIsJSON($value)) {
+ 		    return $this->formatJSON($value);
+ 		}
 // 		elseif ($this->testIsCurrency($key)) {
 // 		    return $this->view->currencyFormatter($value);
 // 		}
@@ -156,5 +156,18 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		$formElement = $form->getElement($key);
 		
 		return (bool) ($formElement instanceof Zend_Dojo_Form_Element_CurrencyTextBox);
+	}
+	
+	protected function testIsJSON($value)
+	{
+	    $decoded = json_decode($value);
+	    return (isset($decoded));	    
+	}
+	
+	protected function formatJSON($value)
+	{
+	    $pattern = array(',"', '{', '}');
+	    $replacement = array(",\n\t\"", "{\n\t", "\n}");	    	   
+	    return '<pre>' . print_r(json_decode($value), true) . '</pre>';  
 	}
 }
