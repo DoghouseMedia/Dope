@@ -56,6 +56,14 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 					'post' => 'postJsonContext'
 				)
 			),
+	        'rest' => array(
+                'suffix'	=> 'rest',
+                'headers'   => array('Content-Type' => 'application/json'),
+                'callbacks' => array(
+                    'init' => 'initJsonContext',
+                    'post' => 'postJsonContext'
+                )
+	        ),
 			'pdf' => array(
 				'suffix'	=> 'pdf',
 				'headers'   => array('Content-Type' => 'application/pdf'),

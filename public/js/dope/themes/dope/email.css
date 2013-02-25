@@ -4,17 +4,18 @@
  * @todo Snowwhite styles should go somewhere else!
  */
 .snowwhiteFormEmail .dijitTextBox {
-	min-width: 360px;
+	min-width: 30em;
+	max-width: 70%;
 	padding: 2px;
 }
 
 .dopeEmailBox {
 	width: auto;
-	
 }
 
 .dopeEmailBox .dijitInputField {
 	display: inline-block;
+	width: 30em;
 }
 
 .dopeEmailBoxContactContainer {

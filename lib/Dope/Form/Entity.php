@@ -180,9 +180,9 @@ class Entity extends _Base
 					\Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_MANY
 				));
 				
-				if ($isToManyAssociation) {
-					continue; // skip "*ToMany" associations
-				}
+				//if ($isToManyAssociation) {
+				    //continue; // skip "*ToMany" associations
+				//}
 				
 				if ($this->hasElement($alias)) {
 					continue; // skip if form already has element by this name
@@ -192,13 +192,28 @@ class Entity extends _Base
 					'decorators' => array('DijitElement')
 				));
 				
-				if ($getDefaultValuesFromEntity AND
-					$this->getEntity()->{$alias} AND
-					isset($this->getEntity()->{$alias}->id)
-				) {
-					$this->getElement($alias)->setValue(
-						$this->getEntity()->{$alias}->id
-					);
+				if ($isToManyAssociation) {
+    				if ($getDefaultValuesFromEntity AND
+    					$this->getEntity()->{$alias}
+    				) {
+    				    $ids = array();
+    				    foreach ($this->getEntity()->{$alias} as $_entity) {
+    				        $ids[] = $_entity->id;
+    				    }
+    					$this->getElement($alias)->setValue(
+    						join(',', $ids)
+    					);
+    				}
+				}
+				else {
+				    if ($getDefaultValuesFromEntity AND
+				            $this->getEntity()->{$alias} AND
+				            isset($this->getEntity()->{$alias}->id)
+				    ) {
+				        $this->getElement($alias)->setValue(
+				                $this->getEntity()->{$alias}->id
+				        );
+				    }
 				}
 			}
 		}

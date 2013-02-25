@@ -126,6 +126,7 @@ extends Action
 				
 			switch ($this->_helper->contextSwitch()->getCurrentContext()) {
 				case 'dojo': $this->_helper->autoCompleteDojo($collectionArray); break;
+				case 'rest':
 				case 'json': $this->_helper->json($collectionArray); break;
 				case 'xml': $this->_helper->xml($collectionArray); break;
 				case 'csv': $this->_helper->csv($collectionArray); break;
@@ -167,6 +168,7 @@ extends Action
 		/* Assign to view */
 		switch($this->getHelper('ContextSwitch')->getCurrentContext()) {
 			case 'json': $this->_helper->json($entity->toArray()); break;
+			case 'rest': $this->_helper->json($entity->toArray(false)); break;
 			case 'xml': $this->_helper->xml($entity->toArray()); break;
 			case 'csv': $this->_helper->csv($entity->toArray()); break;
 			case 'pdf': $this->_helper->pdf($entity); break;
@@ -433,6 +435,7 @@ extends Action
 		switch($this->_helper->contextSwitch()->getCurrentContext()) {
 			case 'dojo':
 			case 'json':
+			case 'rest':
 			case 'xml':
 			case 'html': $this->view->status = true; break;
 				
@@ -726,6 +729,7 @@ extends Action
 	protected function respondOk(\Dope\Entity $entity=null, \Dope\Form\Entity $form=null)
 	{
 		switch($this->_helper->contextSwitch()->getCurrentContext()) {
+		    case 'rest':
 			case 'json':
 	
 				switch(strtoupper($this->getRequest()->getMethod())) {

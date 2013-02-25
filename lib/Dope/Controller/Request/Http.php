@@ -62,5 +62,10 @@ class Http extends \Zend_Controller_Request_Http
 		elseif (in_array('application/json', $acceptParts)) {
 			$this->setContextName('json');
 		}
+		
+		/* Test for rest */
+		elseif (in_array('application/x-rest-json', $acceptParts)) {
+		    $this->setContextName('rest');
+		}
 	}
 }

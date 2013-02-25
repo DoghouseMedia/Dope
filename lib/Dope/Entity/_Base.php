@@ -169,7 +169,7 @@ implements \IteratorAggregate
 		return new \ArrayIterator($this->toArray());
 	}
 	
-	public function toArray()
+	public function toArray($flatten=true)
 	{
 		$array = array();
 		
@@ -181,7 +181,7 @@ implements \IteratorAggregate
 		);
 		
 		foreach ($keys as $key) {
-			if ($this->{$key} instanceof \DateTime) {
+			if ($flatten && $this->{$key} instanceof \DateTime) {
 				switch ($md->getTypeOfColumn($key)) {
 					case 'time':
 						$array[$key] = $this->$key->format("H:i:s");
@@ -203,7 +203,9 @@ implements \IteratorAggregate
 			    }
 			}
 			elseif ($this->$key instanceof Entity) {
-				$array[$key] = (string) $this->$key;
+			    if ($flatten) {
+				    $array[$key] = (string) $this->$key;
+			    }
 				$array[$key . '_id'] = (int) $this->$key->id;
 			}
 			else {
@@ -301,10 +303,20 @@ implements \IteratorAggregate
 		
 		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 		
-		foreach ($array as $key => $val) {
-			
-			$keyPlural = $key . 's';
-			
+		$keys = array_merge(
+	        $md->getFieldNames(),
+	        $md->getAssociationNames()
+		);
+		
+		foreach ($keys as $key) {
+		    if (! isset($array[$key])) {
+		        continue;
+		    }
+
+		    $keyPlural = rtrim($key, 's') . 's';
+		    $val = isset($array[$key]) ? $array[$key] : null;
+		    $valKeyPlural = isset($array[$keyPlural]) ? $array[$keyPlural] : null;
+		    
 			/* Save field, eg. $this->whatever */
 			if ($md->hasField($key)) {
 				switch ($md->getTypeOfColumn($key)) {
@@ -323,59 +335,11 @@ implements \IteratorAggregate
 			}
 			/* Save single relation, eg. $this->user */
 			elseif ($md->hasAssociation($key)) {
-				$this->__set($key, $val
-					? \Dope\Doctrine::getRepository($md->getAssociationTargetClass($key))->find($val)
-					: null
-				);
+			    $this->assignFromRelation($key, $val);
 			}
 			/* Save multiple relation, eg. $this->categories */
-			elseif ($md->hasAssociation($keyPlural) AND $val) {
-			    
-			    if (strpos($val, ',') !== false) {
-			        $vals = explode(',', $val);
-			    } else {
-			        $vals = array($val);
-			    }
-			    
-			    foreach ($vals as $_val) {
-			        if ($_val == '') {
-			            continue;
-			        }
-			        
-    				/*
-    				 * We don't know which side is owning side, so we save on both.
-    				 * @todo Read up on owning side and shorten/simplify this. 
-    				 */
-    				
-    				$targetRecord = \Dope\Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
-    				    ->find($_val);
-    				
-    				/* Skip duplicates */
-    				if ($this->{$keyPlural} instanceof \Doctrine\Common\Collections\Collection) {
-    				    if ($this->{$keyPlural}->contains($targetRecord)) {
-    				    	continue;
-    				    }
-    				}
-    				elseif (is_array($this->{$keyPlural})) {
-    				    if (in_array($targetRecord, $this->{$keyPlural})) {
-    				    	continue;
-    				    }    
-    				}
-    				
-    				
-    				/* Save our side */
-    				$this->{$keyPlural}[] = $targetRecord;
-    				
-    				/* Save other side */
-    				$targetField = $md->getAssociationMappedByTargetField($keyPlural);
-    				if ($targetField) {
-    					if (isset($targetRecord->{$targetField})) {
-    						$targetRecord->{$targetField}[] = $this;
-    					} else {
-    						throw new \Exception("No field $targetField for $keyPlural on " . get_class($this));
-    					}
-    				}
-			    }
+			elseif ($md->hasAssociation($keyPlural)) {
+			    $this->assignFromRelation($keyPlural, $valKeyPlural);
 			}
 			/* this field doesn't exist... */
 			else {
@@ -392,6 +356,62 @@ implements \IteratorAggregate
 	
 		return $this;
 	}
+	
+	protected function assignFromRelation($key, $val)
+	{
+	    $md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+	    $mapping = $md->getAssociationMapping($key);
+	    $typeIsCollection = in_array($mapping['type'], array(
+            \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY,
+            \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_MANY
+	    ));
+	     
+	    if ($typeIsCollection) {
+	        $vals = (strpos($val, ',') !== false) ? explode(',', $val) : array($val);
+	    
+	        foreach ($vals as $_val) {
+	            if ($_val == '') {
+	                continue;
+	            }
+	             
+	            /*
+	             * We don't know which side is owning side, so we save on both.
+	             * @todo Read up on owning side and shorten/simplify this.
+	             */
+	             
+	            $targetRecord = \Dope\Doctrine::getRepository($mapping['targetEntity'])->find($_val);
+	             
+	            /* Skip duplicates */
+	            if ($this->{$key} instanceof \Doctrine\Common\Collections\Collection) {
+	                if ($this->{$key}->contains($targetRecord)) {
+	                    continue;
+	                }
+	            }
+	            elseif (is_array($this->{$key})) {
+	                if (in_array($targetRecord, $this->{$key})) {
+	                    continue;
+	                }
+	            }
+	             
+	            /* Save our side */
+	            $this->{$key}[] = $targetRecord;
+	             
+	            /* Save other side */
+	            $targetField = $mapping['mappedBy'];
+	            if ($targetField) {
+	                if (isset($targetRecord->{$targetField})) {
+	                    $targetRecord->{$targetField}[] = $this;
+	                } else {
+	                    throw new \Exception("No field $targetField for $key on " . get_class($this));
+	                }
+	            }
+	        }
+	    }
+        elseif ($val OR in_array($key, $md->getFieldNames())) {
+            $_val = $val ? \Dope\Doctrine::getRepository($mapping['targetEntity'])->find($val) : null;
+            $this->__set($key, $_val);
+        }
+    }
 	
 	public function unlinkFromArray(array $array)
 	{
