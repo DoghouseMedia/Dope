@@ -24,7 +24,7 @@ dojo.declare('dope.form.Form', [
 		dojo.attr(this.domNode, 'novalidate', 'novalidate');
 		
 		/* Attach Children onChange */
-		dojo.forEach(this.getChildren(), dojo.hitch(this, '_setupChild'));
+		dojo.forEach(this.getDescendants(), dojo.hitch(this, '_setupChild'));
 	},
 	_setupChild: function(child) {
 		this.handles.push(
@@ -32,7 +32,7 @@ dojo.declare('dope.form.Form', [
 		);
 	},
 	onChildChange: function(changedChild, value) {
-		dojo.forEach(this.getChildren(), function(child) {
+		dojo.forEach(this.getDescendants(), function(child) {
 			if (child === changedChild) return;
 			
 			if (child.onFormFieldChange) {
