@@ -248,29 +248,5 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 				return;
 			}
 		});
-	},
-	btnDoneFormatter: function(item, i, row) {
-		//Create a button programmatically:
-		var btn = new dijit.form.ToggleButton({
-			label: "Done",
-			onClick: function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				
-				var restUrl = new dope.utils.Url(row.grid.store.target);
-				
-				var toggleState = ! btn.value;
-				
-				snowwhite.toggleButton(btn, toggleState, restUrl.get('controller'), item.id, 'is_done');
-				
-				return false;
-			}
-		});
-		
-		btn.attr('iconClass', "dijitCheckBoxIcon");
-		btn.setValue(item.is_done);
-		btn.setChecked(item.is_done);
-		
-		return btn;
 	}
 });
