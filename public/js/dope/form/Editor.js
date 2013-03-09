@@ -9,9 +9,9 @@ dojo.declare('dope.form.Editor', dijit.Editor, {
 			name: this.name
 		}) ;
 		dojo.place(this.hiddenNode, this.domNode);
+		this.watch('value', this.updateHiddenField.bind(this));
 	},
-	onChange: function(e) {
+	updateHiddenField: function() {
 		this.hiddenNode.value = this.get('value');
-		this.inherited(arguments);
-	},
+	}
 });

@@ -40,15 +40,15 @@ class Mail extends \Zend_Mail
 	
 	public function setBodyText($txt, $charset = null, $encoding = \Zend_Mime::ENCODING_QUOTEDPRINTABLE)
 	{
-		$this->layout->content = $txt;
-		$txt = $this->layout->render('txt.phtml');
+		//$this->layout->content = $txt;
+		//$txt = $this->layout->render('txt.phtml');
 		return parent::setBodyText($txt, $charset, $encoding);
 	}
 	
 	public function setBodyHtml($html, $charset = null, $encoding = \Zend_Mime::ENCODING_QUOTEDPRINTABLE)
 	{
-		$this->layout->content = $html;
-		$html = $this->layout->render('html.phtml');
+		//$this->layout->content = $html;
+		//$html = $this->layout->render('html.phtml');
 		return parent::setBodyHtml($html, $charset, $encoding);
 	}
 	
@@ -71,10 +71,6 @@ class Mail extends \Zend_Mail
 	
 	public function send($transport = null)
 	{
-		if (! $transport) {
-			$transport = new \Zend_Mail_Transport_Sendmail('-f' . $this->getFromUser()->email);
-		}
-		
 		/* 
 		 * Replace recipients by debugging values unless in production
 		 * @todo This check should probably be encapsulated somewhere else... 

@@ -203,6 +203,9 @@ implements \IteratorAggregate
 			    }
 			}
 			elseif ($this->$key instanceof Entity) {
+			    // Force load
+			    (string) $this->$key;
+			    
 			    if ($flatten) {
 				    $array[$key] = (string) $this->$key;
 			    }
@@ -211,6 +214,10 @@ implements \IteratorAggregate
 			else {
 				$array[$key] = $this->$key;
 			}
+		}
+		
+		if ($md->discriminatorValue) {
+		    $array['dtype'] = $md->discriminatorValue;
 		}
 
 		return $array;

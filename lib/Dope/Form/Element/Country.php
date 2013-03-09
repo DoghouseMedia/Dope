@@ -1,7 +1,7 @@
 <?php
 
 class Dope_Form_Element_Country
-extends Zend_Dojo_Form_Element_FilteringSelect
+extends Zend_Dojo_Form_Element_ComboBox
 {
 	public function init()
 	{
