@@ -30,32 +30,6 @@ extends Action\Model
 		return parent::getModelClassName(array());
 	}
 	
-	public function newAction()
-	{
-		//throw new \Exception("You can't create a new master record.");
-// 		if ($this->getRequest()->isPost()) {
-// 			if ($this->getEntityForm()->getModelChildClass()) {
-// 				$controllerKey = $this->getEntityForm()->getModelChildControllerKey();
-				
-// 				$data = $this->getData($this->getEntityForm()->getValues(true));
-// 				$data->removeParam('_type');
-				
-// 				$this->view->tabId(false); // stop tab from propagating
-// 				$this->view->open = $this->view->url(array_merge((array) $data->getParams(), array(
-// 					'controller' => $controllerKey,
-// 					'action' => 'new',
-// 					'format' => 'html'
-// 				)));
-// 				$this->view->title = (string) 'New ' . $controllerKey;
-// 				$this->view->status = true;
-
-// 		    	return $this->respondOk();
-// 			}
-// 		}
-
-		parent::newAction();
-	}
-	
 	public function browseAction($returnCollection=false)
 	{
 		parent::browseAction($returnCollection);

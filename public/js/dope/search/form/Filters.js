@@ -8,8 +8,7 @@ dojo.declare('dope.search.form.Filters', [dijit._Contained, dijit.layout._Layout
 	filters: [],
 	_onInitCallbacks: [],
 	
-	startup: function() {
-		this.inherited(arguments);
+	constructor: function() {
 		dojo.subscribe('/dope/search/form/filterAddRequest', this, 'onFilterAddRequest');
 		dojo.subscribe('/dope/search/form/store/beforeFetch', this, 'onBeforeStoreFetch');
 	},
@@ -21,7 +20,6 @@ dojo.declare('dope.search.form.Filters', [dijit._Contained, dijit.layout._Layout
 		dojo.forEach(this.getAsParams(), function(param) {
 			storeUrl.set(param.key, param.value);
 		});
-		console.log(storeUrl, String(storeUrl));
 	},
 	add: function(options) {
 		var filter = new dope.search.form.Filter(dojo.mixin(options, {

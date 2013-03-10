@@ -669,7 +669,8 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 					break;
 					
 				case Search::SEARCH_WITH_PAGINATION:
-					$FINAL_DATA_ARRAY = $this->select->getQuery()
+					$FINAL_DATA_ARRAY = $this->select
+					    ->getQuery()
 						->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
 						->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 					$FINAL_ALL_IDS = $this->getArrayFromColumn('id', $this->select

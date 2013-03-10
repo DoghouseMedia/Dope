@@ -314,15 +314,17 @@ implements \IteratorAggregate
 	        $md->getFieldNames(),
 	        $md->getAssociationNames()
 		);
-		
+
 		foreach ($keys as $key) {
-		    if (! isset($array[$key])) {
+		    
+		    $key = rtrim($key, 's');
+		    $keyPlural = $key . 's';
+		    $val = isset($array[$key]) ? $array[$key] : null;
+		    $valKeyPlural = isset($array[$keyPlural]) ? $array[$keyPlural] : $val;
+		    
+		    if (!isset($array[$key]) AND !isset($array[$keyPlural])) {
 		        continue;
 		    }
-
-		    $keyPlural = rtrim($key, 's') . 's';
-		    $val = isset($array[$key]) ? $array[$key] : null;
-		    $valKeyPlural = isset($array[$keyPlural]) ? $array[$keyPlural] : null;
 		    
 			/* Save field, eg. $this->whatever */
 			if ($md->hasField($key)) {
@@ -424,13 +426,25 @@ implements \IteratorAggregate
 	{
 		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 		
-		foreach ($array as $key => $val) {
-			$keyPlural = $key . 's';
+		$keys = array_merge(
+		        $md->getFieldNames(),
+		        $md->getAssociationNames()
+		);
+		
+		foreach ($keys as $key) {
+		    $key = rtrim($key, 's');
+		    $keyPlural = $key . 's';
+		    $val = isset($array[$key]) ? $array[$key] : null;
+		    $valKeyPlural = isset($array[$keyPlural]) ? $array[$keyPlural] : $val;
+		    
+		    if (!isset($array[$key]) AND !isset($array[$keyPlural])) {
+		        continue;
+		    }
 				
 			if ($md->hasAssociation($key) AND $val) {
 				$this->$key = null;
 			}
-			elseif ($md->hasAssociation($keyPlural) AND $val) {
+			elseif ($md->hasAssociation($keyPlural) AND $valKeyPlural) {
 				/*
 				 * We don't know which side is owning side,
 				 * so we save on both.
@@ -438,7 +452,7 @@ implements \IteratorAggregate
 				 */
 				
 				$record = \Dope\Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
-					->find($val);
+					->find($valKeyPlural);
 				
 				/* Remove our side */
 				$this->$keyPlural->removeElement($record);

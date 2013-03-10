@@ -157,15 +157,6 @@ class Search
 		/* Set distinct */
 		$select->distinct(true);
 		
-		/* Select columns */
-		if ($this->getData()->select AND $this->getData()->select != '') {
-			$selectColumns = explode(',', $this->getData()->select);
-			foreach($selectColumns as &$selectColumn) {
-				$selectColumn = $this->getTableAlias() . '.' . $selectColumn;
-			}
-			$select->select(join(',', $selectColumns));
-		}
-		
 		$this->getProfiler()->punch('filter pre where');
 		
 		/* Sort - preparation */
@@ -205,6 +196,7 @@ class Search
 			);
 			
 			foreach($values as $value) {
+				$value = rtrim($value, '/');
 				if ($value == '') continue;
 				
 				/*
@@ -291,6 +283,17 @@ class Search
 			);
 		}
 		
+		/* Select columns */
+		if ($this->getData()->select AND $this->getData()->select != '') {
+		    $selectColumns = explode(',', $this->getData()->select);
+		    foreach($selectColumns as &$selectColumn) {
+		        $selectColumn = $this->getTableAlias() . '.' . $selectColumn;
+		    }
+		    $select->select(join(',', $selectColumns));
+		}
+		
+		//echo $select->getQuery()->getSQL(); die;
+		
 		return $select;
 	}
 	
@@ -329,6 +332,7 @@ class Search
 	{
 		if (! is_array($this->relations)) {
 			foreach($this->getEntityRepository()->getAssociationMappings() as $alias => $mapping) {
+			    //echo $alias . "\n";
 				$this->relations[$alias] = new Search\Relation($this, $mapping);
 			}
 		}

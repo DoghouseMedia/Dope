@@ -535,7 +535,7 @@ extends Action
 	{
 		foreach($this->getData()->getParams() as $key => $val) {
 			$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(
-					$this->getModelClassName((array) $this->getData()->getParams())
+				$this->getModelClassName((array) $this->getData()->getParams())
 			);
 	
 			if ($md->hasAssociation($key)) {

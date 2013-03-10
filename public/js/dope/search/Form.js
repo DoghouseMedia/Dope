@@ -17,7 +17,7 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		dojo.subscribe('/dope/search/form/domChange', this, 'onDomChange');
 	},
 	onDomChange: function() {
-		this.getParent().resize();
+		this.getPane().resize();
 	},
 	onSubmit: function(e) {
 		/* Prevent the form from really submitting */

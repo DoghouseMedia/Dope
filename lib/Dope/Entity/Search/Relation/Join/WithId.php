@@ -66,7 +66,7 @@ class WithId extends Search\Relation\Join
 		foreach ($this->filters['=']['AND'] as $filter) {
 			$WHERES = array();
 
-			foreach($filter->getIds() as $id) {
+			foreach ($filter->getIds() as $id) {
 				$_tableAlias = $this->getRelation()->getSearch()->getEntityRepository()
 					->getTableAliases()->getNewAlias(true);
 

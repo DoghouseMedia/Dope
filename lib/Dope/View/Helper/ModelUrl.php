@@ -1,6 +1,6 @@
 <?php
 
-class Dope_View_Helper_ModelUrl extends Dope_View_Helper_Url
+class Dope_View_Helper_ModelUrl extends Zend_View_Helper_Url
 {
 	/**
 	 * $model \Dope\Entity
@@ -26,7 +26,7 @@ class Dope_View_Helper_ModelUrl extends Dope_View_Helper_Url
 		    return '';
 		}
 		
-		return $this->url(array(
+		return $this->view->url(array(
 			'controller' => $this->model->getEntityKey(),
 			'action' => $this->model->id
 		), null, true);

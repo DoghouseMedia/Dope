@@ -91,7 +91,7 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		url.setAction(id);
 		url.removeSearch();
 		
-		this.getParent().onGridRowClick({
+		this.getPane().onGridRowClick({
 			id: id,
 			href: String(url),
 			title: url.getController() + ' #' + id,
