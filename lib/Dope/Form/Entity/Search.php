@@ -1,6 +1,8 @@
 <?php
 
 namespace Dope\Form\Entity;
+use Dope\Entity\Definition;
+
 use Dope\Form\Entity,
 	Dope\Form\Entity\Search;
 
@@ -46,12 +48,23 @@ class Search extends \Dope\Form\_Base
 	public function getFilters()
 	{
 		$filters = array();
-	
-		foreach($this->getEntityRepository()->getAssociationMappings() as $alias => $mapping) {
+		$mappings = $this->getEntityRepository()->getAssociationMappings();
+		$definition = new Definition($this->getEntityRepository()->getClassName());
+		$searchFilters = $definition->getSearchFilters()->value;
+		
+		foreach ($searchFilters as $value) {
+		    if (!is_array($value)) {
+		        $value = array(
+		            'name' => $mappings[$value]['fieldName'],
+	                'label' => ucfirst($mappings[$value]['fieldName']),
+	                'target' => $mappings[$value]['targetEntity']
+		        );
+		    }	
+		    	    
 			$filters[] = new Search\Filter(
-				$mapping['fieldName'],
-				ucfirst($mapping['fieldName']),
-				$mapping['targetEntity']
+				$value['name'],
+				$value['label'],
+				$value['target']
 			);
 		}
 	

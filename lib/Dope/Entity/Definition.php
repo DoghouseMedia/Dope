@@ -129,6 +129,16 @@ class Definition extends \ReflectionClass
 			return new \Dope\Doctrine\ORM\Mapping\BrowseOptions();
 		}
 	}
+	
+	public function getSearchFilters()
+	{
+	    $searchFilters = $this->getAnnotation('\Dope\Doctrine\ORM\Mapping\SearchFilters');
+	    if ($searchFilters instanceof \Dope\Doctrine\ORM\Mapping\SearchFilters) {
+	        return $searchFilters;
+	    } else {
+	        return new \Dope\Doctrine\ORM\Mapping\SearchFilters();
+	    }
+	}
 
 	public function factory($params)
 	{
