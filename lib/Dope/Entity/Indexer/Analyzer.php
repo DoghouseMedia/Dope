@@ -294,7 +294,10 @@ class Analyzer
 	{
 		//setlocale(LC_CTYPE, 'en_US.utf8');
 		//$text = "Babí léto definitivně skončilo, zatáhne se a na horách začne sněžit";
-		$ascii = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+		$ascii = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+		if (!$ascii) {
+		    $ascii = @iconv('UTF-8', 'ASCII//IGNORE', $text);
+		}
 		return preg_replace(array('/[^\w*]/', '/-+/'), array('-', '-'), strtolower($ascii));
 	}
 }

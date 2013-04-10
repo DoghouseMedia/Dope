@@ -9,6 +9,8 @@ use Dope\Entity,
 
 class Indexer
 {
+    const BULK = true;
+    
 	/**
 	 * @var \Dope\Entity
 	 */
@@ -38,7 +40,7 @@ class Indexer
 		}
 	}
 	
-	public function add($fieldName, $value)
+	public function add($fieldName, $value, $bulk=false)
 	{
 		/* Analyze content */
 		$terms = Analyzer::analyze($value);
@@ -59,8 +61,10 @@ class Indexer
 				)));
 				
 				Doctrine::getEntityManager()->persist($indexEntry);
-				Doctrine::isFlushing(false);
-				Doctrine::flush($indexEntry);
+				if (!$bulk) {
+    				Doctrine::isFlushing(false);
+    				Doctrine::flush($indexEntry);
+				}
 			}
 		}
 		
