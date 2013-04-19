@@ -416,7 +416,7 @@ implements \IteratorAggregate
 	            }
 	        }
 	    }
-        elseif ($val OR in_array($key, $md->getFieldNames())) {
+        elseif ($val OR $val==="0" OR in_array($key, $md->getFieldNames())) {
             $_val = $val ? \Dope\Doctrine::getRepository($mapping['targetEntity'])->find($val) : null;
             $this->__set($key, $_val);
         }
