@@ -328,27 +328,19 @@ implements \IteratorAggregate
 		    
 			/* Save field, eg. $this->whatever */
 			if ($md->hasField($key)) {
-				switch ($md->getTypeOfColumn($key)) {
-					case 'time':
-					case 'date':
-					case 'datetime':
-						if (! $val instanceof \Datetime) {
-							$val = (is_string($val) AND strlen($val) > 0)
-								? new \DateTime($val)
-								: null;
-						}
-						break;
-				}
-			
-				$this->__set($key, $val);
+				$this->_assignFromField($key, $val);
+			}
+			/* Save field, eg. $this->whatever */
+			elseif ($md->hasField($keyPlural)) {
+			    $this->_assignFromField($keyPlural, $valKeyPlural);
 			}
 			/* Save single relation, eg. $this->user */
 			elseif ($md->hasAssociation($key)) {
-			    $this->assignFromRelation($key, $val);
+			    $this->_assignFromRelation($key, $val);
 			}
 			/* Save multiple relation, eg. $this->categories */
 			elseif ($md->hasAssociation($keyPlural)) {
-			    $this->assignFromRelation($keyPlural, $valKeyPlural);
+			    $this->_assignFromRelation($keyPlural, $valKeyPlural);
 			}
 			/* this field doesn't exist... */
 			else {
@@ -366,7 +358,25 @@ implements \IteratorAggregate
 		return $this;
 	}
 	
-	protected function assignFromRelation($key, $val)
+	protected function _assignFromField($key, $val)
+	{
+	    $md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+	    switch ($md->getTypeOfColumn($key)) {
+	        case 'time':
+	        case 'date':
+	        case 'datetime':
+	            if (! $val instanceof \Datetime) {
+	                $val = (is_string($val) AND strlen($val) > 0)
+	                ? new \DateTime($val)
+	                : null;
+	            }
+	            break;
+	    }
+	    	
+	    $this->__set($key, $val);
+	}
+	
+	protected function _assignFromRelation($key, $val)
 	{
 	    $md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 	    $mapping = $md->getAssociationMapping($key);
