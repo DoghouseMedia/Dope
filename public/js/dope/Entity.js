@@ -36,7 +36,7 @@ dojo.declare('dope.Entity', [], {
 		dojo.mixin(this, entity);
 	},
 	
-	delete: function() {
+	'delete': function() {
 		return this.getStore().remove(this.id);
 	}
 });

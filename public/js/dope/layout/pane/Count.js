@@ -59,9 +59,9 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 		this.operations.push(op);
 	},
 	_onCount: function(data, args) {
-		var int = parseInt(data);
-		if (isNaN(int)) return;
-		this.total += int; 
+		var i = parseInt(data);
+		if (isNaN(i)) return;
+		this.total += i; 
 		this.containerNode.innerHTML = ' (' + this.total + ')'
 	}
 });
