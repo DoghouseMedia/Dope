@@ -4,6 +4,7 @@
  * Load the theme's CSS files alphabetically
  */
 @import url(browser.css);
+@import url(colorPicker.css);
 @import url(contentPane.css);
 @import url(dnd.css);
 @import url(email.css);
