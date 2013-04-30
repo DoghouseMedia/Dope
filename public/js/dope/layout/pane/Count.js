@@ -6,6 +6,7 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 	urls: [],
 	operations: [],
 	total: 0,
+	active: true,
 	templateString: '<span dojoattachpoint="containerNode"></span>',
 	
 	postCreate: function() {
@@ -38,15 +39,21 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 		return this;
 	},
 	refresh: function() {
-		/* Cancel running operations */
-		this.resetOperations();
+		if (this.active) {
+			/* Cancel running operations */
+			this.resetOperations();
+			
+			/* Reset counter */
+			this.total = 0;
+			
+			/* Fetch counts */
+			dojo.forEach(this.urls, dojo.hitch(this, '_fetch'));
+		}
 		
-		/* Reset counter */
-		this.total = 0;
-		
-		/* Fetch counts */
-		dojo.forEach(this.urls, dojo.hitch(this, '_fetch'));
-		
+		return this;
+	},
+	setActive: function(active) {
+		this.active = active;
 		return this;
 	},
 	_fetch: function(url) {

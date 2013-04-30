@@ -42,6 +42,9 @@ dojo.declare('dope.layout.ContentPane', [
 			dojo.place(this.count.domNode, this.controlButton.containerNode);
 			this.count.addUrl(this.getUrl()).refresh();
 		}
+		else {
+			this.count.setActive(false);
+		}
 	},
 	onShow: function() {
 		this.inherited(arguments);
