@@ -66,70 +66,6 @@ hr {
 	
 }
 
-#layout {
-    width:  100%;
-    height: 100%;
-    display: none;
-}
-#layout.dijitContainer {
-	display: block;
-}
-
-#layout-loading {
-	display: block;
-	padding: 3em;
-	font-size: 3em;
-	color: #666;
-	text-align: center;
-}
-body.loaded #layout-loading {
-	display: none;
-}
-
-#list {
-    height: 25em;
-    width: 80%;
-}
-
-#logo {
-	position: absolute;
-	padding: 1px;
-	background-color: rgba(255, 255, 255, 0.8);
-	margin: 6px;
-	border: 1px solid #DDD;
-	box-shadow: 1px 1px 1px #ccc;
-}
-
-#menubar {
-	padding-left: 80px;
-}
-
-#main {
-	padding-top: 5px;
-}
-
-#main_tablist .dijitTabContainerTop-tabs {
-	padding-left: 58px;
-}
-
-#navPane {
-    width: 225px;
-    margin-left: 1em;
-    margin-top: 1em;
-    padding-left: 1em;
-}
-
-#footer {
-    visibility: collapse;
-    height: 1.5em;
-    background-color: #CCCCCC;
-}
-
-#footer p {
-    margin: 0;
-    padding: 0 0 0 0.5em;
-}
-
 /*
  * Layout CSS 
  */
@@ -137,10 +73,6 @@ body.loaded #layout-loading {
 .float-left { float: left; }
 .float-right { float: right; }
 .clear { clear: both; }
-
-.job-details { float: left; }
-.job-categories { float: left; }
-
 
 /**
  * Notifications
@@ -183,64 +115,6 @@ div.info > p:first-child {
 	margin-top: 0;
 }
 
-/**
- * Quick nav
- */
-div.quick-nav{
-	right: 0;
-	position: fixed; 
-	margin: 20px 45px 0 0;
-
-	border: 1px solid #ccc;
-	background-color: #fff;
-}
-
-div.quick-nav h3{
-	color: #373941;
-	margin: 0;
-	padding: 5px 15px;
-	background-color: #eee;
-}
-
-div.quick-nav ul{
-	padding: 0;
-	border-bottom: 1px solid #eee;
-}
-
-div.quick-nav ul li{
-	border-top: 1px solid #eee;
-	list-style-type: none;
-	background-color: #fff;
-	margin: 0;
-}
-
-div.quick-nav ul li a{
-	display: block;
-	padding: 5px 15px;
-	
-	color: #666;
-	text-decoration: none;
-}
-div.quick-nav ul li a:hover,
-div.quick-nav ul li a:active,
-div.quick-nav ul li a.hover,
-div.quick-nav ul li a.active
-{
-	text-decoration: underline;
-}
-
-div.quick-nav .buttons {
-	text-align: center;
-}
-div.quick-nav .buttons .dijit {
-	margin: 5px;
-}
-div.quick-nav .buttons .dijit .dijitButtonNode {
-	padding: 0;
-}
-div.quick-nav .buttons .dijit .dijitButtonContents {
-	padding: 3px 15px;
-}
 
 #overlay-box{ width: 800px !important; }
 #overlay-box .dijitDialogPaneContent{ width: auto !important; padding: 0; }
@@ -309,21 +183,6 @@ div.quick-nav .buttons .dijit .dijitButtonContents {
 
 .space { margin: 1em; }
 
-/* Columns */
-.column-1{ width: 98%; margin: 1%; }
-
-.column-2{ width: 48.5%; float:left; }
-.column-2-1{ margin: 1% 0% 1% 1%; }
-.column-2-2{ margin: 1% 1% 1% 1%; }
-
-.column-3{ width: 32%; float:left; }
-.column-3.span-2{ width: 65%; float:left; }
-.column-3-1{ margin: 1% 0% 1% 1%; }
-.column-3-2{ margin: 1% 0% 1% 1%; }
-.column-3-3{ margin: 1% 1% 1% 1%; }
-
-
-/* Top bar */
 
 
 /* Top Paginator */
