@@ -22,11 +22,6 @@ implements \IteratorAggregate
 	protected $definition = null;
 	
 	/**
-	 * @var bool $inSaveLoop
-	 */
-	protected static $inSaveLoop = false;
-	
-	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -129,11 +124,7 @@ implements \IteratorAggregate
 	 */
 	public function getDefinition()
 	{
-		if (! $this->definition instanceof Definition) {
-			$this->definition = new Definition($this);
-		}
-		
-		return $this->definition;
+		return $this->getRepository()->getDefinition();
 	}
 	
 	public function isDeleted()
@@ -222,30 +213,7 @@ implements \IteratorAggregate
 
 		return $array;
 	}
-	
-// 	protected function _setDate($key, $mixed)
-// 	{
-// 		$value = null;
-		
-// 		if (is_string($mixed)) {
-// 			$value = new \DateTime($mixed);
-// 		}
-// 		elseif (is_int($mixed)) {
-// 			$value = new \DateTime();
-// 			$value->setTimestamp($mixed);
-// 		}
-		
-// 		if (! $value instanceof \DateTime) {
-// 			throw new \Exception(
-// 				"Date for $key must be either a DateTime object" . 
-// 				"or a string or int we can transform to one."
-// 			);
-// 		}
-		
-// 		$this->$key = $value;
-// 		return $this;
-// 	}
-	
+
 	/**
 	 * Save
 	 * 
@@ -263,15 +231,6 @@ implements \IteratorAggregate
 		\Dope\Doctrine::flush($this);
 		
 		return $this;
-	}
-	
-	public function inSaveLoop($inSaveLoop=null)
-	{
-		if (is_bool($inSaveLoop)) {
-			static::$inSaveLoop = $inSaveLoop;
-		}
-		
-		return (bool) static::$inSaveLoop;
 	}
 	
 	/**

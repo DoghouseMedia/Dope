@@ -331,6 +331,7 @@ class Search
 	protected function getRelations()
 	{
 		if (! is_array($this->relations)) {
+			$this->relations = array();
 			foreach($this->getEntityRepository()->getAssociationMappings() as $alias => $mapping) {
 			    //echo $alias . "\n";
 				$this->relations[$alias] = new Search\Relation($this, $mapping);

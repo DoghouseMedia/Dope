@@ -4,6 +4,7 @@ namespace Dope\Doctrine\ORM;
 
 use Doctrine\ORM\Mapping\UniqueConstraint,
     Dope\Entity\Search,
+    Dope\Entity\Definition,
     Dope\Controller\Data,
     Dope\Config\Helper as Config;
 
@@ -28,6 +29,23 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 	 * @var bool
 	 */
 	protected $usePagination = false;
+	
+	/**
+	 * @var \Dope\Entity\Definition
+	 */
+	protected $definition = null;
+	
+	/**
+	 * @return \Dope\Entity\Definition
+	 */
+	public function getDefinition()
+	{
+	    if (! $this->definition instanceof Definition) {
+	        $this->definition = new Definition($this->getClassName());
+	    }
+	
+	    return $this->definition;
+	}
 	
 	/**
 	 * @return \Dope\Entity
@@ -108,11 +126,6 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		}
 	
 		return $this->tableAliases;
-	}
-	
-	public function getIndexes()
-	{
-		return $this->getOption('indexes');
 	}
 	
 	public function isColumnUnique($columnName) {
@@ -258,7 +271,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 	 */
 	public function searchCount(Data $data)
 	{
-		return $this->search($data, self::SEARCH_COUNT_ONLY);
+		return $this->search($data, \Dope\Entity\Search::SEARCH_COUNT_ONLY);
 	}
 	
 	/**
