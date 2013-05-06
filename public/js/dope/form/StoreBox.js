@@ -5,6 +5,7 @@ dojo.require('dope.data.ItemFileReadStore');
 dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 	searchAttr: "__toString",
 	labelAttr: "__toString",
+	silence: false,
 	postCreate: function() {
 		this.inherited(arguments);
 		this.fetchStore();

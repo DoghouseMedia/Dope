@@ -32,13 +32,15 @@ dojo.declare('dope.form.Form', [
 		);
 	},
 	onChildChange: function(changedChild, value) {
-		dojo.forEach(this.getDescendants(), function(child) {
-			if (child === changedChild) return;
-			
-			if (child.onFormFieldChange) {
-				child.onFormFieldChange(changedChild, value);
-			}
-		});
+		if (! changedChild.silence) {
+			dojo.forEach(this.getDescendants(), function(child) {
+				if (child === changedChild) return;
+				
+				if (child.onFormFieldChange) {
+					child.onFormFieldChange(changedChild, value);
+				}
+			});
+		}
 	},
 	onSubmit: function(e) {
 		this.inherited(arguments);
