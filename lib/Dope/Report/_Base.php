@@ -132,6 +132,22 @@ abstract class _Base
             $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
             
             $this->results = $query->getResult(\Doctrine\ORM\Query::HYDRATE_OBJECT);
+            
+            /*
+             * Sometimes, we get additional "virtual" fields
+             * but doctrine doesn't add them to the base object (which is fair)
+             * so we add them here ourselves in order to normalise the result set.
+             */
+            foreach ($this->results as $i => $result) {
+            	if (is_array($result)) {
+            		$array = $result; // save a copy
+            		$result = array_shift($result); // get the "real" object
+            		foreach ($array as $k => $v) {
+            			$result->$k = $v; // add the extra data to the object
+            		}
+            		$this->results[$i] = $result; //re-assign
+            	}
+            }
         }
         
         return $this->results;
