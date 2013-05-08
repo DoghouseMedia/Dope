@@ -1,7 +1,10 @@
 <?php
 
 namespace Dope\Controller\Action\Helper;
-use \Dope\Auth\Service as AuthService;
+
+use Dope\Auth\Service as AuthService,
+	Dope\Config\Helper as Config,
+	Zend_Controller_Action_HelperBroker as HelperBroker;
 
 class Acl extends \Zend_Controller_Action_Helper_Abstract
 {
@@ -48,18 +51,11 @@ class Acl extends \Zend_Controller_Action_Helper_Abstract
 		$privilege = $controller->getRequest()->getActionName();
 
 		if (! $this->isAllowed($resource, $privilege)) {
-			$redirector = \Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
-			$redirectParams = array(
-				'format' => $this->getActionController()->getHelper('contextSwitch')->getCurrentContext()
-					?: $this->getRequest()->getParam('format')
+			HelperBroker::getStaticHelper('redirector')->gotoUrl(
+				AuthService::hasUser()
+					? Config::getOption('url.app.error.denied')
+					: Config::getOption('url.app.auth.login')
 			);
-			
-			if (AuthService::hasUser()) {
-				$redirector->gotoSimple('denied', 'error', null, $redirectParams);
-			}
-			else {
-				$redirector->gotoSimple('login', 'auth', null, $redirectParams);
-			}
 		}
 	}
 	
