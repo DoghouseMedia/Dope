@@ -16,13 +16,16 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
-/** Zend_Application */
+/** Dope_Application */
+require_once 'Zend/Config/Ini.php';
 require_once 'Zend/Application.php';
+require_once 'Dope/Config/Helper.php';
+require_once 'Dope/Application.php';
 
 // Creating application
-$application = new Zend_Application(
+$application = new \Dope\Application(
     APPLICATION_ENV,
-    APPLICATION_PATH . '/configs/application.ini'
+    new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV)
 );
 
 // Bootstrapping resources

@@ -5,35 +5,30 @@ use
 	Dope\Doctrine\Auth\Adapter,
 	Dope\Auth\Acl,
 	Dope\Entity\User,
+	Dope\Config\Helper as Config,
 	Zend_Auth as Auth,
 	Zend_Session as Session;
 
 class Service
 {
-    protected static $appName;
 	protected static $user;
 	protected static $acl;
 	protected static $loaded = false;
 	
-	public static function setAppName($appName)
-	{
-	    static::$appName = $appName;
-	}
-	
 	public static function getAclClass()
 	{
-	    return static::$appName . '\Auth\Acl';
+	    return Config::getOption('appnamespace') . '\Auth\Acl';
 	}
 	
 	public static function getUserEntityClass()
 	{
-	    return static::$appName . '\Entity\User';
+	    return Config::getOption('appnamespace') . '\Entity\User';
 	}
 	
 	public static function getUserRepository()
 	{
 	    return \Dope\Doctrine::getEntityManager()->getRepository(
-	            static::getUserEntityClass()
+            static::getUserEntityClass()
 	    );
 	}
 	
