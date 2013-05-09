@@ -49,16 +49,10 @@ class Notify
     
     public static function stopService()
     {
-        /*
-         * @author Leif Madsen
-         * @see http://leifmadsen.wordpress.com/2011/09/15/return-just-pid-of-script-with-ps-and-awk/
-         */
-        $exec = exec('ps -eo pid,command | grep "dope.js" | grep -v grep | awk \'{print $1}\'');
+    	$pids = \Dope\Cli\Helper::findPidsByName('dope.js');
         
-        if ($exec) {
-            foreach (explode("\n", $exec) as $pid) {
-                exec('kill ' . (int) $pid);
-            }
+        foreach ($pids as $pid) {
+            exec('kill ' . (int) $pid);
         }
     }
 }
