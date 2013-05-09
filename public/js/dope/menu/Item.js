@@ -21,7 +21,7 @@ dojo.declare('dope.menu.Item', dijit.MenuItem, {
 	closeAll: function() {
 		dojo.publish('/dope/layout/TabContainerMain/closeAll');
 	},
-	logout: function() {
-		window.location = '/auth/logout';
+	location: function() {
+		window.location = this.url;
 	}
 });
