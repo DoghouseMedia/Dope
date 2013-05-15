@@ -170,7 +170,7 @@ class Entity extends _Base
 			$this->setAction($this->getController()->getHelper('url')->direct(
 				$this->hasEntity() ? $this->getEntity()->id : null,
 				$request->getControllerName(),
-				'default'
+				$this->getController()->getFrontController()->getDefaultModule()
 			));
 			
 			/* Relations */
