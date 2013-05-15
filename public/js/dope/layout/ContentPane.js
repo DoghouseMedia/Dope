@@ -106,6 +106,10 @@ dojo.declare('dope.layout.ContentPane', [
 			this._loadingDisabler.destroy();
 		}
 		
+		dojo.forEach(this.getDescendants(), function(widget) {
+			widget.destroyRecursive();
+		});
+		
 		return this.inherited(arguments);
 	},
 	getData: function(key) {
