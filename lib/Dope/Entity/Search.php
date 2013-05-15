@@ -2,6 +2,8 @@
 
 namespace Dope\Entity;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 use 
 	Dope\Doctrine\ORM\EntityRepository,
 	Dope\Controller\Data,
@@ -539,7 +541,7 @@ class Search
 	 */
 	public function populateToString()
 	{	
-	    $definition = new \Dope\Entity\Definition($this->getEntityRepository()->getClassName());
+	    $definition = new Definition($this->getEntityRepository()->getClassName());
 	
 	    if (count($definition->getToStringColumnNames())) {
 	        foreach ($this->records as &$record) {
@@ -554,7 +556,7 @@ class Search
 	    }
 	    else {
 	        foreach ($this->records as &$record) {
-	            $record['__toString'] = ucfirst($this->getModelKey()) . ' ' . $record['id'];
+	            $record['__toString'] = ucfirst($this->getEntityRepository()->getModelKey()) . ' ' . $record['id'];
 	        }
 	    }
 	
@@ -569,25 +571,28 @@ class Search
 	        foreach ($md->getAssociationMappings() as $alias => $mapping) {	
 	            Log::console($alias);
 	            Log::console($mapping);
+	            
+	            $targetRepo = Doctrine::getRepository($mapping['targetEntity']);
 
 	            switch ($mapping['type']) {
-	                case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_ONE:
-	                case \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_ONE:
+	                case ClassMetadata::ONE_TO_ONE:
+	                case ClassMetadata::MANY_TO_ONE:
 	                    if (isset($mapping['joinColumns'][0]['name']) AND
 	                    	isset($record[$mapping['joinColumns'][0]['name']])
 	                    ) {
-	                        $record[$alias] = (string) \Dope\Doctrine::getRepository($mapping['targetEntity'])
-	                        	->find($record[$mapping['joinColumns'][0]['name']]);
+	                        $record[$alias] = (string) $targetRepo->find(
+	                        	$record[$mapping['joinColumns'][0]['name']]
+	                        );
 	                    } else {
 	                        $record[$alias] = '';
 	                    }
 	                    break;
 	
-	                case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY:
-	                //case \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_MANY:
+	                case ClassMetadata::ONE_TO_MANY:
+	                //case ClassMetadata::MANY_TO_MANY:
 	                    $record[$alias] = array();
 	                    	
-	                    $_entities = \Dope\Doctrine::getRepository($mapping['targetEntity'])->findBy(array(
+	                    $_entities = $targetRepo->findBy(array(
 	                        $mapping['mappedBy'] => $record['id']
 	                    ));
 	

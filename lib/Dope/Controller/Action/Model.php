@@ -85,21 +85,7 @@ extends Action
 		}
 		
 		/* Search */
-		
-		$search = new Search();
-		$search->setData($this->getData());
-		$search->setEntityRepository($this->getEntityRepository());
-		
-		if (! $this->_helper->savedSearch($search)) {
-			$search->setMode(Search::MODE_WITH_PAGINATION);
-			$search->setType($this->getData()->query
-				? new Search\Type\Query()
-				: new Search\Type\Plain()
-			);
-		}
-		
-		$search->execute();
-		$search->improve();
+		$search = $this->getEntitySearch(Search::MODE_WITH_PAGINATION);
 		
 		$this->_helper->http->setContentRange(
 			$search->getRangeStart(),
@@ -128,6 +114,32 @@ extends Action
 // 				$this->view->paginatorIds = $search->getIds();
 // 				break;
 		}
+	}
+	
+	/**
+	 * Get an executed Search object
+	 * 
+	 * @param string $mode
+	 * @return \Dope\Entity\Search
+	 */
+	protected function getEntitySearch($mode)
+	{
+		$search = new Search();
+		$search->setData($this->getData());
+		$search->setEntityRepository($this->getEntityRepository());
+		
+		if (! $this->_helper->savedSearch($search)) {
+		    $search->setMode($mode);
+		    $search->setType($this->getData()->query
+	            ? new Search\Type\Query()
+	            : new Search\Type\Plain()
+		    );
+		}
+		
+		$search->execute();
+		$search->improve();
+		
+		return $search;
 	}
 	
 	/**
@@ -278,18 +290,15 @@ extends Action
 	
 	public function countAction()
 	{
-		/* Get count */
-		$collectionCount = $this->getEntityRepository()->search(
-			$this->getData(),
-			Search::MODE_COUNT_ONLY
-		);
+		/* Search */
+		$search = $this->getEntitySearch(Search::MODE_COUNT_ONLY);
 	
 		switch($this->_helper->contextSwitch()->getCurrentContext()) {
 			case 'ajax':
 			case 'dojo':
-			case 'json': $this->_helper->json($collectionCount); break;
-			case 'xml': $this->_helper->xml($collectionCount); break;
-			case 'html': $this->view->recordsTotalCount = $collectionCount; break;
+			case 'json': $this->_helper->json($search->getCount()); break;
+			case 'xml': $this->_helper->xml($search->getCount()); break;
+			case 'html': $this->view->recordsTotalCount = $search->getCount(); break;
 		}
 	}
 	
