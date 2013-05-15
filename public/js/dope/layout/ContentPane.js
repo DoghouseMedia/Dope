@@ -38,7 +38,7 @@ dojo.declare('dope.layout.ContentPane', [
 		dojo.publish('/dope/layout/ContentPane/open', [this]);
 				
 		this.count = new dope.layout.pane.Count();
-		if (this.controlButton && !this.isTopPane) {
+		if (this.controlButton && !this.isTopPane && this.getUrl()) {
 			dojo.place(this.count.domNode, this.controlButton.containerNode);
 			this.count.addUrl(this.getUrl()).refresh();
 		}
@@ -118,7 +118,9 @@ dojo.declare('dope.layout.ContentPane', [
 	},
 	getUrl: function(forceUpdate) {
 		if (! this._url || forceUpdate) {
-			this._url = new dope.utils.Url(this.href);
+			this._url = this.href
+				? new dope.utils.Url(this.href)
+				: false;
 		}
 		
 		return this._url;
