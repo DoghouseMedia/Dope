@@ -63,6 +63,12 @@ define("dojox/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 						range = deferred.ioArgs.xhr.getResponseHeader("Content-Range");
 						deferred.fullLength = range && (range=range.match(/\/(.*)/)) && parseInt(range[1]);
 				}
+				if(deferred.ioArgs.xhr){
+					if (! deferred.headers) {
+						deferred.headers = {};
+					}
+					deferred.headers["Dope-Search-Id"] = deferred.ioArgs.xhr.getResponseHeader("Dope-Search-Id");
+				}
 				return result;
 			});
 			return deferred;
@@ -111,6 +117,11 @@ define("dojox/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 						Accept: isJson ? 'application/json,application/javascript' : '*/*'
 					}
 				};
+				if(service.headers){
+					for(var name in service.headers) {
+						request.headers[name] = service.headers[name];
+					}
+				}
 				if(args && (args.start >= 0 || args.count >= 0)){
 					request.headers.Range = "items=" + (args.start || '0') + '-' +
 						(("count" in args && args.count != Infinity) ?
@@ -150,6 +161,7 @@ define("dojox/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 			
 			deferred.then(function(response) {
 				args.ioArgs = deferred.ioArgs;
+				service.headers = deferred.headers;
 			}); 
 			
 			return deferred;

@@ -8,14 +8,12 @@ use \Dope\Controller\Action,
 abstract class ModelSearchable
 extends Action\Model
 {
-	public function browseAction($returnCollection=false)
+	public function browseAction()
 	{
-		$mixed = parent::browseAction($returnCollection);
+		parent::browseAction();
 		
 		$this->view->search_form = $this->getSearchForm()
 			->populate((array) $this->view->data);
-
-		return $mixed;
 	}
 	
 	/**

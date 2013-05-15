@@ -2,13 +2,24 @@
 
 namespace Dope\Controller;
 
+use Zend_Controller_Action_HelperBroker as HelperBroker,
+	Zend_Controller_Response_Abstract as Response,
+	Zend_Controller_Request_Abstract as Request;
+
 abstract class Action
 extends \Zend_Controller_Action
 {
-	public function __construct(\Zend_Controller_Request_Abstract $request, \Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
+	/**
+	 * Data
+	 * 
+	 * @var \Dope\Controller\Data
+	 */
+	protected $data = null;
+	
+	public function __construct(Request $request, Response $response, array $invokeArgs = array())
 	{
 		/* View helper */
-		\Zend_Controller_Action_HelperBroker::addHelper(new Action\Helper\View());
+		HelperBroker::addHelper(new Action\Helper\View());
 		
 		/* Call parent constructor */
 		parent::__construct($request, $response, $invokeArgs);
@@ -45,20 +56,27 @@ extends \Zend_Controller_Action
 	
 	/**
 	 * Pass data through our Data class for filtering, etc...
+	 * 
+	 * This returns the same instance unless you pass through data,
+	 * in which case it returns a new data object and replaces the internal one.
 	 *
 	 * @param array $data
 	 * @return \Dope\Controller\Data
 	 */
 	public function getData(array $data=null)
 	{
-		return new Data(
-			is_array($data) ? $data : $this->getRequest()->getParams()
-		);
+		if ($data OR !$this->data) {
+			$this->data = new Data(
+				$data ?: $this->getRequest()->getParams()
+			);
+		}
+		
+		return $this->data;
 	}
 	
 	public function getFormUniqueId()
 	{
-		$view = \Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view;
+		$view = HelperBroker::getStaticHelper('viewRenderer')->view;
 		return preg_replace('/[^A-z0-9_]/', '_',
 			$view->uniqueId('form')
 		);

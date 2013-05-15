@@ -16,11 +16,11 @@ dojo.declare('dope.search.DataGrid', dope.grid.DataGrid, {
 		this.inherited(arguments);
 		
 		if (this.getPane() && this.getPane().setData) {
-			var ids = req.ioArgs.xhr.getResponseHeader('Dope-Entity-Ids');
-			if (typeof(ids) == "string") {
-				ids = dojo.fromJson(ids);
+			var dopeSearchId = req.ioArgs.xhr.getResponseHeader('Dope-Search-Id') || null;
+			
+			if (dopeSearchId) {
+				this.getPane().setData('dope-search-id', dopeSearchId);
 			}
-			this.getPane().setData('dope-entity-ids', ids);
 		}
 	}
 });

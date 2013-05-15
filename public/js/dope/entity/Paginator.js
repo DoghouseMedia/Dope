@@ -77,33 +77,39 @@ dojo.declare('dope.entity.Paginator', [dijit._Widget, dijit._Templated, dope._Co
 		this.reloadData();
 	},
 	reloadData: function() {
-		if (this.getPane() && this.getPane().getData() && this.getPane().getData('dope-entity-ids')) {
-			this.ids = this.getPane().getData('dope-entity-ids');
-			this.id = Number(this.getPane().getUrl().getAction());
-			this.indexOf = this.ids.indexOf(this.id) >= 0
-				? this.ids.indexOf(this.id)
-				: this.ids.indexOf(String(this.id));
-			this.length = this.ids.length;
-			this.page = {
-				first: this.ids[0],
-				prev: this.ids[this.indexOf - 1],
-				next: this.ids[this.indexOf + 1],
-				last: this.ids[this.length - 1]
-			};
+		if (this.getPane() && this.getPane().getData() && this.getPane().getData('dope-search-id')) {
+			this.searchId = this.getPane().getData('dope-search-id');
 			
-			this.indexNode.innerHTML = this.indexOf + 1;
-			this.lengthNode.innerHTML = this.length;
+			this.savedSearch = new dope.Entity('saved-search');
+			this.savedSearch.load(this.searchId).then(dojo.hitch(this, function() {
+				this.ids = this.savedSearch.results;
 			
-			if (this.id == this.page.first) {
-				this.btnFirst.set('disabled', 'disabled');
-				this.btnPrev.set('disabled', 'disabled');
-			}
-			if (this.id == this.page.last) {
-				this.btnNext.set('disabled', 'disabled');
-				this.btnLast.set('disabled', 'disabled');
-			}			
-			
-			this.show();
+				this.id = Number(this.getPane().getUrl().getAction());
+				this.indexOf = this.ids.indexOf(this.id) >= 0
+					? this.ids.indexOf(this.id)
+					: this.ids.indexOf(String(this.id));
+				this.length = this.ids.length;
+				this.page = {
+					first: this.ids[0],
+					prev: this.ids[this.indexOf - 1],
+					next: this.ids[this.indexOf + 1],
+					last: this.ids[this.length - 1]
+				};
+				
+				this.indexNode.innerHTML = this.indexOf + 1;
+				this.lengthNode.innerHTML = this.length;
+				
+				if (this.id == this.page.first) {
+					this.btnFirst.set('disabled', 'disabled');
+					this.btnPrev.set('disabled', 'disabled');
+				}
+				if (this.id == this.page.last) {
+					this.btnNext.set('disabled', 'disabled');
+					this.btnLast.set('disabled', 'disabled');
+				}			
+				
+				this.show();
+			}));
 		}
 	},
 	gotoId: function(id) {

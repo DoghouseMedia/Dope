@@ -43,10 +43,9 @@ class Sort
 	public function __construct(Search $search, $useDefaultSort=true)
 	{
 		$this->search = $search;
-		$this->useDefaultSort($useDefaultSort);
-		
 		$this->userSort = $this->getSearch()->getData()->sort ?: false; 
 		
+		$this->useDefaultSort($useDefaultSort);
 		$this->configure($this->userSort);
 	}
 	

@@ -2,10 +2,14 @@
 
 namespace Dope\Controller\Action;
 
-use \Dope\Controller\Action,
-    \Dope\Controller\Data,
-    \Dope\Entity\Search,
-    \Dope\Config\Helper as Config;
+use Dope\Controller\Action,
+    Dope\Controller\Data,
+    Dope\Entity\Search,
+    Dope\Doctrine,
+    Dope\Config\Helper as Config,
+    Zend_Controller_Request_Abstract as Request,
+    Zend_Controller_Response_Abstract as Response,
+	Zend_Controller_Action_HelperBroker as HelperBroker;
         
 
 abstract class Model
@@ -27,13 +31,16 @@ extends Action
 	 * @param \Zend_Controller_Response_Abstract $response
 	 * @param array $invokeArgs
 	 */
-	public function __construct(\Zend_Controller_Request_Abstract $request, \Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
+	public function __construct(Request $request, Response $response, array $invokeArgs = array())
 	{
 		/* Dojo helpers */
-		\Zend_Controller_Action_HelperBroker::addHelper(new Helper\AutoCompleteDojo());
+		HelperBroker::addHelper(new Helper\AutoCompleteDojo());
 		
 		/* Not modified since */
-		\Zend_Controller_Action_HelperBroker::addHelper(new Helper\NotModifiedSince());
+		HelperBroker::addHelper(new Helper\NotModifiedSince());
+		
+		/* Saved Search */
+		HelperBroker::addHelper(new Helper\SavedSearch());
 		
 		/* Call parent constructor */
 		parent::__construct($request, $response, $invokeArgs);
@@ -61,97 +68,65 @@ extends Action
 	/**
 	 * BREAD Browse
 	 */
-	public function browseAction($returnCollection=false)
+	public function browseAction()
 	{
-		if ($this->contextAllowsRecordFetching()) {
-			/* Range (list_start/list_count) */
-			if ($this->getRequest()->getHeader('Range')) {
-				$this->log("Range: " . $this->getRequest()->getHeader('Range'));
-				if (preg_match('/^items=(\d*)-(\d*)$/',$this->getRequest()->getHeader('Range'),$matches)) {
-					$this->getRequest()->setParam('list_start', $matches[1]);
-					$this->getRequest()->setParam('list_count', $matches[2] - $matches[1] + 1); //need to add the 1 because of how mysql counts
-				}
-			}
-	
-			/* Data */
-			$data = $this->getData();
-
-			/* Get data + count + pagination ids */
-			list (
-				$collectionArray,
-				$collectionCount,
-				$collectionIds
-			) = $this->getEntityRepository()->search($data);
-	
-			/* Set Entity IDs Header (used by pagination) */
-			$this->_response->setHeader('Dope-Entity-Ids', 
-				\Zend_Json::encode($collectionIds, true)
-			);
-				
-			/*
-			 * Set headers for response so Dojo knows current range and total
-			 * 
-			 * Example:
-			 *     Content-Range: "items 25-50/189"
-			 * 
-			 * @todo This should be moved somewhere else
-			 */
-			if ($this->_getParam('list_count')) {
-				/* HTTP Content-Range */
-				$this->_response->setHeader('Content-Range',
-					"items " 
-					. $this->_getParam('list_start', 0) 
-					. "-" 
-					. min(array($this->_getParam('list_count'), $collectionCount)) 
-					. "/" 
-					. $collectionCount
-				);
-					
-				/* HTTP 206 Partial Content */
-				if ($this->_getParam('list_count') < $collectionCount) {
-					$this->_response->setHttpResponseCode(206);
-				}
-			}
-			else {
-				/* HTTP Content-Range */
-				$this->_response->setHeader('Content-Range',
-					"items 0-" . $collectionCount . "/" . $collectionCount
-				);
-			}
-				
-			if ($returnCollection) {
-				/* @todo Huge hack, I know */
-				return $collectionArray;
-			}
-				
-			switch ($this->_helper->contextSwitch()->getCurrentContext()) {
-				case 'dojo': $this->_helper->autoCompleteDojo($collectionArray); break;
-				case 'rest':
-				case 'json': $this->_helper->json($collectionArray); break;
-				case 'xml': $this->_helper->xml($collectionArray); break;
-				case 'csv': $this->_helper->csv($collectionArray); break;
-	
-// 				case 'profile':
-// 					$this->view->profiler = $this->getEntityRepository()->getSearch()->getProfiler();
-// 					$this->view->select = $this->getEntityRepository()->getSelect();
-// 					// do NOT break !
-	
-// 				case 'html':
-// 					$this->view->records = new \Doctrine_Collection($this->getEntityRepository());
-// 					$this->view->records->fromArray($collectionArray);
-// 					$this->view->recordsTotalCount = $collectionCount;
-// 					$this->view->paginatorIds = $collectionIds;
-// 					break;
-			}
-		}
-		else {
+		/* Display */
+		
+		if (! $this->_helper->contextSwitch()->currentContextAllowsRecordFetching()) {
 			/* View params (Data) */
-			$this->view->data = isset($data) ? $data : $this->getData();
-			
+			$this->view->data = $this->getData();
+				
 			/* Load and configure new/add form */
 			if ($this->getEntityDefinition()->getBrowseOptions()->getShowForm()) {
-				$this->view->form = $this->getEntityForm();
+			    $this->view->form = $this->getEntityForm();
 			}
+			
+			return;
+		}
+		
+		/* Search */
+		
+		$search = new Search();
+		$search->setData($this->getData());
+		$search->setEntityRepository($this->getEntityRepository());
+		
+		if (! $this->_helper->savedSearch($search)) {
+			$search->setMode(Search::MODE_WITH_PAGINATION);
+			$search->setType($this->getData()->query
+				? new Search\Type\Query()
+				: new Search\Type\Plain()
+			);
+		}
+		
+		$search->execute();
+		$search->improve();
+		
+		$this->_helper->http->setContentRange(
+			$search->getRangeStart(),
+			$search->getRangeEnd(),
+			$search->getCount()
+		);
+		
+		// ----- //
+		
+		switch ($this->_helper->contextSwitch()->getCurrentContext()) {
+			case 'dojo': $this->_helper->autoCompleteDojo($search->getRecords()); break;
+			case 'rest':
+			case 'json': $this->_helper->json($search->getRecords()); break;
+			case 'xml': $this->_helper->xml($search->getRecords()); break;
+			case 'csv': $this->_helper->csv($search->getRecords()); break;
+	
+// 			case 'profile':
+// 				$this->view->profiler = $this->getEntityRepository()->getSearch()->getProfiler();
+// 				$this->view->select = $this->getEntityRepository()->getSelect();
+// 				// do NOT break !
+
+// 			case 'html':
+// 				$this->view->records = new \Doctrine_Collection($this->getEntityRepository());
+// 				$this->view->records->fromArray($search->getRecords());
+// 				$this->view->recordsTotalCount = $search->getCount();
+// 				$this->view->paginatorIds = $search->getIds();
+// 				break;
 		}
 	}
 	
@@ -306,7 +281,7 @@ extends Action
 		/* Get count */
 		$collectionCount = $this->getEntityRepository()->search(
 			$this->getData(),
-			Search::SEARCH_COUNT_ONLY
+			Search::MODE_COUNT_ONLY
 		);
 	
 		switch($this->_helper->contextSwitch()->getCurrentContext()) {
@@ -675,12 +650,6 @@ extends Action
 				throw new \Exception("Found more than one entity matching all parameters");
 				break;
 		}
-	}
-	
-	protected function contextAllowsRecordFetching()
-	{
-		$currentContext = $this->_helper->contextSwitch->getCurrentContext();
-		return (bool) ($currentContext AND !in_array($currentContext,array('grid', 'html')));
 	}
 	
 	/**

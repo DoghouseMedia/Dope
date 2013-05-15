@@ -5,18 +5,28 @@ namespace Dope\Entity;
 use 
 	Dope\Doctrine\ORM\EntityRepository,
 	Dope\Controller\Data,
+	Dope\Doctrine,
+	Dope\Log,
 	Doctrine\ORM\QueryBuilder;
 
 class Search
 {
-	const SEARCH_NORMAL = '\Dope\Entity\Search::SEARCH_NORMAL';
-	const SEARCH_COUNT_ONLY = '\Dope\Entity\Search::SEARCH_COUNT_ONLY';
-	const SEARCH_WITH_PAGINATION = '\Dope\Entity\Search::SEARCH_WITH_PAGINATION';
+	const MODE_NORMAL = '\Dope\Entity\Search::MODE_NORMAL';
+	const MODE_COUNT_ONLY = '\Dope\Entity\Search::MODE_COUNT_ONLY';
+	const MODE_WITH_PAGINATION = '\Dope\Entity\Search::MODE_WITH_PAGINATION';
+	
+	const LIMIT_YES = true;
+	const LIMIT_FALSE = false;
 	
 	/**
 	 * @var \Dope\Doctrine\ORM\EntityRepository
 	 */
 	protected $entityRepository;
+	
+	/**
+	 * @var \Doctrine\ORM\QueryBuilder
+	 */
+	protected $queryBuilder;
 	
 	/**
 	 * @var \Dope\Controller\Data
@@ -53,29 +63,83 @@ class Search
 	protected $delegatedWheres = array();
 	
 	/**
-	 * Constructor
+	 * Records
 	 * 
-	 * @param \Dope\Doctrine\ORM\EntityRepository $entityRepository
-	 * @param \Dope\Controller\Data $data
+	 * @var array
 	 */
-	public function __construct(EntityRepository $entityRepository, Data $data)
+	protected $records = array();
+	
+	/**
+	 * Count
+	 * 
+	 * @var int
+	 */
+	protected $count = 0;
+	
+	/**
+	 * IDs
+	 * 
+	 * @var array
+	 */
+	protected $ids = array();
+	
+	/**
+	 * Use Limit
+	 * 
+	 * @var boolean
+	 */
+	protected $useLimit = true;
+	
+	/**
+	 * Mode
+	 * 
+	 * @var string
+	 */
+	protected $mode = self::MODE_NORMAL;
+	
+	/**
+	 * Callbacks
+	 * 
+	 * @var array
+	 */
+	protected $callbacks = array();
+	
+	/**
+	 * Type
+	 * 
+	 * @var \Dope\Entity\Search\Type\_Base
+	 */
+	protected $type;
+	
+	/**
+	 * Constructor
+	 */
+	public function __construct()
 	{
-		$this->entityRepository = $entityRepository;
-		$this->data = $data;
+		$this->getProfiler()->punch('search start');
 		
-		//$this->getProfiler()->punch('search start');
+		/* Create SELECT query */
+		$this->queryBuilder = Doctrine::getEntityManager()->createQueryBuilder();
 	}
 	
 	/**
-	 * @return \Dope\Profiler
+	 * @param EntityRepository $entityRepository
+	 * @return \Dope\Entity\Search
 	 */
-	public function getProfiler()
+	public function setEntityRepository(EntityRepository $entityRepository)
 	{
-		if (! $this->profiler instanceof \Dope\Profiler) {
-			$this->profiler = new \Dope\Profiler();
-		}
-		
-		return $this->profiler;
+		$this->entityRepository = $entityRepository;
+		return $this;
+	}
+	
+	/**
+	 * @param Data $data
+	 * @return \Dope\Entity\Search
+	 */
+	public function setData(Data $data)
+	{
+		$this->data = $data;
+		return $this;
 	}
 	
 	/**
@@ -86,6 +150,16 @@ class Search
 	public function getData()
 	{
 		return $this->data;
+	}
+	
+	/**
+	 * Get QueryBuilder
+	 *
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
+	public function getQueryBuilder()
+	{
+	    return $this->queryBuilder;
 	}
 	
 	/**
@@ -130,10 +204,209 @@ class Search
 		if (! $this->tableAlias) {
 			$this->tableAlias = $this->getEntityRepository()
 				->getTableAliases()
-				->getNewAlias(true); 
+				->getNewAlias(true);
 		}
 		
 		return $this->tableAlias;
+	}
+	
+	public function getMode()
+	{
+		return $this->mode;
+	}
+	
+	public function setMode($mode)
+	{
+		$this->mode = $mode;
+		return $this;
+	}
+	
+	public function useLimit($useLimit=null)
+	{
+	    if (is_bool($useLimit)) {
+	        $this->useLimit = $useLimit;
+	    }
+	
+	    return $this->useLimit;
+	}
+	
+	public function getRecords()
+	{
+		return $this->records;
+	}
+	
+	public function getCount()
+	{
+		return $this->count;
+	}
+	
+	public function getIds()
+	{
+		return $this->ids;
+	}
+	
+	public function getRangeStart()
+	{
+		return $this->getData()->getParam('list_start') ?: 0;
+	}
+	
+	public function getRangeEnd()
+	{
+		if ($this->getData()->getParam('list_count')) {
+		    return min(array(
+			    $this->getData()->getParam('list_count'),
+			    $this->getCount()
+		    ));
+		}
+		else {
+			return $this->getCount();
+		}
+	}
+	
+	public function setRecords($records)
+	{
+		$this->records = $records;
+		return $this;
+	}
+	
+	public function setCount($count)
+	{
+	    $this->count = $count;
+	    return $this;
+	}
+	
+	public function setIds($ids)
+	{
+	    $this->ids = $ids;
+	    
+	    foreach ($this->callbacks as $callback) {
+	    	$callback($this->ids);
+	    }
+	    
+	    return $this;
+	}
+	
+	public function setType(Search\Type\_Base $type)
+	{
+		$this->type = $type;
+		$this->type->setSearch($this);
+		return $this;
+	}
+	
+	public function onSetIds(\Closure $callback)
+	{
+		$this->callbacks[] = $callback;
+		return $this;
+	}
+	
+	/**
+	 * Get column weight factor (for search)
+	 *
+	 * This should obviously be overriden when models need to specify weighting for fields
+	 *
+	 * @param string $columnName
+	 * @param string $focusPresetName
+	 * @return int column weight factor
+	 */
+	public function getColumnWeightFactor($columnName, $focusPresetName=false)
+	{
+		/**
+		 * @todo Implement!!
+		 */
+	    return 1;
+	}
+	
+	/**
+	 * Execute
+	 * 
+	 * @return \Dope\Entity\Search
+	 */
+	public function execute()
+	{
+		$this->type->preExecute();
+		
+	    /* ----- Profiler ----- */
+	    $this->getProfiler()->punch('filter start');
+	
+	    /* Get some variables from Doctrine */
+	    $modelName = $this->getEntityRepository()->getClassName(); // eg: [App]\Entity\Candidate
+	
+	    /* Set FROM */
+	    $this->getQueryBuilder()->from($modelName, (string) $this->getTableAlias());
+	
+	    /* Set distinct */
+	    $this->getQueryBuilder()->distinct(true);
+	
+	    /* ----- Profiler ----- */
+	    $this->getProfiler()->punch('filter pre where');
+	
+	    /* Sort - preparation */
+	    $this->getSort()->useDefaultSort((bool) $this->getData()->query); // use default sort if query
+	    $this->getSort()->processSelect($this->getQueryBuilder());
+	
+	    /* Filter */
+	    $this->filter();
+	
+	    /* Limit */
+	    $this->limit();
+	
+	    /* Select columns */
+	    if ($this->getData()->select AND $this->getData()->select != '') {
+	        $selectColumns = explode(',', $this->getData()->select);
+	        foreach ($selectColumns as &$selectColumn) {
+	            $selectColumn = $this->getTableAlias() . '.' . $selectColumn;
+	        }
+	        $this->getQueryBuilder()->select(join(',', $selectColumns));
+	    }
+	
+	    Log::console('SELECT after filter');
+	    Log::console($this->getQueryBuilder()->getDQL());
+	
+	    $this->type->postExecute();
+	    
+	    return $this;
+	}
+	
+	/**
+	 * Improve
+	 * 
+	 * @return \Dope\Entity\Search
+	 */
+	public function improve()
+	{
+	    $this->getProfiler()->punch('search pre populate relations');
+	
+	    /* Populate relations */
+	    $this->populateRelations();
+	
+	    /* Populate toString field */
+	    $this->populateToString();
+	     
+	    $this->getProfiler()->punch('search pre return 2');
+	    //$this->debug($FINAL_DATA_ARRAY, "FINAL DATA ARRAY");
+	
+	    return $this;
+	}
+	
+	public function limit()
+	{
+	    if ($this->useLimit()) {
+	        /* Limit (and offset) */
+	        if ($this->getData()->list_count) {
+	            $this->getQueryBuilder()->setMaxResults(
+                    (int) $this->getData()->list_count
+	            );
+	
+	            /* Offset (for limit) */
+	            if ($this->getData()->list_start) {
+	                $this->getQueryBuilder()->setFirstResult(
+                        (int) $this->getData()->list_start
+	                );
+	            }
+	        }
+	    }
+	    
+	    return $this;
 	}
 	
 	/**
@@ -141,27 +414,9 @@ class Search
 	 * 
 	 * @return \Doctrine\ORM\QueryBuilder
 	 */
-	public function filter($useLimit=true, $useDefaultSort=true)
+	public function filter()
 	{
 		$this->getProfiler()->punch('filter start');
-		
-		/* Get some variables from Doctrine */
-		$modelName = $this->getEntityRepository()->getClassName(); // eg: [App]\Entity\Candidate
-		
-		/* Create SELECT query */
-		$select = \Dope\Doctrine::getEntityManager()->createQueryBuilder();
-		
-		/* Set FROM */
-		$select->from($modelName, (string) $this->getTableAlias());
-		
-		/* Set distinct */
-		$select->distinct(true);
-		
-		$this->getProfiler()->punch('filter pre where');
-		
-		/* Sort - preparation */
-		$this->getSort()->useDefaultSort($useDefaultSort);
-		$select = $this->getSort()->processSelect($select);
 		
 		/*
 		 * Loop over column names
@@ -169,10 +424,11 @@ class Search
 		 * - Apply sort orders
 		 * - Apply where filters
 		 */
-		foreach($this->getEntityRepository()->getColumnNames() as $columnName) {
+		foreach ($this->getEntityRepository()->getColumnNames() as $columnName) {
 			/* Apply sort */
-			$select = $this->getSort()->processKeySort(
-				$select,
+			//$select = 
+			$this->getSort()->processKeySort(
+				$this->getQueryBuilder(),
 				$this->getTableAlias(),
 				$columnName
 			);
@@ -247,16 +503,11 @@ class Search
 					. $searchOperator . ' ' . (string) $value;
 			}
 			
-			if ($columnName!='id' AND ($relation = $this->columnHasOtherRelation($columnName))) {
-				$this->delegatedWheres[$relation->getAlias()] = $WHERES;
+			if (count($WHERES['AND'])) {
+				$this->getQueryBuilder()->andWhere(join(' AND ', $WHERES['AND']));
 			}
-			else {
-				if (count($WHERES['AND'])) {
-					$select->andWhere(join(' AND ', $WHERES['AND']));
-				}
-				if (count($WHERES['OR'])) {
-					$select->andWhere(join(' OR ', $WHERES['OR']));
-				}
+			if (count($WHERES['OR'])) {
+				$this->getQueryBuilder()->andWhere(join(' OR ', $WHERES['OR']));
 			}
 		}
 		
@@ -268,72 +519,114 @@ class Search
 		 * - Apply joins
 		 * - Apply filters
 		 */
-		$this->ormRelationsCallbackProcessSelect($select, 'pre');
-		$this->ormRelationsCallbackProcessSelect($select);
-		$this->ormRelationsCallbackProcessSelect($select, 'post');
+		$this->ormRelationsCallbackProcessSelect('pre');
+		$this->ormRelationsCallbackProcessSelect();
+		$this->ormRelationsCallbackProcessSelect('post');
 		
 		$this->getProfiler()->punch('filter pre limit');
 		
-		/* Apply limit */
-		if ($useLimit) {
-			$select = $this->limit(
-				$select,
-				$this->getData()->list_count,
-				$this->getData()->list_start
-			);
-		}
-		
-		/* Select columns */
-		if ($this->getData()->select AND $this->getData()->select != '') {
-		    $selectColumns = explode(',', $this->getData()->select);
-		    foreach($selectColumns as &$selectColumn) {
-		        $selectColumn = $this->getTableAlias() . '.' . $selectColumn;
-		    }
-		    $select->select(join(',', $selectColumns));
-		}
-		
 		//echo $select->getQuery()->getSQL(); die;
 		
-		return $select;
+		return $this;
 	}
 	
-	public function columnHasOtherRelation($columnName)
+	/**
+	 * This code is stolen/duplicated from Dope\Entity::__toString().
+	 * @todo Clean up
+	 *
+	 * @param array $collection
+	 * @return array $collection
+	 */
+	public function populateToString()
+	{	
+	    $definition = new \Dope\Entity\Definition($this->getEntityRepository()->getClassName());
+	
+	    if (count($definition->getToStringColumnNames())) {
+	        foreach ($this->records as &$record) {
+	            $values = array();
+	            foreach ($definition->getToStringColumnNames() as $columnName) {
+	                if (isset($record[$columnName])) {
+	                    $values[] = $record[$columnName];
+	                }
+	            }
+	            $record['__toString'] = (string) join(' ', $values);
+	        }
+	    }
+	    else {
+	        foreach ($this->records as &$record) {
+	            $record['__toString'] = ucfirst($this->getModelKey()) . ' ' . $record['id'];
+	        }
+	    }
+	
+	    return $this;
+	}
+	
+	public function populateRelations()
 	{
-// 		foreach($this->getRelations() as $relation) {
-// 			if ($relation->matchesColumn($columnName) AND $relation->getType() != 'Doctrine_Relation_LocalKey') {
-// 				return $relation;
-// 			}
-// 		}
-		
-		return false;
+	    $md = $this->getEntityRepository()->getClassMetadata();
+	    
+	    foreach ($this->records as &$record) {
+	        foreach ($md->getAssociationMappings() as $alias => $mapping) {	
+	            Log::console($alias);
+	            Log::console($mapping);
+
+	            switch ($mapping['type']) {
+	                case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_ONE:
+	                case \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_ONE:
+	                    if (isset($mapping['joinColumns'][0]['name']) AND
+	                    	isset($record[$mapping['joinColumns'][0]['name']])
+	                    ) {
+	                        $record[$alias] = (string) \Dope\Doctrine::getRepository($mapping['targetEntity'])
+	                        	->find($record[$mapping['joinColumns'][0]['name']]);
+	                    } else {
+	                        $record[$alias] = '';
+	                    }
+	                    break;
+	
+	                case \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY:
+	                //case \Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_MANY:
+	                    $record[$alias] = array();
+	                    	
+	                    $_entities = \Dope\Doctrine::getRepository($mapping['targetEntity'])->findBy(array(
+	                        $mapping['mappedBy'] => $record['id']
+	                    ));
+	
+	                    foreach ($_entities as $_entity) {
+	                        $record[$alias][] = $_entity->id;
+	                    }
+	                    break;
+	            }
+		    }
+		}
+	
+		return $this;
 	}
 	
-	protected function ormRelationsCallbackProcessSelect(QueryBuilder $select, $step='')
+	protected function ormRelationsCallbackProcessSelect($step='')
 	{
 		$methodName = 'processSelect' . ucfirst($step);
 		
-		return $this->ormRelationsCallback($select, $methodName,
-			function(Search\Relation $relation, $methodName, QueryBuilder $select) {
+		return $this->ormRelationsCallback($methodName,
+			function (Search\Relation $relation, $methodName, QueryBuilder $select) {
 				return $relation->$methodName($select);
 			}
 		);
 	}
 	
-	protected function ormRelationsCallback(QueryBuilder $select, $methodName, \Closure $callback)
+	protected function ormRelationsCallback($methodName, \Closure $callback)
 	{
-		foreach($this->getRelations() as $relationName => $relation) {
-			$select = $callback($relation, $methodName, $select);
+		foreach ($this->getRelations() as $relationName => $relation) {
+			$callback($relation, $methodName, $this->getQueryBuilder());
 		}
 
-		return $select;
+		return $this;
 	}
 	
 	protected function getRelations()
 	{
 		if (! is_array($this->relations)) {
 			$this->relations = array();
-			foreach($this->getEntityRepository()->getAssociationMappings() as $alias => $mapping) {
-			    //echo $alias . "\n";
+			foreach ($this->getEntityRepository()->getAssociationMappings() as $alias => $mapping) {
 				$this->relations[$alias] = new Search\Relation($this, $mapping);
 			}
 		}
@@ -341,18 +634,58 @@ class Search
 		return $this->relations;
 	}
 	
-	public static function limit(QueryBuilder $select, $count=false, $start=0)
+	public static function getArrayFromColumn($columnName, array $rows)
 	{
-		/* Limit (and offset) */
-		if ($count) {
-			$select->setMaxResults((int) $count);
-			
-			/* Offset (for limit) */
-			if ($start) {
-				$select->setFirstResult((int) $start);
-			}
-		}
-		
-		return $select;
+	    $result = array();
+	
+	    foreach ($rows as $row) {
+	        $result[] = $row[$columnName];
+	    }
+	
+	    return $result;
+	}
+	
+	/**
+	 * @return \Dope\Profiler
+	 */
+	public function getProfiler()
+	{
+	    if (! $this->profiler instanceof \Dope\Profiler) {
+	        $this->profiler = new \Dope\Profiler();
+	    }
+	
+	    return $this->profiler;
+	}
+	
+	public function debug($object, $title=null)
+	{
+	    /*
+	     * @todo Encapsulate this in \Dope\Env
+	     */
+	     
+	    // 		$showDebug = (
+	    // 			\APPLICATION_ENV != '' AND
+	    // 			!in_array(\APPLICATION_ENV, array('staging','development','production'))
+	    // 		);
+	
+	    // 		if ($showDebug) {
+	    // 			if (! $this->logger instanceof \Zend_Log) {
+	    // 				$this->logger = new \Zend_Log();
+	    //         		$this->logger->addWriter(new \Zend_Log_Writer_Firebug());
+	    // 			}
+	    	
+	    // 			if ($title) {
+	    // 				$this->logger->log('----- ' . $title . ' -----', \Zend_Log::INFO);
+	    // 			}
+	    	
+	    // 			$this->logger->log(
+	    // 				is_string($object) ? addslashes($object) : $object,
+	    // 				\Zend_Log::INFO
+	    // 			);
+	    	
+	    // 			return true;
+	    // 		}
+	
+	    // 		return false;
 	}
 }

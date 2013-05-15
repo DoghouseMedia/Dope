@@ -30,9 +30,9 @@ extends Action\Model
 		return parent::getModelClassName(array());
 	}
 	
-	public function browseAction($returnCollection=false)
+	public function browseAction()
 	{
-		parent::browseAction($returnCollection);
+		parent::browseAction();
 		$this->view->modelChildrenTables = $this->getEntityRepository()->getSubClassTables();
 	}
 }
