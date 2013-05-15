@@ -62,8 +62,9 @@ class SavedSearch extends \Zend_Controller_Action_Helper_Abstract
             $this->getRequest()->getParam('list_start'),
             $this->getRequest()->getParam('list_count')
         );
+        $total = count($savedSearch->results);
         
-        $search->setType(new Search\Type\ByIds($ids));
+        $search->setType(new Search\Type\ByIds($ids, $total));
 
         return true;
 	}

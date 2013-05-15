@@ -255,13 +255,13 @@ class Search
 	public function getRangeEnd()
 	{
 		if ($this->getData()->getParam('list_count')) {
-		    return min(array(
+		    return $this->getRangeStart() + min(array(
 			    $this->getData()->getParam('list_count'),
 			    $this->getCount()
 		    ));
 		}
 		else {
-			return $this->getCount();
+			return $this->getRangeStart() + $this->getCount();
 		}
 	}
 	

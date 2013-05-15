@@ -2,28 +2,34 @@
 
 namespace Dope\Entity\Search\Type;
 
+use Dope\Entity\Search;
+
 class ByIds extends Plain
 {
 	protected $ids = array();
+	protected $total = 0;
 	
-	public function __construct(array $ids)
+	public function __construct(array $ids, $total)
 	{
 		$this->ids = $ids;
+		$this->total = $total;
 	}
 	
 	public function preExecute()
-	{
+	{	
 		$this->getSearch()->useLimit(false);
 		
-		return parent::preExecute();
+		parent::preExecute();
 	}
 	
-	public function execute()
+	public function postExecute()
 	{
 		$this->getSearch()->getQueryBuilder()->add('where',
-		    $this->getSearch()->getQueryBuilder()->expr()->in('t.id', $this->ids)
+		    $this->getSearch()->getQueryBuilder()->expr()->in($this->getSearch()->getTableAlias() . '.id', $this->ids)
 		);
 		
-		return parent::execute();
+		parent::postExecute();
+		
+		$this->getSearch()->setCount($this->total);
 	}
 }
