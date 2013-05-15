@@ -106,9 +106,11 @@ dojo.declare('dope.layout.ContentPane', [
 			this._loadingDisabler.destroy();
 		}
 		
-		dojo.forEach(this.getDescendants(), function(widget) {
-			widget.destroyRecursive();
-		});
+		if (this.isTopPane) {
+			dojo.forEach(this.getDescendants(), function(widget) {
+				widget.destroy();
+			});
+		}
 		
 		return this.inherited(arguments);
 	},
