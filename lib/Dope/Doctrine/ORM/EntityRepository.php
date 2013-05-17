@@ -226,16 +226,14 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		$formclass = $prefix . '\\' . $inflector->filter($alias);
 
 		/*
-		 * Yuck, we need to turn off error reporting since 
-		 * trying to autoload will spit out Warnings!
+		 * Yuck, we need to turn off error reporting since trying
+		 * to autoload will spit out warnings if it doesn't exist!
 		 * 
 		 * @todo There are very few models that don't have a form,
 		 * so creating a default form might be a better solution.
 		 */
 		$errorReporting = error_reporting(0);
-		if (\Zend_Loader_Autoloader::autoload($formclass)) {
-			$form = new $formclass();
-		}
+		$form = new $formclass();
 		error_reporting($errorReporting);
 		
 		if (! $form instanceof \Dope\Form\_Base) {
