@@ -3,13 +3,14 @@
 namespace Dope\Doctrine\ORM;
 
 use Doctrine\ORM\Mapping\UniqueConstraint,
+	Dope\Entity,
     Dope\Entity\Search,
     Dope\Entity\Definition,
     Dope\Controller\Data,
     Dope\Config\Helper as Config;
 
 class EntityRepository extends \Doctrine\ORM\EntityRepository
-{
+{	
 	/**
 	 * @var \Dope\Entity\Search\Table\Aliases
 	 */
@@ -260,5 +261,61 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		}
 		
 		return false;
+	}
+	
+	public function flatten(array $data, $forceShallow=false)
+	{
+		$array = array();
+		$md = $this->getClassMetadata();
+		$keys = array_merge(
+	        $md->getFieldNames(),
+	        $md->getAssociationNames()
+		);
+		
+		foreach ($keys as $key) {
+			if (! isset($data[$key])) {
+				continue;
+			}
+			
+		    if ($forceShallow AND $data[$key] instanceof \DateTime) {
+		        switch ($md->getTypeOfColumn($key)) {
+		            case 'time':
+		                $array[$key] = $data[$key]->format("H:i:s");
+		                break;
+		            case 'date':
+		                $array[$key] = $data[$key]->format("Y-m-d");
+		                break;
+		            case 'datetime':
+		            default:
+		                $array[$key] = $data[$key]->format("Y-m-d H:i:s");
+		                break;
+		        }
+		    }
+		    elseif ($data[$key] instanceof \Doctrine\Common\Collections\Collection) {
+		        $_key = $key . '_ids';
+		        $array[$_key] = array();
+		        foreach ($data[$key] as $_entity) {
+		            $array[$_key][] = $_entity->id;
+		        }
+		    }
+		    elseif ($data[$key] instanceof Entity) {
+		        // Force load
+		        (string) $data[$key];
+		         
+		        if ($forceShallow) {
+		            $array[$key] = trim((string) $data[$key]);
+		        }
+		        $array[$key . '_id'] = (int) $data[$key]->id;
+		    }
+		    else {
+		        $array[$key] = trim($data[$key]);
+		    }
+		}
+		
+		if ($md->discriminatorValue) {
+		    $array['dtype'] = $md->discriminatorValue;
+		}
+		
+		return $array;
 	}
 }

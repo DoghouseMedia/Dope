@@ -325,7 +325,9 @@ class Search
 	 */
 	public function execute()
 	{
-		$this->type->preExecute();
+		if ($this->type instanceof Search\Type\_Base) {
+			$this->type->preExecute();
+		}
 		
 	    /* ----- Profiler ----- */
 	    $this->getProfiler()->punch('filter start');
@@ -354,19 +356,32 @@ class Search
 	
 	    /* Select columns */
 	    if ($this->getData()->select AND $this->getData()->select != '') {
-	        $selectColumns = explode(',', $this->getData()->select);
-	        foreach ($selectColumns as &$selectColumn) {
-	            $selectColumn = $this->getTableAlias() . '.' . $selectColumn;
-	        }
-	        $this->getQueryBuilder()->select(join(',', $selectColumns));
+	        $this->_selectArray(explode(',', $this->getData()->select));
 	    }
 	
 	    Log::console('SELECT after filter');
 	    Log::console($this->getQueryBuilder()->getDQL());
 	
-	    $this->type->postExecute();
+	    if ($this->type instanceof Search\Type\_Base) {
+	    	$this->type->postExecute();
+	    }
 	    
 	    return $this;
+	}
+	
+	public function _selectArray($columns)
+	{
+	    $tableAlias = $this->getTableAlias();
+	    $columns = array_map(function($column) use ($tableAlias) {
+	        return $tableAlias . '.' . $column;
+	    } , $columns);
+	    return $this->select($columns);
+	}
+	
+	public function select(array $columns)
+	{
+		$this->getQueryBuilder()->select(join(',', $columns));
+		return $this;
 	}
 	
 	/**

@@ -160,58 +160,12 @@ implements \IteratorAggregate
 		return new \ArrayIterator($this->toArray());
 	}
 	
-	public function toArray($flatten=true)
+	public function toArray($forceShallowFlattening)
 	{
-		$array = array();
-		
-		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
-		
-		$keys = array_merge(
-			$md->getFieldNames(),
-			$md->getAssociationNames()
+		return $this->getRepository()->flatten(
+			get_object_vars($this),
+			$forceShallowFlattening
 		);
-		
-		foreach ($keys as $key) {
-			if ($flatten && $this->{$key} instanceof \DateTime) {
-				switch ($md->getTypeOfColumn($key)) {
-					case 'time':
-						$array[$key] = $this->$key->format("H:i:s");
-						break;
-					case 'date':
-						$array[$key] = $this->$key->format("Y-m-d");
-						break;
-					case 'datetime':
-					default:
-						$array[$key] = $this->$key->format("Y-m-d H:i:s");
-						break;
-				}
-			}
-			elseif ($this->$key instanceof \Doctrine\Common\Collections\Collection) {
-			    $_key = $key . '_ids';
-			    $array[$_key] = array();
-			    foreach ($this->$key as $_entity) {
-			        $array[$_key][] = $_entity->id;
-			    }
-			}
-			elseif ($this->$key instanceof Entity) {
-			    // Force load
-			    (string) $this->$key;
-			    
-			    if ($flatten) {
-				    $array[$key] = (string) $this->$key;
-			    }
-				$array[$key . '_id'] = (int) $this->$key->id;
-			}
-			else {
-				$array[$key] = $this->$key;
-			}
-		}
-		
-		if ($md->discriminatorValue) {
-		    $array['dtype'] = $md->discriminatorValue;
-		}
-
-		return $array;
 	}
 
 	/**

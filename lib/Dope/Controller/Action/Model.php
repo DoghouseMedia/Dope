@@ -7,6 +7,7 @@ use Dope\Controller\Action,
     Dope\Entity\Search,
     Dope\Doctrine,
     Dope\Config\Helper as Config,
+    Doctrine\ORM\Query as Query,
     Zend_Controller_Request_Abstract as Request,
     Zend_Controller_Response_Abstract as Response,
 	Zend_Controller_Action_HelperBroker as HelperBroker;
@@ -71,7 +72,6 @@ extends Action
 	public function browseAction()
 	{
 		/* Display */
-		
 		if (! $this->_helper->contextSwitch()->currentContextAllowsRecordFetching()) {
 			/* View params (Data) */
 			$this->view->data = $this->getData();
@@ -87,14 +87,14 @@ extends Action
 		/* Search */
 		$search = $this->getEntitySearch(Search::MODE_WITH_PAGINATION);
 		
+		/* HTTP Content-Range */
 		$this->_helper->http->setContentRange(
 			$search->getRangeStart(),
 			$search->getRangeEnd(),
 			$search->getCount()
 		);
 		
-		// ----- //
-		
+		/* Respond */
 		switch ($this->_helper->contextSwitch()->getCurrentContext()) {
 			case 'dojo': $this->_helper->autoCompleteDojo($search->getRecords()); break;
 			case 'rest':
@@ -336,7 +336,13 @@ extends Action
 			/* This will exit with 304 if conditions are met */
 			$this->_helper->notModifiedSince(max($maxCreated,$maxUpdated));
 		}
-	
+		
+		/*
+		 * Define some vars
+		 */
+		
+		$matches = array();
+		
 		/*
 		 * Doctrine uses a lot of memory. With 128M, I couldn't load more than
 		 * 5000 objects/rows and dojo autocomplete widgets (Combobox/FilteringSelect)
@@ -346,52 +352,48 @@ extends Action
 		 * Doing so, we can limit the fields Doctrine fetches from DB, and switch from
 		 * object hydration to array hydration.
 		 */
-	
-		$search = new Search($this->getEntityRepository(), $this->getData());
-		$select = $search->filter();
-			
-		$matches = array();
-	
-		$toStringColumnNames = $this->getEntityDefinition()->getToStringColumnNames();
 		
-		if (! in_array('id', $toStringColumnNames)) {
-			/* Prepend 'id' to column list */
-			array_unshift($toStringColumnNames, 'id');
-		}
-		
-		foreach($toStringColumnNames as &$toStringColumnName) {
-			$toStringColumnName = $search->getTableAlias() . '.' . $toStringColumnName;
+		$columns = $this->getEntityDefinition()->getToStringColumnNames();
+		// Prepend 'id' to column list
+		if (! in_array('id', $columns)) {
+		    array_unshift($columns, 'id');
 		}
 	
-		/* Only select what we need */
-		$select->select(join(',', $toStringColumnNames));
-	
-		$records = $select->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+		/*
+		 * Search
+		 */
+		
+		$search = new Search();
+		$search->setEntityRepository($this->getEntityRepository());
+		$search->setData($this->getData());
+		$search->execute();
+		$search->_selectArray($columns);
+		
+		$records = $search->getQueryBuilder()
+			->getQuery()
+			->getResult(Query::HYDRATE_ARRAY);
 	
 		/** @var array $record */
-		foreach($records as $record) {
+		foreach ($records as $record) {
 			$values = array();
-			$recordId = array_shift($record);
-				
-			foreach($record as $i => $value) {
-				$_value = trim($value);
-	
-				/* Only assign value if not empty */
-				if (! empty($_value)) {
-					$values[] = $_value;
-				}
-			}
-				
-			$matches[$recordId] = count($values)
+			$id = array_shift($record);
+
+			// Flatten data
+			$values = $this->getEntityRepository()->flatten($record, true);
+			
+			// Remove empty values
+			$values = array_filter($values, 'strlen');
+						
+			$matches[$id] = count($values)
 				? join(' ', $values)
-				: $recordId;
+				: $id;
 		}
 	
 		if ($returnMatches) {
 			return $matches;
 		}
 		
-		switch($this->_helper->contextSwitch()->getCurrentContext()) {
+		switch ($this->_helper->contextSwitch()->getCurrentContext()) {
 			case 'dojo': $this->_helper->autoCompleteDojo($matches); break;
 			case 'json': $this->_helper->json($matches); break;
 			case 'xml': $this->_helper->xml($matches); break;
