@@ -41,11 +41,11 @@ class Search
 	protected $sort;
 	
 	/**
-	 * Profiler object
+	 * Debug object
 	 * 
-	 * @var \Dope\Profiler
+	 * @var \Dope\Debug
 	 */
-	protected $profiler;
+	protected $debug;
 	
 	/**
 	 * Table alias
@@ -118,7 +118,7 @@ class Search
 	 */
 	public function __construct()
 	{
-		$this->getProfiler()->punch('search start');
+		$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		/* Create SELECT query */
 		$this->queryBuilder = Doctrine::getEntityManager()->createQueryBuilder();
@@ -326,11 +326,18 @@ class Search
 	public function execute()
 	{
 		if ($this->type instanceof Search\Type\_Base) {
+			/* ----- Profile ----- */
+			$this->getDebug()->punch(__CLASS__, __LINE__);
+			
+			/* PreExecute */
 			$this->type->preExecute();
+			
+			/* ----- Profile ----- */
+			$this->getDebug()->punch(__CLASS__, __LINE__);
 		}
 		
-	    /* ----- Profiler ----- */
-	    $this->getProfiler()->punch('filter start');
+	    /* ----- Profile ----- */
+	    $this->getDebug()->punch(__CLASS__, __LINE__);
 	
 	    /* Get some variables from Doctrine */
 	    $modelName = $this->getEntityRepository()->getClassName(); // eg: [App]\Entity\Candidate
@@ -341,8 +348,8 @@ class Search
 	    /* Set distinct */
 	    $this->getQueryBuilder()->distinct(true);
 	
-	    /* ----- Profiler ----- */
-	    $this->getProfiler()->punch('filter pre where');
+	    /* ----- Profile ----- */
+	    $this->getDebug()->punch(__CLASS__, __LINE__);
 	
 	    /* Sort - preparation */
 	    $this->getSort()->useDefaultSort((bool) $this->getData()->query); // use default sort if query
@@ -355,26 +362,38 @@ class Search
 	    $this->limit();
 	
 	    /* Select columns */
-	    if ($this->getData()->select AND $this->getData()->select != '') {
-	        $this->_selectArray(explode(',', $this->getData()->select));
+	    if ($this->getSelectedColumns()) {
+	        $this->_selectArray($this->getSelectedColumns());
 	    }
 	
-	    Log::console('SELECT after filter');
-	    Log::console($this->getQueryBuilder()->getDQL());
+	    /* ----- Debug ----- */
+	    $this->getDebug()->log('SELECT after filter', $this->getQueryBuilder()->getDQL());
 	
 	    if ($this->type instanceof Search\Type\_Base) {
+	    	/* ----- Profile ----- */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
+	    	
+	    	/* PostExecute */
 	    	$this->type->postExecute();
+	    	
+	    	/* ----- Profile ----- */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 	    }
 	    
 	    return $this;
 	}
 	
-	public function _selectArray($columns)
+	public function _selectArray(array $columns)
 	{
+		// Fetch tableAlias
 	    $tableAlias = $this->getTableAlias();
-	    $columns = array_map(function($column) use ($tableAlias) {
-	        return $tableAlias . '.' . $column;
+	    
+	    // Prefix with tableAlias
+	    $columns = array_map(function($columnName) use ($tableAlias) {
+	        return $tableAlias . '.' . $columnName;
 	    } , $columns);
+
+	    // Select and return
 	    return $this->select($columns);
 	}
 	
@@ -384,6 +403,19 @@ class Search
 		return $this;
 	}
 	
+	public function getSelectedColumns()
+	{
+		if (! $this->getData()->select) {
+			return false;
+		}
+			
+		// Filter out columns that don't exist here
+		return array_filter(
+			explode(',', $this->getData()->select),
+			array($this->getEntityRepository()->getClassMetadata(), 'hasField')
+		);
+	}
+	
 	/**
 	 * Improve
 	 * 
@@ -391,16 +423,11 @@ class Search
 	 */
 	public function improve()
 	{
-	    $this->getProfiler()->punch('search pre populate relations');
-	
 	    /* Populate relations */
 	    $this->populateRelations();
-	
+	    
 	    /* Populate toString field */
 	    $this->populateToString();
-	     
-	    $this->getProfiler()->punch('search pre return 2');
-	    //$this->debug($FINAL_DATA_ARRAY, "FINAL DATA ARRAY");
 	
 	    return $this;
 	}
@@ -430,10 +457,13 @@ class Search
 	 * Get filtered query
 	 * 
 	 * @return \Doctrine\ORM\QueryBuilder
+	 * 
+	 * @todo Refactor. Sorry for anyone who stumbles on this.
 	 */
 	public function filter()
 	{
-		$this->getProfiler()->punch('filter start');
+		/* Profile */
+	    $this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		/*
 		 * Loop over column names
@@ -443,7 +473,6 @@ class Search
 		 */
 		foreach ($this->getEntityRepository()->getColumnNames() as $columnName) {
 			/* Apply sort */
-			//$select = 
 			$this->getSort()->processKeySort(
 				$this->getQueryBuilder(),
 				$this->getTableAlias(),
@@ -468,7 +497,7 @@ class Search
 				'OR' => array()		
 			);
 			
-			foreach($values as $value) {
+			foreach ($values as $value) {
 				$value = rtrim($value, '/');
 				if ($value == '') continue;
 				
@@ -540,9 +569,8 @@ class Search
 		$this->ormRelationsCallbackProcessSelect();
 		$this->ormRelationsCallbackProcessSelect('post');
 		
-		$this->getProfiler()->punch('filter pre limit');
-		
-		//echo $select->getQuery()->getSQL(); die;
+		/* Profile */
+	    $this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		return $this;
 	}
@@ -556,6 +584,9 @@ class Search
 	 */
 	public function populateToString()
 	{	
+		/* Profile */
+		$this->getDebug()->punch(__CLASS__, __LINE__);
+		
 	    $definition = new Definition($this->getEntityRepository()->getClassName());
 	
 	    if (count($definition->getToStringColumnNames())) {
@@ -574,19 +605,27 @@ class Search
 	            $record['__toString'] = ucfirst($this->getEntityRepository()->getModelKey()) . ' ' . $record['id'];
 	        }
 	    }
+	    
+	    /* Profile */
+	    $this->getDebug()->punch(__CLASS__, __LINE__);
 	
 	    return $this;
 	}
 	
 	public function populateRelations()
 	{
+		/* Profile */
+		$this->getDebug()->punch(__CLASS__, __LINE__);
+		
 	    $md = $this->getEntityRepository()->getClassMetadata();
+	    $columnNames = explode(',', $this->getData()->select ?: '');
 	    
 	    foreach ($this->records as &$record) {
-	        foreach ($md->getAssociationMappings() as $alias => $mapping) {	
-	            Log::console($alias);
-	            Log::console($mapping);
-	            
+	        foreach ($md->getAssociationMappings() as $alias => $mapping) {
+	        	if (count($columnNames) AND !in_array($alias, $columnNames)) {
+	        		continue;
+	        	}
+	        	
 	            $targetRepo = Doctrine::getRepository($mapping['targetEntity']);
 
 	            switch ($mapping['type']) {
@@ -618,6 +657,9 @@ class Search
 	            }
 		    }
 		}
+		
+		/* Profile */
+		$this->getDebug()->punch(__CLASS__, __LINE__);
 	
 		return $this;
 	}
@@ -664,48 +706,17 @@ class Search
 	
 	    return $result;
 	}
-	
+
 	/**
-	 * @return \Dope\Profiler
+	 * 
+	 * @return \Dope\Debug
 	 */
-	public function getProfiler()
+	public function getDebug()
 	{
-	    if (! $this->profiler instanceof \Dope\Profiler) {
-	        $this->profiler = new \Dope\Profiler();
-	    }
-	
-	    return $this->profiler;
-	}
-	
-	public function debug($object, $title=null)
-	{
-	    /*
-	     * @todo Encapsulate this in \Dope\Env
-	     */
-	     
-	    // 		$showDebug = (
-	    // 			\APPLICATION_ENV != '' AND
-	    // 			!in_array(\APPLICATION_ENV, array('staging','development','production'))
-	    // 		);
-	
-	    // 		if ($showDebug) {
-	    // 			if (! $this->logger instanceof \Zend_Log) {
-	    // 				$this->logger = new \Zend_Log();
-	    //         		$this->logger->addWriter(new \Zend_Log_Writer_Firebug());
-	    // 			}
-	    	
-	    // 			if ($title) {
-	    // 				$this->logger->log('----- ' . $title . ' -----', \Zend_Log::INFO);
-	    // 			}
-	    	
-	    // 			$this->logger->log(
-	    // 				is_string($object) ? addslashes($object) : $object,
-	    // 				\Zend_Log::INFO
-	    // 			);
-	    	
-	    // 			return true;
-	    // 		}
-	
-	    // 		return false;
+		if (! $this->debug instanceof \Dope\Debug) {
+		    $this->debug = new \Dope\Debug();
+		}
+		
+		return $this->debug;
 	}
 }

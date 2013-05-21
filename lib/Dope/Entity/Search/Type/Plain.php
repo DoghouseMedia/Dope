@@ -15,12 +15,12 @@ class Plain extends _Base
 	
 	public function postExecute()
 	{
-		//$this->getSearch()->getProfiler()->punch('search pre return');
-			
-		Log::console("PRE RETURN SQL");
-		Log::console($this->getSearch()->getQueryBuilder()->getDQL());
-		
-		//$this->getSearch()->debug($this->getQueryBuilder()->getSqlQuery(), "PRE RETURN SQL");
+		/* Profile */
+		$this->getDebug()->punch(__CLASS__, __LINE__);
+
+		/* Debug */
+		$this->getDebug()->log('PRE RETURN DQL', $this->getSearch()->getQueryBuilder()->getDQL());
+		$this->getDebug()->log('PRE RETURN SQL', $this->getSearch()->getQueryBuilder()->getQuery()->getSQL());
 			
 		switch($this->getSearch()->getMode()) {
 			

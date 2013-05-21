@@ -102,17 +102,15 @@ extends Action
 			case 'xml': $this->_helper->xml($search->getRecords()); break;
 			case 'csv': $this->_helper->csv($search->getRecords()); break;
 	
-// 			case 'profile':
-// 				$this->view->profiler = $this->getEntityRepository()->getSearch()->getProfiler();
-// 				$this->view->select = $this->getEntityRepository()->getSelect();
-// 				// do NOT break !
+			case 'profile':
+				$this->view->debug = $search->getDebug();
+				// do NOT break !
 
-// 			case 'html':
-// 				$this->view->records = new \Doctrine_Collection($this->getEntityRepository());
-// 				$this->view->records->fromArray($search->getRecords());
-// 				$this->view->recordsTotalCount = $search->getCount();
-// 				$this->view->paginatorIds = $search->getIds();
-// 				break;
+			case 'html':
+				$this->view->records = $search->getRecords();
+				$this->view->recordsTotalCount = $search->getCount();
+				$this->view->paginatorIds = $search->getIds();
+				break;
 		}
 	}
 	

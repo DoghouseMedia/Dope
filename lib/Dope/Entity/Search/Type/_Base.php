@@ -30,6 +30,11 @@ abstract class _Base
 		return $this->search;
 	}
 	
+	public function getDebug()
+	{
+		return $this->getSearch()->getDebug();
+	}
+	
 	abstract public function preExecute();
 	abstract public function postExecute();
 }

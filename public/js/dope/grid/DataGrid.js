@@ -12,7 +12,7 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	baseClass: 'dopeGridDataGrid',
 	region: 'center',
 	query: '',
-	rowsPerPage: 20,
+	rowsPerPage: 40,
 	clientSort: false,
 	delayScroll: true,
 	selectionMode: 'single',

@@ -28,7 +28,8 @@ class Query extends _Base
 		$modelIdsByScore = array();
 		$modelIds = array();
 			
-		$this->getSearch()->getProfiler()->punch('search query pre terms loop');
+		/* Profile */
+		$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		$columnsNames = method_exists($this->getSearch()->getEntityRepository(), 'getSearchColumnNames')
 			? $this->getSearch()->getEntityRepository()->getSearchColumnNames()
@@ -76,10 +77,11 @@ class Query extends _Base
 			
 		$numTerms = count($terms);
 		
-		$this->getSearch()->debug($terms, 'TERMS All');
-		$this->getSearch()->debug($termsRequired, 'TERMS Required');
-		$this->getSearch()->debug($termsBunnies, 'TERMS Bunnies');
-		$this->getSearch()->debug($termsExcluded, 'TERMS Excluded');
+		/* Debug */
+		$this->getDebug()->log('TERMS All', $terms);
+		$this->getDebug()->log('TERMS Required', $termsRequired);
+		$this->getDebug()->log('TERMS Bunnies', $termsBunnies);
+		$this->getDebug()->log('TERMS Excluded', $termsExcluded);
 			
 		$_SQL_keyword_like_array = array();
 		$_SQL_keyword_exact_array = array();
@@ -124,7 +126,8 @@ class Query extends _Base
 			
 		$_SQL.=	"ORDER BY keyword_count DESC ";
 		
-		//$this->debug($_SQL, "SELECT ids from $modelIndexTable");
+		/* Debug */
+		$this->getDebug()->log("SELECT ids from $modelIndexTable", $_SQL);
 			
 		/*
 		 * We need to increase "group_concat_max_len"
@@ -134,9 +137,15 @@ class Query extends _Base
 		$this->getSearch()->getEntityRepository()->getEntityManager()->getConnection()->executeQuery(
 		    'SET SESSION group_concat_max_len = 10240;'
 		);
-			
+		
+		/* Profile */
+	    $this->getDebug()->punch(__CLASS__, __LINE__, $_SQL);
+		
 		$indexRows = $this->getSearch()->getEntityRepository()->getEntityManager()->getConnection()->executeQuery($_SQL);
 			
+		/* Profile */
+	    $this->getDebug()->punch(__CLASS__, __LINE__);
+		
 		foreach ($indexRows as $indexRow) {
 		    $modelScoresById[$indexRow['id']] = 0;
 		    $extraParts = explode('|', $indexRow['extra']);
@@ -197,9 +206,10 @@ class Query extends _Base
 		    if (count($uniqueMatchedBunnies) != count($uniqueTermsBunnies)) {
 		        unset($modelScoresById[$indexRow['id']]);
 		        	
-		        $this->getSearch()->debug($indexRow['id'], "Bunny discard");
-		        $this->getSearch()->debug($matchedBunnies, "Bunny matches");
-		        $this->getSearch()->debug($termsBunnies, "Bunny terms");
+		        /* Debug */
+		        $this->getDebug()->log("Bunny discard", $indexRow['id']);
+		        $this->getDebug()->log("Bunny matches", $matchedBunnies);
+		        $this->getDebug()->log("Bunny terms", $termsBunnies);
 		    }
 		}
 			
@@ -216,13 +226,12 @@ class Query extends _Base
 		        $numValidResults++;
 		    }
 		}
-			
-		//$this->getSearch()->debug($modelScoresById, 'Model scores by id');
-			
+		
 		$modelIds = array_keys($modelScoresById);
 			
 		if (count($modelIds)) {
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search');
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		    //$this->getSearch()->debug($modelIds, 'Model IDs');
 		
 		    /* Get params */
@@ -231,7 +240,8 @@ class Query extends _Base
 		    /* Define temporary table name */
 		    $tmpTableName = uniqid('temp_search_' . time() . '_' . rand(111,999), true);
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search create tmp table pre');
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		    /* Create temporary table */
 		    $this->getSearch()->getEntityRepository()->getEntityManager()->getConnection()->executeQuery("
@@ -241,14 +251,16 @@ class Query extends _Base
 		        )
 		    ");
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search create tmp table post');
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		    /* Insert into temporary table */
 			$this->getSearch()->getEntityRepository()->getEntityManager()->getConnection()->executeQuery("
 				INSERT INTO `$tmpTableName` (id) VALUES(" . join('),(', $modelIds) . ")
 			");
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table');
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		    /*
 		     * Ensure there's a WHERE clause
@@ -263,14 +275,15 @@ class Query extends _Base
 		    /* Build & Run search query */
 		    $SQL_DATA = $this->getSearch()->getQueryBuilder()->getQuery()->getSQL();
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table 2');
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		    preg_match('/^SELECT .*? FROM [^\s]*? (\w+)/mis', $SQL_DATA, $matches);
 		    $modelTableAlias = $matches[1];
 		
-		    if ($this->getSearch()->getData()->select) {
+		    if ($this->getSearch()->getSelectedColumns()) {
 		        $_selects = array();
-		        foreach (explode(',', $this->getSearch()->getData()->select) as $column) {
+		        foreach ($this->getSearch()->getSelectedColumns() as $column) {
 		            $_selects[] = $modelTableAlias . '.' . $column;
 		        }
 		        $SQL_DATA = preg_replace('/^SELECT .*? FROM ([^\s]*?) (\w+)/mis', 'SELECT DISTINCT ' . join(',', $_selects) . ' FROM \\1 \\2',$SQL_DATA);
@@ -297,11 +310,13 @@ class Query extends _Base
 		        $SQL_DATA .= ' LIMIT ' . $this->getSearch()->getData()->list_start . ',' . $this->getSearch()->getData()->list_count;
 		    }
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search insert tmp table 3');
-		    //$this->getSearch()->debug($SQL_DATA, 'SELECT data after query');
-		    //$this->getSearch()->debug($SQL_IDS, 'SELECT ids after query');
-		    //$this->getSearch()->debug($params['where'], 'PARAMS WHERE');
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search pre execution');
+		    /* Debug */
+		    $this->getDebug()->log('SELECT data after query', $SQL_DATA);
+		    $this->getDebug()->log('SELECT ids after query', $SQL_IDS);
+		    $this->getDebug()->log('PARAMS WHERE', $params['where']);
+		    
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		    $paramsWhere = isset($params['where']) ? $params['where'] : '';
 		
@@ -310,17 +325,20 @@ class Query extends _Base
 		        $this->getSearch()->getQueryBuilder()->select('COUNT(id)');
 		        $this->getSearch()->getQueryBuilder()->getQuery()->setMaxResults(false)->setFirstResult(false); // remove limit/offset to get total count
 		        
-		        //$this->getSearch()->getProfiler()->punch('search query pre result search post execution 2');
+		        /* Profile */
+	    		$this->getDebug()->punch(__CLASS__, __LINE__);
 		        
 		        $SQL_COUNT = str_replace(
 		        	' WHERE ',
 		        	" RIGHT JOIN `$tmpTableName` `tmps` ON `tmps`.`id` = `$modelTableAlias`.`id` WHERE ",
 		        	$this->getSearch()->getQueryBuilder()->getDQL()
 		        );
-		        	
-		        //$this->getSearch()->getProfiler()->punch('search query pre result search post execution 3');
-		        //$this->getSearch()->debug($SQL_COUNT,'SELECT count after query');
-		        //$this->getSearch()->getProfiler()->punch('search query pre result search pre execution count');
+		        
+		        /* Debug */
+		        $this->getDebug()->log('SELECT count after query', $SQL_COUNT);
+		        
+		        /* Profile */
+	    		$this->getDebug()->punch(__CLASS__, __LINE__);
 		        	
 		        $RES_COUNT = \Dope\Doctrine::getEntityManager()
 			        ->getConnection()
@@ -334,19 +352,19 @@ class Query extends _Base
 		        $RES_IDS = \Dope\Doctrine::getEntityManager()
 			        ->getConnection()
 			        ->executeQuery($SQL_IDS, array($paramsWhere));
-		        
-		        //$this->getSearch()->getProfiler()->punch('search query pre result search post execution');
 		    }
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search post execution count');
+		    /* Profile */
+	    	$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 		    /* Drop temporary table */
 		    $this->getSearch()->getEntityRepository()->getEntityManager()->getConnection()->executeQuery("
 		        DROP TABLE `$tmpTableName`
 		    ");
 		
-		    //$this->getSearch()->getProfiler()->punch('search query pre result search post tmp drop');
-		
+		    /* Profile */
+		    $this->getDebug()->punch(__CLASS__, __LINE__);
+			
 		    if ($this->getSearch()->getMode() == Search::MODE_COUNT_ONLY) {
 		    	$this->getSearch()->setCount($RES_COUNT->fetchColumn());
 		    }
@@ -358,7 +376,8 @@ class Query extends _Base
 		    		}, $RES_DATA->fetchAll(ORM\Query::HYDRATE_ARRAY))
 			    );
 			    
-			    //$this->getSearch()->getProfiler()->punch('search query post fetch all data');
+			    /* Profile */
+	    		$this->getDebug()->punch(__CLASS__, __LINE__);
 			    	
 			    $this->getSearch()->setIds($this->getSearch()->getArrayFromColumn(0,
 			    	$RES_IDS->fetchAll(ORM\Query::HYDRATE_SINGLE_SCALAR)
@@ -366,7 +385,8 @@ class Query extends _Base
 			    	
 			    $this->getSearch()->setCount(count($this->getSearch()->getIds()));
 			    	
-			    //$this->getSearch()->getProfiler()->punch('search query post fetch all ids');
+			    /* Profile */
+	    		$this->getDebug()->punch(__CLASS__, __LINE__);
 		    }
 		}
 	}
