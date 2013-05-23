@@ -368,7 +368,7 @@ class Query extends _Base
 		    if ($this->getSearch()->getMode() == Search::MODE_COUNT_ONLY) {
 		    	$this->getSearch()->setCount($RES_COUNT->fetchColumn());
 		    }
-		    else {
+		    else {		    	
 			    $this->getSearch()->setRecords(
 			    	array_map(function($record) use ($modelScoresById) {
 		    			$record['score'] = $modelScoresById[$record['id']];

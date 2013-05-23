@@ -18,6 +18,11 @@ class SavedSearch extends \Zend_Controller_Action_Helper_Abstract
 	 */
 	public function direct(Search $search)
 	{
+		/* Check request supports saved searches */
+		if (strpos($this->getRequest()->getHeader('Dope-Accept'), 'dope-search-id') === false) {
+			return false;
+		}
+		
 		/* Get entity class to use for Saved Search */
 		$savedSearchClass = $this->getSearchClass();
 		

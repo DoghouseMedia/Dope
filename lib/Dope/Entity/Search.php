@@ -363,7 +363,7 @@ class Search
 	
 	    /* Select columns */
 	    if ($this->getSelectedColumns()) {
-	        $this->_selectArray($this->getSelectedColumns());
+	        $this->select($this->prefix($this->getSelectedColumns()));
 	    }
 	
 	    /* ----- Debug ----- */
@@ -383,18 +383,15 @@ class Search
 	    return $this;
 	}
 	
-	public function _selectArray(array $columns)
+	public function prefix(array $columns)
 	{
 		// Fetch tableAlias
 	    $tableAlias = $this->getTableAlias();
 	    
 	    // Prefix with tableAlias
-	    $columns = array_map(function($columnName) use ($tableAlias) {
+	    return array_map(function($columnName) use ($tableAlias) {
 	        return $tableAlias . '.' . $columnName;
 	    } , $columns);
-
-	    // Select and return
-	    return $this->select($columns);
 	}
 	
 	public function select(array $columns)
@@ -408,8 +405,8 @@ class Search
 		if (! $this->getData()->select) {
 			return false;
 		}
-			
-		// Filter out columns that don't exist here
+		
+		// Filter out columns that don't exist as fields or associations
 		return array_filter(
 			explode(',', $this->getData()->select),
 			array($this->getEntityRepository()->getClassMetadata(), 'hasField')
@@ -618,11 +615,11 @@ class Search
 		$this->getDebug()->punch(__CLASS__, __LINE__);
 		
 	    $md = $this->getEntityRepository()->getClassMetadata();
-	    $columnNames = explode(',', $this->getData()->select ?: '');
+	    $columnNames = $this->getData()->select ? explode(',', $this->getData()->select) : false;
 	    
 	    foreach ($this->records as &$record) {
 	        foreach ($md->getAssociationMappings() as $alias => $mapping) {
-	        	if (count($columnNames) AND !in_array($alias, $columnNames)) {
+	        	if ($columnNames AND !in_array($alias, $columnNames)) {
 	        		continue;
 	        	}
 	        	

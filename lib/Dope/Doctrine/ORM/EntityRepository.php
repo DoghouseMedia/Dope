@@ -7,7 +7,8 @@ use Doctrine\ORM\Mapping\UniqueConstraint,
     Dope\Entity\Search,
     Dope\Entity\Definition,
     Dope\Controller\Data,
-    Dope\Config\Helper as Config;
+    Dope\Config\Helper as Config,
+	Zend_Loader_Autoloader as Autoloader;
 
 class EntityRepository extends \Doctrine\ORM\EntityRepository
 {	
@@ -216,28 +217,31 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 	 */
 	public function getForm(array $options=array(), $prefix = null, $alias=null, $default='\Dope\Form\Entity', $depth=0)
 	{	
-		if (is_null($prefix)) {
-			$prefix = '\\' . Config::getOption('appnamespace') . '\Form\Entity';
-		}
-
-		$alias = $alias ?: $this->getModelAlias($this->getClassName());
-		
-		$form = null;
 		$inflector = new \Zend_Filter_Word_UnderscoreToCamelCase();
-		$formclass = $prefix . '\\' . $inflector->filter($alias);
-
-		/*
-		 * Yuck, we need to turn off error reporting since trying
-		 * to autoload will spit out warnings if it doesn't exist!
-		 * 
-		 * @todo There are very few models that don't have a form,
-		 * so creating a default form might be a better solution.
-		 */
-		$errorReporting = error_reporting(0);
-		$form = new $formclass();
-		error_reporting($errorReporting);
 		
+		$prefix = is_null($prefix) ? '\\' . Config::getOption('appnamespace') . '\Form\Entity' : $prefix;
+		$alias = $alias ?: $this->getModelAlias($this->getClassName());
+		$formclass = $prefix . '\\' . $inflector->filter($alias);
+		$formclassShort = ltrim($formclass, '\\');
+		$form = null;
+		
+		/*
+		 * Find the good autoloaders and load the class specific form if it exists
+		 */
+		foreach (Autoloader::getInstance()->getClassAutoloaders($formclassShort) as $autoloader) {
+			if ($autoloader[0]->canLoadClass($formclassShort)) {
+				$form = new $formclass();
+				break;
+			}
+		}
+		
+		/*
+		 * If we haven't found a form yet, use the generic one
+		 */
 		if (! $form instanceof \Dope\Form\_Base) {
+			/*
+			 * If this is a subclass, try to get the parent form before defaulting to the generic one.
+			 */
 			if (isset($this->getClassMetadata()->parentClasses[$depth])) {
 				$alias = $this->getModelAlias($this->getClassMetadata()->parentClasses[$depth]);
 				return $this->getForm($options, $prefix, $alias, $default, $depth+1);
@@ -308,7 +312,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		        $array[$key . '_id'] = (int) $data[$key]->id;
 		    }
 		    else {
-		        $array[$key] = trim($data[$key]);
+		        $array[$key] = is_string($data[$key]) ? trim($data[$key]) : $data[$key];
 		    }
 		}
 		

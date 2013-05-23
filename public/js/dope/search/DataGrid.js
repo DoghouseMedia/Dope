@@ -9,6 +9,9 @@ dojo.declare('dope.search.DataGrid', dope.grid.DataGrid, {
 	},
 	onFormStoreReady: function(form) {
 		if (this.getPane() === form.getPane()) {
+			// Turn on saved searches
+			form.getStore().service.useSavedSearch = true;
+			// Set store
 			this.setStore(form.getStore());
 		}
 	},

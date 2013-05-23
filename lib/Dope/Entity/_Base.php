@@ -160,7 +160,7 @@ implements \IteratorAggregate
 		return new \ArrayIterator($this->toArray());
 	}
 	
-	public function toArray($forceShallowFlattening)
+	public function toArray($forceShallowFlattening=false)
 	{
 		return $this->getRepository()->flatten(
 			get_object_vars($this),

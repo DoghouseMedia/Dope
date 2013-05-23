@@ -114,7 +114,8 @@ define("dojox/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 					contentType: isJson ? 'application/json' : 'text/plain',
 					sync: dojox.rpc._sync,
 					headers: {
-						Accept: isJson ? 'application/json,application/javascript' : '*/*'
+						Accept: isJson ? 'application/json,application/javascript' : '*/*',
+						'Dope-Accept': service.useSavedSearch ? 'dope-search-id' : ''
 					}
 				};
 				if(service.headers){

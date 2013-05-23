@@ -2,6 +2,8 @@
 
 namespace Dope\Controller\Action;
 
+use Dope\Entity;
+
 use Dope\Controller\Action,
     Dope\Controller\Data,
     Dope\Entity\Search,
@@ -220,8 +222,11 @@ extends Action
 		$id = (int) $this->_getParam('id');
 	
 		$record = $this->getEntityRepository()->find($id);
-		$record->delete();
-	
+		
+		if ($record instanceof Entity) {
+			$record->delete();
+		}
+		
 		$this->respondOk($record);
 	}
 	
@@ -365,7 +370,8 @@ extends Action
 		$search->setEntityRepository($this->getEntityRepository());
 		$search->setData($this->getData());
 		$search->execute();
-		$search->_selectArray($columns);
+		$search->select($search->prefix($columns));
+		
 		
 		$records = $search->getQueryBuilder()
 			->getQuery()

@@ -7,11 +7,25 @@ dojo.declare('dope.form.Editor', dijit.Editor, {
 		this.hiddenNode = dojo.create('input', {
 			type: 'hidden',
 			name: this.name
-		}) ;
+		});
 		dojo.place(this.hiddenNode, this.domNode);
 		this.watch('value', this.updateHiddenField.bind(this));
 	},
 	updateHiddenField: function() {
 		this.hiddenNode.value = this.get('value');
+	},
+	
+	destroy: function() {
+		/*
+		 * Sometimes the toolbar has already been destroyed by us when
+		 * dojo tries to delete it, so I've hacked a void method here.
+		 * Lame.
+		 */
+		if (!this.toolbar) {
+			this.toolbar = {
+				destroyRecursive: function() {}	
+			};
+		}
+		this.inherited(arguments);
 	}
 });
