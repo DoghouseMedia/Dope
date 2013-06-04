@@ -86,17 +86,31 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		}
 	},
 	_onRowClick: function(e) {
-		var id = this.getItem(e.rowIndex).id;
+		var item = this.getItem(e.rowIndex);
 		var url = new dope.utils.Url(this.store.target);
-		url.setAction(id);
+		url.setAction(item.id);
 		url.removeSearch();
 		
 		this.getPane().onGridRowClick({
-			id: id,
+			id: item.id,
 			href: String(url),
-			title: url.getController() + ' #' + id,
+			title: this._getTitleByItem(item),
 			e: e
 		});
+	},
+	_getTitleByItem: function(item) {
+		if (this.stringify) {
+			var toStringParts = [];
+			dojo.forEach(this.stringify, function(fieldname) {
+				toStringParts.push(item[fieldname]);
+			});
+			return toStringParts.join(' ');
+		}
+		else {
+			var url = new dope.utils.Url(this.store.target);
+			return url.getController() + ' #' + item.id;
+		}
+		
 	},
 	
 	/* ---------- Formatters ---------- */

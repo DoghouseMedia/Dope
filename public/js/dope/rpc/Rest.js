@@ -100,7 +100,6 @@ define("dope/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 					}
 					url.set('sort', sortParts.join(','));
 				}
-				console.log('DEBUG BEFORE REQUEST VAR', service);
 				var request = {
 					url: String(url),
 					handleAs: isJson ? 'json' : 'text',
@@ -111,7 +110,6 @@ define("dope/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 						'Dope-Accept': service.useSavedSearch ? 'dope-search-id' : ''
 					}
 				};
-				console.log('DEBUG AFTER REQUEST VAR', request);
 				if(service.headers){
 					for(var name in service.headers) {
 						request.headers[name] = service.headers[name];
