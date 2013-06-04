@@ -410,9 +410,7 @@ class Adapter implements \Zend_Auth_Adapter_Interface
         try {
             $resultIdentities = $dqlQueryObject->getResult();
         } catch (\Exception $e) {
-            throw new \Zend_Auth_Adapter_Exception('The supplied parameters to BadWolf_Doctrine_Auth_Adapter '
-                                                           . 'failed to produce a valid DQL statement, please check table, table alias, '
-                                                           . 'and column names for validity.', 0, $e);
+            throw new \Zend_Auth_Adapter_Exception($e->getMessage(), 0, $e);
         }
 
         return $resultIdentities;
