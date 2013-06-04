@@ -551,23 +551,35 @@ extends Action
 		$this->view->relatedId = $relatedId;
 	
 	
-		$search = new Search($this->getEntityRepository(), $this->getData());
-		$_recordIdsUsed = $search->filter()->select($search->getTableAlias() . '.id')
-			->getQuery()->getArrayResult();
-	
+		$search = new Search();
+		$search->setEntityRepository($this->getEntityRepository());
+		$search->setData($this->getData());
+		$search->execute();
+		$search->select($search->prefix(array('id')));
+		
+		$_recordIdsUsed = $search->getQueryBuilder()
+			->getQuery()
+			->getResult(Query::HYDRATE_SCALAR);
+		
 		$recordIdsUsed = array();
 	
-		foreach($_recordIdsUsed as $_recordIdUsed) {
+		foreach ($_recordIdsUsed as $_recordIdUsed) {
 			$recordIdsUsed[] = $_recordIdUsed['id'];
 		}
-	
+
 		$this->view->recordsUsed = array();
 		$this->view->recordsFree = array();
 	
-		$search = new Search($this->getEntityRepository(), new Data(array()));
-		$recordsAll = $search->filter()->getQuery()->getResult();
-	
-		foreach($recordsAll as $record) {
+		$search = new Search();
+		$search->setEntityRepository($this->getEntityRepository());
+		$search->setData($this->getData());
+		$search->execute();
+		
+		$recordsAll = $search->getQueryBuilder()
+			->getQuery()
+			->getResult();
+		
+		foreach ($recordsAll as $record) {
 			if (in_array($record->id, $recordIdsUsed)) {
 				$this->view->recordsUsed[] = $record;
 			}
