@@ -101,6 +101,9 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		elseif ($this->testIsCollection($value)) {
 			return '#' . $value->count();
 		}
+		elseif ($this->testIsDateTime($value)) {
+			return $this->view->dateFormatter($value);
+		}
  		elseif ($this->testIsJSON($value)) {
  		    return $this->formatJSON($value);
  		}
@@ -158,8 +161,21 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		return (bool) ($formElement instanceof Zend_Dojo_Form_Element_CurrencyTextBox);
 	}
 	
+	protected function testIsDateTime($value)
+	{
+		if (! is_object($value)) {
+			return false;
+		}
+		
+		return ($value instanceof \DateTime);
+	}
+	
 	protected function testIsJSON($value)
 	{
+		if (! is_string($value)) {
+			return false;
+		}
+		
 	    $decoded = json_decode($value);
 	    return (isset($decoded));	    
 	}
