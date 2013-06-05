@@ -11,6 +11,7 @@ dojo.declare('dope.search.form.Filter', [
 ],{
 	baseClass: 'dopeSearchFormFilter',
 	_isLoaded: false,
+	_doNotAddValue: false,
 	values: [],
 	widgetsInTemplate: true,
 	templateString: '<div>'
@@ -36,13 +37,19 @@ dojo.declare('dope.search.form.Filter', [
 		
 		dojo.connect(this.addValueBtn, 'onClick', dojo.hitch(this, 'addValue'));
 		dojo.connect(this.removeBtn, 'onClick', dojo.hitch(this, 'remove'));
+		
+		if (this.params && this.params.value && this.params.value.indexOf(':') >= 0) {
+			var paramParts = this.params.value.split(':');
+			this.setOperator(paramParts[0] + paramParts[1]);
+			dojo.forEach(paramParts[2].split(','), dojo.hitch(this, 'addValue'));
+		}
 	},
 	startup: function() {
 		this.inherited(arguments);
 		/* Add first value selector */
-		//if (! this.doNotAddValue) {
+		if (! this._doNotAddValue) {
 			this.addValue();
-		//}
+		}
 	},
 	allowHasAllOf: function() {
 		if (this.type == 'Doctrine_Relation_LocalKey') {
@@ -67,15 +74,11 @@ dojo.declare('dope.search.form.Filter', [
 			key: this.key,
 			modelAlias: this.modelAlias,
 			type: this.type,
-			i: this.values.length
+			i: this.values.length,
+			_value: selectedValue 
 		});
-		dojo.place(value.domNode, this.valuesContainerNode);
-		
 		this.values.push(value);
-		
-		if (selectedValue) {
-			value.setValue(selectedValue);
-		}
+		dojo.place(value.domNode, this.valuesContainerNode);
 		
 		dojo.publish('/dope/search/form/domChange');
 	},
@@ -97,6 +100,17 @@ dojo.declare('dope.search.form.Filter', [
 		return {
 			key: this.key,
 			value: this.operatorSelect.get('value') + ':' + urlValues.join(',')
+		};
+	},
+	getSerialized: function() {
+		return {
+			options: {
+				key: this.key,
+				type: this.type,
+				title: this.title,
+				modelAlias: this.modelAlias
+			},
+			params: this.getAsParams()
 		};
 	},
 	isLoaded: function() {

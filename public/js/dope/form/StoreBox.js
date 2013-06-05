@@ -6,7 +6,12 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 	searchAttr: "__toString",
 	labelAttr: "__toString",
 	silence: false,
+	_value: null,
+	onCompleteCallback: null,
+	
 	postCreate: function() {
+		this.onCompleteCallback = null;
+		this._value = null;
 		this.inherited(arguments);
 		this.fetchStore();
 	},
@@ -39,7 +44,11 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 	},
 	onStoreComplete: function() {
 		this.set('disabled', false);
-		this.set('value', this.value);
+		this.set('value', this._value);
+		
+		if (this.onCompleteCallback) {
+			this.onCompleteCallback();
+		}
 	},
 	onStoreError: function(v1,v2) {
 		if (console) console.log('onStoreError', v1, v2);

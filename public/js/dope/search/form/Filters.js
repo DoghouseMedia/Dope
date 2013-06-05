@@ -2,26 +2,38 @@ dojo.provide('dope.search.form.Filters');
 dojo.require('dope.search.form.Filter');
 dojo.require('dope.search.form.FilterAdd');
 dojo.require('dope.search.form.FilterValues');
+dojo.require('dope._Contained');
+dojo.require('dijit.layout._LayoutWidget');
 
-dojo.declare('dope.search.form.Filters', [dijit._Contained, dijit.layout._LayoutWidget], {
+dojo.declare('dope.search.form.Filters', [dope._Contained, dijit.layout._LayoutWidget], {
 	form: null,
 	filters: [],
 	_onInitCallbacks: [],
 	
 	constructor: function() {
-		dojo.subscribe('/dope/search/form/filterAddRequest', this, 'onFilterAddRequest');
-		dojo.subscribe('/dope/search/form/store/beforeFetch', this, 'onBeforeStoreFetch');
+		dojo.subscribe('/dope/search/form/filterAddRequest', dojo.hitch(this, 'onFilterAddRequest'));
+		dojo.subscribe('/dope/search/form/store/beforeFetch', dojo.hitch(this, 'onBeforeStoreFetch'));
 	},
-	onFilterAddRequest: function(data) {
-		this.add(data);
+	onFilterAddRequest: function(data, initCallback) {
+		this.add(data, initCallback);
 		return this;
 	},
-	onBeforeStoreFetch: function(storeUrl) {
+	onBeforeStoreFetch: function(form, storeUrl) {
+		if (form.getPane() !== this.getPane()) {
+			return;
+		}
+		
+		this.getPane().setData('formfilters', this.getSerialized());
+		//
 		dojo.forEach(this.getAsParams(), function(param) {
 			storeUrl.set(param.key, param.value);
 		});
 	},
-	add: function(options) {
+	add: function(options, initCallback) {
+		if (initCallback) {
+			this.addOnInit(initCallback);
+		}
+		
 		var filter = new dope.search.form.Filter(dojo.mixin(options, {
 			filters: this
 		}));
@@ -47,6 +59,15 @@ dojo.declare('dope.search.form.Filters', [dijit._Contained, dijit.layout._Layout
 		});
 		
 		return params;
+	},
+	getSerialized: function() {
+		var data = [];
+		
+		dojo.forEach(this.filters, function(filter, i) {
+			data.push(filter.getSerialized());
+		});
+		
+		return data;
 	},
 	onFilterLoad: function() {
 		if (! this.testAllFiltersLoaded()) {

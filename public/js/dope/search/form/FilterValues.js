@@ -5,7 +5,7 @@ dojo.declare('dope.search.form.FilterValues', dijit._Widget, {
 	baseClass: 'dopeSearchFormFilterValues',
 	
 	startup: function() {
-		this.values = dojo.fromJson(this.domNode.innerHTML);
+		//this.values = dojo.fromJson(this.domNode.innerHTML);
 		//console.log(this.values, 'FILTER VALUES');
 //		dojo.forEach(this.getOptions(), function(option) {
 //			if (option.value) {

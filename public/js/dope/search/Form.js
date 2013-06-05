@@ -14,7 +14,7 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		 * @todo This will react to all form changes,
 		 * but we only want to react to changes in this tab!
 		 */
-		dojo.subscribe('/dope/search/form/domChange', this, 'onDomChange');
+		dojo.subscribe('/dope/search/form/domChange', dojo.hitch(this, 'onDomChange'));
 		
 		/*
 		 * React to _data change after tab load
@@ -22,17 +22,45 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		this.getPane().watch('_data', this.onDataChange.bind(this));
 	},
 	onDomChange: function() {
-		this.getPane().resize();
+		if (this.getPane() && this.getPane().resize) {
+			this.getPane().resize();
+		}
 	},
 	onDataChange: function() {
+		/*
+		 * @todo This should be written better and put somewhere else.
+		 */
+		var that = this;
+		var waits=0;
 		var formdata = this.getPane().getData('formdata');
 		dojo.forEach(this.getChildren(), function(child) {
 			if (child.name && formdata[child.name]) {
 				child.set('value', formdata[child.name]);
 			}
 		});
-		this.submit();
+		var formfilters = this.getPane().getData('formfilters');
+		dojo.forEach(formfilters, function(formfilter) {
+			waits++;
+			var _options = formfilter.options; // make a copy so we don't pollute the filter's options
+			dojo.publish('/dope/search/form/filterAddRequest', [
+    			dojo.mixin(_options, {
+    				_doNotAddValue: true,
+    				params: formfilter.params
+    			}),
+    			function() {
+    				waits--;
+    				if (waits == 0) {
+    					//that.submit(); // submit the form
+    				}
+    			}
+    		]);
+		});
+		
+		if (waits == 0) {
+			//that.submit(); // submit the form
+		}
 	},
+	
 	onSubmit: function(e) {
 		/* Prevent the form from really submitting */
 		if (e) e.preventDefault();
@@ -46,7 +74,7 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		var storeUrl = new dope.utils.Url(this.domNode.action, formdata);
 		this.getPane().setData('formdata', formdata);
 		
-		dojo.publish('/dope/search/form/store/beforeFetch', [storeUrl]);
+		dojo.publish('/dope/search/form/store/beforeFetch', [this, storeUrl]);
 		
 		/* Store */
 		this.store = new dope.data.JsonRestStore({

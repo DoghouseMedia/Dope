@@ -40,11 +40,13 @@ dojo.declare('dope.search.form.FilterValue', [
 			url: storeUrl
 		});
 		
-		dataStore.fetch({onComplete: dojo.hitch(this, 'onDataStoreLoad')});
-		
 		this.valueSelect
 			.set('pageSize', 20)
-			.set('store', dataStore);
+			.set('_value', this._value)
+			.set('onCompleteCallback', dojo.hitch(this, 'onDataStoreLoad'))
+			.setStore(dataStore);
+		
+		//dataStore.fetch({onComplete: dojo.hitch(this, 'onDataStoreLoad')});
 		
 		if (! this.isFirst()) {
 			dojo.place(dojo.create('div', {
@@ -61,7 +63,7 @@ dojo.declare('dope.search.form.FilterValue', [
 	},
 	onDataStoreLoad: function() {
 		this._isLoaded = true;
-		this.assignValue();
+		//this.assignValue();
 		this.params.filter.onValueLoad();
 	},
 	isLoaded: function() {
