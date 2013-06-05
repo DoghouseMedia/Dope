@@ -15,9 +15,23 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		 * but we only want to react to changes in this tab!
 		 */
 		dojo.subscribe('/dope/search/form/domChange', this, 'onDomChange');
+		
+		/*
+		 * React to _data change after tab load
+		 */
+		this.getPane().watch('_data', this.onDataChange.bind(this));
 	},
 	onDomChange: function() {
 		this.getPane().resize();
+	},
+	onDataChange: function() {
+		var formdata = this.getPane().getData('formdata');
+		dojo.forEach(this.getChildren(), function(child) {
+			if (child.name && formdata[child.name]) {
+				child.set('value', formdata[child.name]);
+			}
+		});
+		this.submit();
 	},
 	onSubmit: function(e) {
 		/* Prevent the form from really submitting */
@@ -28,9 +42,9 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 			return false;
 		}
 		
-		var storeUrl = new dope.utils.Url(this.domNode.action, 
-			dojo.formToObject(this.domNode)
-		);
+		var formdata = dojo.formToObject(this.domNode);
+		var storeUrl = new dope.utils.Url(this.domNode.action, formdata);
+		this.getPane().setData('formdata', formdata);
 		
 		dojo.publish('/dope/search/form/store/beforeFetch', [storeUrl]);
 		
