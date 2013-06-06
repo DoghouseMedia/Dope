@@ -14,6 +14,6 @@ extends Zend_Dojo_Form_Element_FilteringSelect
 	public function init()
 	{
 		parent::init();
-		$this->setDecorators(array('DijitElement')); 
+		$this->setDecorators(array('DijitElement'));
 	}
 }

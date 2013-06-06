@@ -124,10 +124,17 @@ dojo.declare('dope.layout.ContentPane', [
 		return key ? this._data[key] : this._data;
 	},
 	setData: function(key, val) {
-		this._data[key] = val;
-		dojo.publish('/dope/layout/ContentPane/change', [this]);
+		this.pepareData(key, val);
+		this.publishChange();
 		return this;
 	},
+	prepareData: function(key, val, noPublish) {
+    this._data[key] = val;
+    return this;
+  },
+  publishChange: function() {
+    dojo.publish('/dope/layout/ContentPane/change', [this]);
+  },
 	getUrl: function(forceUpdate) {
 		if (! this._url || forceUpdate) {
 			this._url = this.href

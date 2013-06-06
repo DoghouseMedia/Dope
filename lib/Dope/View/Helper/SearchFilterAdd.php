@@ -5,7 +5,7 @@ class Dope_View_Helper_SearchFilterAdd extends Zend_View_Helper_HtmlElement
 	public function searchFilterAdd($name, $value, $dijitParams, $attribs, $options)
 	{
 		$return = '
-			<select data-dojo-type="dope.search.form.FilterAdd">
+			<select data-dojo-type="dope.search.form.FilterAdd" data-dojo-attach-point="filterAdd">
 				<option>Add filter</option>
 		';
 		

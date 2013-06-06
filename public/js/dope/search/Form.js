@@ -7,9 +7,25 @@ dojo.require('dope.utils.Url');
 dojo.declare('dope.search.Form', dope.form.Form, {
 	store: null,
 	baseClass: 'dopeSearchForm',
+	widgetsInTemplate: true,
+	waits: 0,
 	
 	startup: function() {
+	  var that = this;
 		this.inherited(arguments);
+		
+		/*
+		 * Find FilterAdd and tell it who it's parent is
+		 */
+		dojo.forEach(this.getChildren(), function(child) {
+		  if (child instanceof dope.search.form.FilterAdd) {
+		    that.filterAdd = child;
+		  }
+		});
+		if (this.filterAdd) {
+		  this.filterAdd.form = this;
+		}
+		
 		/*
 		 * @todo This will react to all form changes,
 		 * but we only want to react to changes in this tab!
@@ -31,7 +47,7 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		 * @todo This should be written better and put somewhere else.
 		 */
 		var that = this;
-		var waits=0;
+		this.waits=1;
 		var formdata = this.getPane().getData('formdata');
 		dojo.forEach(this.getChildren(), function(child) {
 			if (child.name && formdata[child.name]) {
@@ -40,26 +56,28 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		});
 		var formfilters = this.getPane().getData('formfilters');
 		dojo.forEach(formfilters, function(formfilter) {
-			waits++;
-			var _options = formfilter.options; // make a copy so we don't pollute the filter's options
+			that.waits++;
+			var _options = dojo.clone(formfilter.options); // make a copy so we don't pollute the filter's options
+			dojo.mixin(_options, {
+        _doNotAddValue: true,
+        params: formfilter.params
+      });
 			dojo.publish('/dope/search/form/filterAddRequest', [
-    			dojo.mixin(_options, {
-    				_doNotAddValue: true,
-    				params: formfilter.params
-    			}),
-    			function() {
-    				waits--;
-    				if (waits == 0) {
-    					//that.submit(); // submit the form
-    				}
-    			}
+			    that,
+    			_options,
+    			dojo.hitch(that, 'trySubmit')
     		]);
 		});
 		
-		if (waits == 0) {
-			//that.submit(); // submit the form
-		}
+		this.trySubmit();
 	},
+	
+	trySubmit: function() {
+    this.waits--;
+    if (this.waits == 0) {
+      this.submit(); // submit the form
+    }
+  },
 	
 	onSubmit: function(e) {
 		/* Prevent the form from really submitting */
@@ -72,9 +90,10 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		
 		var formdata = dojo.formToObject(this.domNode);
 		var storeUrl = new dope.utils.Url(this.domNode.action, formdata);
-		this.getPane().setData('formdata', formdata);
+		this.getPane().prepareData('formdata', formdata);
 		
 		dojo.publish('/dope/search/form/store/beforeFetch', [this, storeUrl]);
+		this.getPane().publishChange();
 		
 		/* Store */
 		this.store = new dope.data.JsonRestStore({

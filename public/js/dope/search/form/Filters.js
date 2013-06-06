@@ -14,7 +14,11 @@ dojo.declare('dope.search.form.Filters', [dope._Contained, dijit.layout._LayoutW
 		dojo.subscribe('/dope/search/form/filterAddRequest', dojo.hitch(this, 'onFilterAddRequest'));
 		dojo.subscribe('/dope/search/form/store/beforeFetch', dojo.hitch(this, 'onBeforeStoreFetch'));
 	},
-	onFilterAddRequest: function(data, initCallback) {
+	onFilterAddRequest: function(form, data, initCallback) {
+	  if (form.getPane() !== this.getPane()) {
+      return;
+    }
+	  
 		this.add(data, initCallback);
 		return this;
 	},
@@ -23,7 +27,7 @@ dojo.declare('dope.search.form.Filters', [dope._Contained, dijit.layout._LayoutW
 			return;
 		}
 		
-		this.getPane().setData('formfilters', this.getSerialized());
+		this.getPane().prepareData('formfilters', this.getSerialized());
 		//
 		dojo.forEach(this.getAsParams(), function(param) {
 			storeUrl.set(param.key, param.value);

@@ -2,6 +2,8 @@ dojo.provide("dope.search.form.FilterAdd");
 dojo.require("dijit.form.Select");
 
 dojo.declare('dope.search.form.FilterAdd', dijit.form.Select, {
+  form: null,
+  
 	onChange: function(newValue) {
 		this.inherited(arguments);
 		
@@ -10,6 +12,7 @@ dojo.declare('dope.search.form.FilterAdd', dijit.form.Select, {
 		}
 		
 		dojo.publish('/dope/search/form/filterAddRequest', [
+			this.form,
 			this.getOptions(String(newValue))
 		]);
 		
