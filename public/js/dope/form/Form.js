@@ -47,7 +47,7 @@ dojo.declare('dope.form.Form', [
 				if (child === changedChild) return;
 				
 				if (child.onFormFieldChange) {
-			    this._setupChildOnCompleteCallback(child);
+			    that._setupChildOnCompleteCallback(child);
 			    
 				  that.childrenChanging++;
 					child.onFormFieldChange(changedChild, value);
