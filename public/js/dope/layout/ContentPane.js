@@ -124,11 +124,11 @@ dojo.declare('dope.layout.ContentPane', [
 		return key ? this._data[key] : this._data;
 	},
 	setData: function(key, val) {
-		this.pepareData(key, val);
+		this.prepareData(key, val);
 		this.publishChange();
 		return this;
 	},
-	prepareData: function(key, val, noPublish) {
+	prepareData: function(key, val) {
     this._data[key] = val;
     return this;
   },
