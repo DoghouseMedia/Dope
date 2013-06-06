@@ -113,6 +113,11 @@ class Search
 	 */
 	protected $type;
 	
+	/*
+	 * Local cache for column weights
+	 */
+	protected $columnWeights = array();
+	
 	/**
 	 * Constructor
 	 */
@@ -310,10 +315,18 @@ class Search
 	 */
 	public function getColumnWeightFactor($columnName, $focusPresetName='')
 	{
-	    return $this->getEntityRepository()
-	        ->getDefinition()
-	        ->getSearchFocusPresets()
-	        ->getFactor($columnName, $focusPresetName);
+	  if (! isset($this->columnWeights[$focusPresetName][$columnName])) {
+	      if (! isset($this->columnWeights[$focusPresetName])) {
+	          $this->columnWeights[$focusPresetName] = array();
+	      }
+	      $this->columnWeights[$focusPresetName][$columnName] = $this
+    	      ->getEntityRepository()
+    	      ->getDefinition()
+    	      ->getSearchFocusPresets()
+    	      ->getFactor($columnName, $focusPresetName);
+	  }
+	  
+	  return $this->columnWeights[$focusPresetName][$columnName];
 	}
 	
 	/**

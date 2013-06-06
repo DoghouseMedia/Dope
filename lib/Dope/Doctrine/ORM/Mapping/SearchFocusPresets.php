@@ -15,7 +15,7 @@ final class SearchFocusPresets implements Annotation
 	public function getFactor($columnName, $presetName='')
 	{
 	    foreach ($this->value as $preset) {
-	        if ($preset['name'] == $presetName) {
+	        if ($preset['key'] == $presetName) {
 	            return isset($preset['factors'][$columnName])
 	                ? $preset['factors'][$columnName]
 	                : 1;
