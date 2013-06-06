@@ -16,6 +16,9 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 		this.fetchStore();
 	},
 	onFormFieldChange: function(field, value) {
+	  if (this.get('value')) {
+	      this.set('_value', this.get('value'));
+	  }
 		this.setStoreParam(field.name, value);
 	},
 	setStoreParam: function(key, val) {
