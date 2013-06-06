@@ -30,12 +30,15 @@ dojo.declare('dope.form.Form', [
 		dojo.forEach(this.getDescendants(), dojo.hitch(this, '_setupChild'));
 	},
 	_setupChild: function(child) {
-	  if (child.onCompleteCallbacks) {
-	    child.onCompleteCallbacks.push(dojo.hitch(this, 'onChildChangeComplete'));
-	  }
 		this.handles.push(
 			dojo.connect(child, 'onChange', dojo.hitch(this, 'onChildChange', child))
 		);
+	},
+	_setupChildOnCompleteCallback: function(child) {
+	  if (child.onCompleteCallbacks && !child.onCompleteCallbackSetup) {
+	    child.onCompleteCallbacks.push(dojo.hitch(this, 'onChildChangeComplete'));
+	    child.onCompleteCallbackSetup = true;
+	  }
 	},
 	onChildChange: function(changedChild, value) {
 		if (! changedChild.silence) {
@@ -44,6 +47,8 @@ dojo.declare('dope.form.Form', [
 				if (child === changedChild) return;
 				
 				if (child.onFormFieldChange) {
+			    this._setupChildOnCompleteCallback(child);
+			    
 				  that.childrenChanging++;
 					child.onFormFieldChange(changedChild, value);
 				}
