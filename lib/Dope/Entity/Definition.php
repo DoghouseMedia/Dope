@@ -139,7 +139,16 @@ class Definition extends \ReflectionClass
 	        return new \Dope\Doctrine\ORM\Mapping\SearchFilters();
 	    }
 	}
-
+	
+	public function getSearchFocusPresets()
+	{
+        $presets = $this->getAnnotation('\Dope\Doctrine\ORM\Mapping\SearchFocusPresets');
+        if (! $presets instanceof \Dope\Doctrine\ORM\Mapping\SearchFocusPresets) {
+            $presets = new \Dope\Doctrine\ORM\Mapping\SearchFocusPresets();
+        }
+        return $presets->value;
+	}
+	
 	public function factory($params)
 	{
 		$instance = $this->newInstance();

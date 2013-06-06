@@ -304,18 +304,16 @@ class Search
 	/**
 	 * Get column weight factor (for search)
 	 *
-	 * This should obviously be overriden when models need to specify weighting for fields
-	 *
 	 * @param string $columnName
 	 * @param string $focusPresetName
 	 * @return int column weight factor
 	 */
-	public function getColumnWeightFactor($columnName, $focusPresetName=false)
+	public function getColumnWeightFactor($columnName, $focusPresetName='')
 	{
-		/**
-		 * @todo Implement!!
-		 */
-	    return 1;
+	    return $this->getEntityRepository()
+	        ->getDefinition()
+	        ->getSearchFocusPresets()
+	        ->getFactor($columnName, $focusPresetName);
 	}
 	
 	/**
