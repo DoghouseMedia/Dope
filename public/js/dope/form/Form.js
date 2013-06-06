@@ -10,10 +10,13 @@ dojo.declare('dope.form.Form', [
 ], {
 	baseClass: 'dopeForm',
 	handles: [],
+	childrenChanging: 0,
+	submitAfterChangeComplete: false,
 
 	startup: function() {
 		this.inherited(arguments);
-		
+		this.childrenChanging = 0;
+		this.submitAfterChangeComplete = false;
 		this.handles = [];
 		
 		/* 
@@ -27,22 +30,51 @@ dojo.declare('dope.form.Form', [
 		dojo.forEach(this.getDescendants(), dojo.hitch(this, '_setupChild'));
 	},
 	_setupChild: function(child) {
+	  if (child.onCompleteCallbacks) {
+	    child.onCompleteCallbacks.push(dojo.hitch(this, 'onChildChangeComplete'));
+	  }
 		this.handles.push(
 			dojo.connect(child, 'onChange', dojo.hitch(this, 'onChildChange', child))
 		);
 	},
 	onChildChange: function(changedChild, value) {
 		if (! changedChild.silence) {
+		  var that = this;
 			dojo.forEach(this.getDescendants(), function(child) {
 				if (child === changedChild) return;
 				
 				if (child.onFormFieldChange) {
+				  that.childrenChanging++;
 					child.onFormFieldChange(changedChild, value);
 				}
 			});
 		}
 	},
+	onChildChangeComplete: function() {
+	  if (this.childrenChanging > 0) {
+	    this.childrenChanging--;
+	  }
+	  
+    if (this.submitAfterChangeComplete && !this.hasChildrenChanging()) {
+      this.submit();
+    }
+    
+    return this;
+  },
+	hasChildrenChanging: function() {
+	  return (this.childrenChanging > 0);
+	},
 	onSubmit: function(e) {
+	  if (this.hasChildrenChanging()) {
+	    if (e) e.preventDefault();
+	    
+	    this.submitAfterChangeComplete = true;
+	    
+	    return false;
+	  }
+	  
+	  this.submitAfterChangeComplete = false;
+	  
 		this.inherited(arguments);
 		
 		/* Prevent the form from really submitting */

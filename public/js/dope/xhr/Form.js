@@ -19,8 +19,8 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 		/* Uploader handles things on its own */
 		if (this.uploader) {
 			return true;
-		}
-
+		}		
+		
 		var params = {
 			title: 'Submit form',
 			form: this.domNode,
