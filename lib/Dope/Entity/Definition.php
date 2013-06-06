@@ -146,7 +146,7 @@ class Definition extends \ReflectionClass
         if (! $presets instanceof \Dope\Doctrine\ORM\Mapping\SearchFocusPresets) {
             $presets = new \Dope\Doctrine\ORM\Mapping\SearchFocusPresets();
         }
-        return $presets->value;
+        return $presets;
 	}
 	
 	public function factory($params)
