@@ -93,8 +93,8 @@ dojo.declare('dope.layout.ContentPane', [
 		dojo.publish('/dope/layout/ContentPane/load', [this]);
 		
 		/* Hack */
-		if (this._singleChild.domNode.title) {
-			this.set('title', this._singleChild.domNode.title);
+		if (this.getChildren()[0].title) {
+			this.set('title', this.getChildren()[0].title);
 			dojo.publish('/dope/layout/ContentPane/change', [this]);
 		}
 		
