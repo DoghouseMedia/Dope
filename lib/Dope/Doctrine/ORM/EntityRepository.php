@@ -267,7 +267,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		return false;
 	}
 	
-	public function flatten(array $data, $forceShallow=false)
+	public function flatten(array $data, $forceShallow=false, $withEntityIds=true)
 	{
 		$array = array();
 		$md = $this->getClassMetadata();
@@ -309,7 +309,9 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		        if ($forceShallow) {
 		            $array[$key] = trim((string) $data[$key]);
 		        }
-		        $array[$key . '_id'] = (int) $data[$key]->id;
+		        if ($withEntityIds) {
+		        	$array[$key . '_id'] = (int) $data[$key]->id;
+		        }
 		    }
 		    else {
 		        $array[$key] = is_string($data[$key]) ? trim($data[$key]) : $data[$key];

@@ -37,11 +37,13 @@ dojo.declare('dope.dialog.Dialog', [dijit.Dialog, dijit.layout._LayoutWidget], {
 	
 	startup: function() {
 		this.inherited(arguments);
-		dojo.connect(
-			dijit.byId(this.confirmButtonNode.id), 
-			'onClick', 
-			dojo.hitch(this, '_onExecute')
-		);
+		if (this.confirmButtonNode) {
+			dojo.connect(
+				dijit.byId(this.confirmButtonNode.id), 
+				'onClick', 
+				dojo.hitch(this, '_onExecute')
+			);
+		}
 	},
 	
 	_onExecute: function(e) {

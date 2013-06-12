@@ -157,14 +157,15 @@ implements \IteratorAggregate
 	}
 	
 	public function getIterator() {
-		return new \ArrayIterator($this->toArray());
+		return new \ArrayIterator($this->toArray(true, false));
 	}
 	
-	public function toArray($forceShallowFlattening=false)
+	public function toArray($forceShallowFlattening=false, $withEntityIds=true)
 	{
 		return $this->getRepository()->flatten(
 			get_object_vars($this),
-			$forceShallowFlattening
+			$forceShallowFlattening,
+			$withEntityIds
 		);
 	}
 
