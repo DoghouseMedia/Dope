@@ -11,7 +11,7 @@ dojo.declare('dope.entity.form.Quick', dope.entity.Form, {
 		xhrUrl.set(child.name, value ? String(value) : '0'); // default to 0 if no value
 		
 		new dope.operation.xhrPost({
-			title: 'Update candidate',
+			title: 'Save',
 			url: xhrUrl
 		});
 	}

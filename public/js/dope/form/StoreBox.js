@@ -3,27 +3,25 @@ dojo.require('dijit.form.FilteringSelect');
 dojo.require('dope.data.ItemFileReadStore');
 
 dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
+	onStoreComplete: function() { /* Event */ },
+
 	searchAttr: "__toString",
 	labelAttr: "__toString",
-	silence: false,
-	_value: null,
-	onCompleteCallbacks: [],
+	pageSize: 20,
+	noisy: true,
 	
 	postCreate: function() {
-		this.onCompleteCallbacks = [];
-		this._value = null;
 		this.inherited(arguments);
 		this.fetchStore();
 	},
 	onFormFieldChange: function(field, value) {
-	    if (this.value) {
-	        this.set('_value', this.value);
-	    }
-		this.setStoreParam(field.name, value);
+	    this.setStoreParam(field.name, value);
 	},
 	setStoreParam: function(key, val) {
 		var url = new dope.utils.Url(this.getStoreUrl());
-		url.set(key, val);
+		if (key) {
+			url.set(key, val);
+		}
 		return this.setStoreUrl(String(url));
 	},
 	getStoreUrl: function() {
@@ -41,21 +39,17 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 	fetchStore: function() {
 		this.set('disabled', true);
 		return this.store.fetch({
-			onComplete: this.onStoreComplete.bind(this),
-			onError: this.onStoreError.bind(this)
+			onComplete: this._onStoreComplete.bind(this),
+			onError: this._onStoreError.bind(this)
 		});
 	},
-	onStoreComplete: function() {
+	_onStoreComplete: function() {
 		this.set('disabled', false);
-		this.set('value', this._value);
+		this.set('value', this.value);
 		
-		if (this.onCompleteCallbacks) {
-		  dojo.forEach(this.onCompleteCallbacks, function(callback) {
-		    callback();
-		  });
-		}
+		this.onStoreComplete();
 	},
-	onStoreError: function(v1,v2) {
+	_onStoreError: function(v1,v2) {
 		if (console) console.log('onStoreError', v1, v2);
 	}
 });

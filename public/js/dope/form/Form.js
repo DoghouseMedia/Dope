@@ -20,7 +20,7 @@ dojo.declare('dope.form.Form', [
 		this.handles = [];
 		
 		/* 
-		 * Prevent Webkit from validation fields,
+		 * Prevent Webkit from validating fields,
 		 * since it errors on hidden fields, eg.
 		 * fields in other tabs...
 		 */
@@ -35,25 +35,36 @@ dojo.declare('dope.form.Form', [
 		);
 	},
 	_setupChildOnCompleteCallback: function(child) {
-	  if (child.onCompleteCallbacks && !child.onCompleteCallbackSetup) {
-	    child.onCompleteCallbacks.push(dojo.hitch(this, 'onChildChangeComplete'));
-	    child.onCompleteCallbackSetup = true;
-	  }
+		/*
+		 * Some children have an 'onCompleteCallback'
+		 * stack that we need to add ourselves to.
+		 */
+	    //if (child.onCompleteCallbacks && !child.onCompleteCallbackSetup) {
+	    	
+	    	dojo.connect(child, 'onStoreComplete', dojo.hitch(this, 'onChildChangeComplete'));
+	    	
+	        //child.onCompleteCallbacks.push(dojo.hitch(this, 'onChildChangeComplete'));
+	       // child.onCompleteCallbackSetup = true;
+	    //}
 	},
 	onChildChange: function(changedChild, value) {
-		if (! changedChild.silence) {
-		  var that = this;
-			dojo.forEach(this.getDescendants(), function(child) {
-				if (child === changedChild) return;
-				
-				if (child.onFormFieldChange) {
-			    that._setupChildOnCompleteCallback(child);
-			    
-				  that.childrenChanging++;
-					child.onFormFieldChange(changedChild, value);
-				}
-			});
+		if (! changedChild.noisy) {
+			return;
 		}
+		
+		dojo.forEach(this.getDescendants(), dojo.hitch(this, function(child) {
+			if (child === changedChild) {
+				return;
+			}
+			
+			if (! child.onFormFieldChange) {
+				return;
+			}
+	        
+			this._setupChildOnCompleteCallback(child);
+		    this.childrenChanging++;
+			child.onFormFieldChange(changedChild, value);
+		}));
 	},
 	onChildChangeComplete: function() {
 	  if (this.childrenChanging > 0) {

@@ -40,13 +40,13 @@ dojo.declare('dope.search.form.FilterValue', [
 			url: storeUrl
 		});
 		
-		this.valueSelect.onCompleteCallbacks.push(
-		  dojo.hitch(this, 'onDataStoreLoad')
-		);
+		dojo.connect(this.valueSelect, 'onStoreComplete', dojo.hitch(this, 'onDataStoreLoad'));
+		this.valueSelect._set('value', this._value);
 		this.valueSelect
 			.set('pageSize', 20)
-			.set('_value', this._value)
+			.set('_resetValue', this._value)
 			.setStore(dataStore);
+		
 		
 		if (! this.isFirst()) {
 			dojo.place(dojo.create('div', {
