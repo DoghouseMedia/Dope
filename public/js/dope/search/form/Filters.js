@@ -27,8 +27,10 @@ dojo.declare('dope.search.form.Filters', [dope._Contained, dijit.layout._LayoutW
 			return;
 		}
 		
-		this.getPane().prepareData('formfilters', this.getSerialized());
-		//
+		if (this.getPane().prepareData) {
+			this.getPane().prepareData('formfilters', this.getSerialized());
+		}
+		
 		dojo.forEach(this.getAsParams(), function(param) {
 			storeUrl.set(param.key, param.value);
 		});

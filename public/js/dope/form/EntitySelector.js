@@ -9,10 +9,13 @@ dojo.declare('dope.form.EntitySelector', dijit.MenuItem, {
 	
 	postCreate: function() {
 		this.inherited(arguments);
+		
 		this.dialog = new dope.dialog.EntitySelector({
-			href: '/' + this.entityType,
-			onSelect: dojo.hitch(this, '_onSelect')
+			href: '/' + this.entityType
 		});
+		dojo.connect(this.dialog, 'onSelect',
+			dojo.hitch(this, '_onSelect')
+		);
 	},
 	
 	_onSelect: function(params) {

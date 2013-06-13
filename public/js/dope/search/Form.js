@@ -90,10 +90,16 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		
 		var formdata = dojo.formToObject(this.domNode);
 		var storeUrl = new dope.utils.Url(this.domNode.action, formdata);
-		this.getPane().prepareData('formdata', formdata);
+		
+		if (this.getPane().prepareData) {
+			this.getPane().prepareData('formdata', formdata);
+		}
 		
 		dojo.publish('/dope/search/form/store/beforeFetch', [this, storeUrl]);
-		this.getPane().publishChange();
+		
+		if (this.getPane().publishChange) {
+			this.getPane().publishChange();
+		}
 		
 		/* Store */
 		this.store = new dope.data.JsonRestStore({

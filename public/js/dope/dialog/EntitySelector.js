@@ -6,11 +6,28 @@ dojo.declare('dope.dialog.EntitySelector', dope.dialog.Dialog, {
 	
 	showOnCreate: false,
 	title: 'Select...',
-	confirmText: 'Done',
+	confirmText: 'Close',
 	href: null,
+	isContainer: true,
+	isLayoutContainer: true,
 	
 	getUrl: function() { 
 		return new dope.utils.Url(this.href);
+	},
+
+	onShow: function() {
+		/*
+		 * _checkIfSingleChild() will define _singleChild if it exists
+		 */
+		this._checkIfSingleChild();
+		if (this._singleChild) {
+			this._singleChild.resize({
+				w: 1040,
+				h: 340
+			});
+		}
+		
+		this.inherited(arguments);
 	},
 	
 	onGridRowClick: function(params) {
