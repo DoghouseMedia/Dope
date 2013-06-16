@@ -64,7 +64,6 @@ class Form extends \Dope\Form\Entity\Search
         $this->addElement('ComboBox', 'state', array(
             'label' => 'State:',
             'multiOptions' => $this->getStates()
-            //'id' => ''
         ));
     
         return $this; //chainable
@@ -131,7 +130,6 @@ class Form extends \Dope\Form\Entity\Search
         return $this->addElement('ComboBox', 'office', array(
             'label'        => 'Office:',
             'multiOptions' => $this->getOffices()
-            //'id' => ''
         ));
     }
 }
