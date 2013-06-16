@@ -42,7 +42,7 @@ class Form extends \Dope\Form\Entity\Search
         return $this;
     }
     
-    protected function _addDate($name='date', $label='Date to report on (format dd/mm/yyyy):', $value=null)
+    public function _addDate($name='date', $label='Date to report on (format dd/mm/yyyy):', $value=null)
     {
         $this->addElement('Date', $name, array(
             'label'   => $label,
@@ -95,33 +95,15 @@ class Form extends \Dope\Form\Entity\Search
     
     protected function _addConsultant($fieldName='user', $label="Consultant:")
     {
-        /**
-         * @todo Fix
-         */
-        return $this->addElement('FilteringSelect', $fieldName, array(
-            'label'        => $label,
-            'storeId' => 'userStore',
-            'storeType'=> 'dojo.data.ItemFileReadStore',
-            'storeParams' => array('url' => '/user/autocomplete/show_reports/1/format/dojo'),
-            'autoComplete'   => 'false',
-            'hasDownArrow'   => 'true',
-            'value' => null
+        return $this->addElement('StoreBox', $fieldName, array(
+            'label' => $label
         ));
     }
     
-    protected function _addStatsConsultant()
+    public function _addStatsConsultant()
     {
-        /**
-         * @todo Fix
-         */
-        return $this->addElement('FilteringSelect', 'user', array(
-            'label'        => 'Consultant:',
-            'storeId' => 'userStore',
-            'storeType'=> 'dojo.data.ItemFileReadStore',
-            'storeParams' => array('url' => '/user/autocomplete/show_stats/1/format/dojo'),
-            'autoComplete'   => 'false',
-            'hasDownArrow'   => 'true',
-            'value' => null
+        return $this->addElement('StoreBox', 'user', array(
+            'label' => 'Consultant:'
         ));
     }
     
