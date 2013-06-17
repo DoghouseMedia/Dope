@@ -23,5 +23,8 @@ dojo.declare('dope.menu.Item', dijit.MenuItem, {
 	},
 	location: function() {
 		window.location = this.url;
+	},
+	openExternal: function() {
+		window.open(this.url);
 	}
 });
