@@ -3,7 +3,9 @@
 class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 {
 	protected $rows = array();
-	protected $tableAttributes = array();
+	protected $headers = array();
+	protected $caption = null;
+	protected $attributes = array();
 	
 	public function table(Traversable $rows)
 	{
@@ -22,22 +24,44 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		return $this;
 	}
 	
+	public function getHeaders()
+	{
+        return $this->headers;
+	}
+	
+	public function setHeaders(Traversable $headers)
+	{
+        $this->headers = $headers;
+        return $this;
+	}
+	
 	public function getAttributes()
 	{
-		return $this->tableAttributes;
+		return $this->attributes;
 	}
 	
 	public function getAttribute($name)
 	{
-		return isset($this->tableAttributes[$name]) ?
-			$this->tableAttributes[$name] :
-			'';
+		return isset($this->attributes[$name])
+			? $this->attributes[$name]
+			: '';
 	}
 	
 	public function setAttribute($name, $value)
 	{
-		$this->tableAttributes[$name] = $value;
+		$this->attributes[$name] = $value;
 		return $this;
+	}
+	
+	public function getCaption()
+	{
+	    return $this->caption;
+	}
+	
+	public function setCaption($caption)
+	{
+	    $this->caption = $caption;
+	    return $this;
 	}
 	
 	public function addClass($className)
@@ -57,12 +81,31 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			}
 			$html .= '>';
 			
-			foreach($this->getRows() as $key => $values) {
+			if ($this->getCaption()) {
+			    $html .= '<caption>';
+			    $html .= $this->getCaption();
+			    $html .= '</caption>';
+			}
+			
+			if (count($this->getHeaders()) > 0) {
+    			$html .= '<thead>';
+    			$html .= '<tr>';
+    			foreach ($this->getHeaders() as $value) {
+    			    $html .= '<th>';
+    			    $html .= $value;
+    			    $html .= '</th>';
+    			}
+    			$html .= '</tr>';
+    			$html .= '<thead>';
+			}
+			
+			$html .= '<tbody>';
+			foreach ($this->getRows() as $key => $values) {
 				$html .= '<tr>';
 				if (! is_array($values)) {
 					$values = array($values);
 				}
-				if (! ctype_digit($key)) {
+				if (!is_int($key) AND !ctype_digit($key)) {
 					$html .= '<th>';
 					$html .= $this->formatKey($key);
 					$html .= '</th>';
@@ -74,7 +117,7 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 				}
 				$html .= '</tr>';
 			}
-			
+			$html .= '</tbody>';
 			$html .= '</table>';
 		}
 		catch(Exception $e) {
@@ -131,7 +174,7 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function testIsBool($key)
 	{
-	    throw new \Exception("nneds refactoring");
+	    throw new \Exception("needs refactoring");
 	    
 		if (! $this->getRows() instanceof Core_Model) {
 			return false;
@@ -144,7 +187,7 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function testIsCurrency($key)
 	{
-	    throw new \Exception("nneds refactoring");
+	    throw new \Exception("needs refactoring");
 	    
 		if (! $this->getRows() instanceof Core_Model) {
 			return false;
