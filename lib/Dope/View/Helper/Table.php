@@ -2,25 +2,36 @@
 
 class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 {
-	protected $rows = array();
+	protected $rows = null;
 	protected $headers = array();
 	protected $caption = null;
 	protected $attributes = array();
 	
-	public function table(Traversable $rows)
+	public function table(Traversable $rows=null)
 	{
-		$this->setRows($rows);
+		if ($rows) {
+			$this->setRows($rows);
+		}
 		return $this;
 	}
 	
 	public function getRows()
 	{
+		if (! $this->rows instanceof \Traversable) {
+			$this->rows = new \ArrayObject();
+		}
 		return $this->rows;
 	}
 	
 	public function setRows(Traversable $rows)
 	{
 		$this->rows = $rows;
+		return $this;
+	}
+	
+	public function addRow($row)
+	{
+		$this->getRows()->append($row);
 		return $this;
 	}
 	

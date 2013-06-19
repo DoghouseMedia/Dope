@@ -186,7 +186,7 @@ abstract class _Base
     
     public function render()
     {
-        $view = $this->getForm()->getController()->view;
+        $view = $this->getController()->view;
         
         /*
          * We'll use an array so we can use join at the end
@@ -227,6 +227,8 @@ abstract class _Base
     
     public function renderLabel(Column $column)
     {
+    	$view = $this->getController()->view;
+    	
         $classes = array('sort');
         $data = clone $this->getController()->getData();
         
@@ -253,7 +255,7 @@ abstract class _Base
         $urlParams['sort'] = $data->sort;
         $urlParams['sort_order'] = $data->sort_order;
         
-        $url = $this->getForm()->getView()->url(array(), null, false) . '?' . http_build_query($urlParams);
+        $url = $view->url(array(), null, false) . '?' . http_build_query($urlParams);
     
         //foreach ($urlParams as $k => $v) {
             //$url .= $this->getForm()->getElementsBelongTo() . '[' . $k . ']=' . urlencode($v) . '&';
