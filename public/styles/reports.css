@@ -1,29 +1,5 @@
 @CHARSET "UTF-8";
 
-body.reports { 
-	background: #ffffff !important;
-	padding: 1%;
-	width: 98%;
-	height: auto;
-}
-
-body.reports .options {
-	float: right;
-	margin: 1em;
-}
-
-body.reports #logo {
-	margin: 0 15px 0 0;
-}
-
-p.timerun {
-	margin: 0;
-	padding: 1em;
-	background-color: #fff;
-	color: #666;
-	font-style: oblique;
-}
-
 table.printable .item {
 	border-top: thin solid #eee;
 
@@ -54,45 +30,6 @@ table.stats caption {
 	margin-right: -2px;
 }
 
-.report-stats-chart-lines {
-	background-color: #E7EEF6;
-	box-shadow: 0px 0px 7px #ccc;
-	border-radius: 0 0 5px 5px;
-	margin: 2em 0;
-	margin-right: 15px;
-	position: relative;
-}
-
-.report-stats-chart-lines h3 {
-	margin: 0;
-	position: absolute;
-	top: 10px;
-	left: 0;
-	right: 0;
-	text-align: center;
-}
-
-.report-loaded .report-stats-chart-lines {
-	margin-right: 0;
-}
-
-.report-loaded .report-stats-chart-lines img {
-	width: 100% !important;
-}
-
-.report-loaded h2 {
-	margin-top: 2em;
-	border: 1px solid #ddd;
-	padding: 1ex;
-	background-color: #f0f0f0;
-	box-shadow: 1px 1px 2px #ccc;
-}
-
-.report-loaded .column-1 {
-	page-break-before: always;
-	page-break-after: always;
-}
-
 
 table.dojoxLegendNode.dojoxLegendHorizontal {
 	border-radius: 0 0 5px 5px;
@@ -106,12 +43,4 @@ table.dojoxLegendNode.dojoxLegendHorizontal td {
 }
 table.dojoxLegendNode.dojoxLegendHorizontal .dojoxLegendText {
 	
-}
-
-.chartsPane .dijitAccordionContainer-dijitContentPane {
-	overflow-y: scroll !important; 
-}
-
-.chart-svg {
-	/*display: none;*/
 }
