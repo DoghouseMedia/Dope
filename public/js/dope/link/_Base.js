@@ -12,7 +12,9 @@ dojo.declare('dope.link._Base', [dijit._Widget, dope._Contained], {
 		dojo.connect(this.domNode, 'onclick', dojo.hitch(this, 'onClick'));
 		
 		/* Ensure dom's href is set so open in new tab works and cursor/pointer is applied */
-		this.domNode.href = this.href;
+		if (this.href) {
+			this.domNode.href = this.href;
+		}
 	},
 	onClick: function(e) {
 		if (e) e.preventDefault();

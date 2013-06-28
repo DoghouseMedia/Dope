@@ -19,17 +19,9 @@ class Dope_View_Helper_FieldFormatter extends Zend_View_Helper_Abstract
 			/* We need the view object but can't access $this from the current scope :( */
 			$view = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer')->view;
 			
-			$email = $matches[1];
-		
-			$url = $view->url(array(
-				'controller' => 'email',
-				'action' => 'new',
-				'recipient_to' => $email
-			));
-				
-			$text = $view->escape($email);
-				
-			return '<a class="newtab" href="' . $url . '">' . $text . '</a>';
+			$email = $view->escape($matches[1]);
+			
+			return '<a data-dojo-type="snowwhite.button.Email" href="mailto:' . $email . '">' . $email . '</a>';
 		}, $string);
 		
 		/*
