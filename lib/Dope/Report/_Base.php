@@ -7,9 +7,11 @@ abstract class _Base
     const FORM_CLASS = 'Dope\Report\Form';
     const DEFAULT_SORT_COLUMN = true;
     
-    protected $timeRun;
     protected $timeStart;
     protected $timeEnd;
+    
+    protected $memoryStart;
+    protected $memoryEnd;
     
     protected $defaultSortColumn;
     protected $columns = array();
@@ -31,7 +33,7 @@ abstract class _Base
     public function __construct(\Dope\Controller\Action $controller)
     {
         $this->setController($controller);
-        $this->timeStart();    
+        $this->profileStart();    
     }
     
     public function addColumn(Column $column, $isDefaultSortColumn=false)
@@ -83,23 +85,33 @@ abstract class _Base
         return static::TITLE;
     }
     
-    public function timeStart()
+    public function profileStart()
     {
         $this->timeStart = microtime(true);
+        $this->memoryStart = memory_get_usage();
     }
     
-    public function timeEnd()
+    public function profileEnd()
     {
-        $this->timeEnd = microtime(true);
+    	if (! $this->timeEnd) {
+        	$this->timeEnd = microtime(true);
+    	}
+    	
+    	if (! $this->memoryEnd) {
+    		$this->memoryEnd = memory_get_usage();
+    	}
     }
     
     public function getTimeRun()
     {
-        if (! $this->timeEnd) {
-            $this->timeEnd();
-        }
-        
+        $this->profileEnd();
         return $this->timeEnd - $this->timeStart;
+    }
+    
+    public function getMemoryUsed()
+    {
+    	$this->profileEnd();
+    	return ($this->memoryEnd - $this->memoryStart) / pow(1024, 2);
     }
     
     /**
