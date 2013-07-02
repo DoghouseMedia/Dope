@@ -95,10 +95,14 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 			return;
 		}
 		
-		this.contacts.push(new dope.form.EmailBox.Contact({
+		var contact = new dope.form.EmailBox.Contact({
 			'value': value,
 			'emailBox': this
-		}));
+		});
+		if (this.get('disabled')) {
+			contact.setReadOnly(true);
+		}
+		this.contacts.push(contact);
 		
 		this.updateFormValue();
 	},
@@ -131,6 +135,12 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 		}
 		
 		this.clearContacts();
+	},
+	setReadOnly: function() {
+		this.set('disabled', 'disabled');
+		dojo.forEach(this.contacts, function(contact) {
+			contact.setReadOnly(true);
+		});
 	}
 });
 
@@ -152,5 +162,8 @@ dojo.declare('dope.form.EmailBox.Contact', [dijit._Widget, dijit._Templated], {
 	},
 	remove: function() {
 		this.emailBox.removeContact(this);
+	},
+	setReadOnly: function(setReadOnly) {
+		dojo.style(this.removeNode, 'display', setReadOnly ? 'none' : 'block');
 	}
 });

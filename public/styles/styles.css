@@ -74,51 +74,11 @@ hr {
 .float-right { float: right; }
 .clear { clear: both; }
 
-/**
- * Notifications
+/*
+ * Overlay
  */
-.success{ color: #00ff00; }
-.error{ color: #cc0000; }
-.debug{ color: #666; }
-.info{ color: #000099; }
-.soft{ color: #999; }
-
-div.error,
-p.error { 
-	background-color: #ffcccc;
-	border: 1px solid #cc0000;
-	padding: 1em;
-	box-shadow: 0 0 4px #ccc;
-	margin: 0 0 1em 0;
-	border-radius: 5px;
-}
-
-div.debug,
-p.debug {
-	background-color: #eeeeee;
-	border: 1px solid #666666;
-	padding: 1em;
-	box-shadow: 0 0 4px #ccc;
-	margin: 0 0 1em 0;
-	border-radius: 5px;
-}
-div.info,
-p.info {
-	background-color: #eeeeff;
-	border: 1px solid #9999cc;
-	padding: 1em;
-	box-shadow: 0 0 4px #ccc;
-	margin: 0 0 1em 0;
-	border-radius: 5px;
-}
-div.info > p:first-child {
-	margin-top: 0;
-}
-
-
 #overlay-box{ width: 800px !important; }
 #overlay-box .dijitDialogPaneContent{ width: auto !important; padding: 0; }
-
 
 /* Waiter spinner (Forms) */
 .waiter{
