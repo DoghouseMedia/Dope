@@ -654,13 +654,17 @@ class Search
 	                //case ClassMetadata::MANY_TO_MANY:
 	                    $record[$alias] = array();
 	                    	
-	                    $_entities = $targetRepo->findBy(array(
-	                        $mapping['mappedBy'] => $record['id']
-	                    ));
-	
-	                    foreach ($_entities as $_entity) {
-	                        $record[$alias][] = $_entity->id;
+	                    $_rows = $targetRepo->createQueryBuilder('t')
+	                    	->select('t.id')
+	                    	->where('t.' . $mapping['mappedBy'] . ' = :id')
+	                    	->setParameter('id', $record['id'])
+	                    	->getQuery()
+	                    	->getScalarResult();
+
+	                    foreach ($_rows as $_row) {
+	                    	$record[$alias][] = $_row['id'];
 	                    }
+	                    
 	                    break;
 	            }
 		    }
