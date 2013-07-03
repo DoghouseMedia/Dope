@@ -14,10 +14,7 @@ class Dope_View_Helper_Tidy extends Zend_View_Helper_Abstract
 		$this->_config['fix-bad-comments']='no';
 		$this->_config['hide-comments']='no';
 		$this->_config['drop-empty-paras']='yes';
-		
-		if (tidy_get_release() > 0) {
-			//$this->_config["preserve-entities"]=1;
-		}
+		$this->_config['indent']='yes';
 	}
 
 	public function tidy($html, $charset = 'utf8')

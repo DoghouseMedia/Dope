@@ -77,7 +77,7 @@ extends Action
 		if (! $this->_helper->contextSwitch()->currentContextAllowsRecordFetching()) {
 			/* View params (Data) */
 			$this->view->data = $this->getData();
-				
+			
 			/* Load and configure new/add form */
 			if ($this->getEntityDefinition()->getBrowseOptions()->getShowForm()) {
 			    $this->view->form = $this->getEntityForm();

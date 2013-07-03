@@ -4,6 +4,7 @@ dojo.require('dijit.Editor');
 dojo.declare('dope.form.Editor', dijit.Editor, {
 	postCreate: function() {
 		this.inherited(arguments);
+		this.addStyleSheet('/css/font.css');
 		this.hiddenNode = dojo.create('input', {
 			type: 'hidden',
 			name: this.name

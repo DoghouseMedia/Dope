@@ -15,11 +15,19 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 		dojo.connect(this, 'onKeyDown', dojo.hitch(this, '_onKeyDown'));
 		dojo.connect(this, 'onKeyUp', dojo.hitch(this, '_onKeyUp'));
 
-		this.valueNode = dojo.create('input', {name: this.name, type: 'hidden'});
-		this.textbox.name = null;
-		dojo.place(this.valueNode, this.domNode);
+		if (!this.valueNode) {
+			this.valueNode = dojo.create('input', {name: this.name, type: 'hidden'});
+			this.textbox.name = null;
+			dojo.place(this.valueNode, this.domNode);
+		}
 		
 		this.reset();
+	},
+	_setDisabledAttr: function(value) {
+		if (!value) {
+			dojo.removeAttr(this.valueNode, 'disabled');
+		}
+		return this.inherited(arguments);
 	},
 	updateFormValue: function() {
 		this.valueNode.value = this.getContactsValue();

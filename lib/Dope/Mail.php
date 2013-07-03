@@ -40,21 +40,29 @@ class Mail extends \Zend_Mail
 	
 	public function setBodyText($txt, $charset = null, $encoding = \Zend_Mime::ENCODING_QUOTEDPRINTABLE)
 	{
-		//$this->layout->content = $txt;
-		//$txt = $this->layout->render('txt.phtml');
-		return parent::setBodyText($txt, $charset, $encoding);
+		$this->layout->content = $txt;
+		
+		return parent::setBodyText(
+			$this->layout->render('txt.phtml'),
+			$charset,
+			$encoding
+		);
 	}
 	
 	public function setBodyHtml($html, $charset = null, $encoding = \Zend_Mime::ENCODING_QUOTEDPRINTABLE)
 	{
-		//$this->layout->content = $html;
-		//$html = $this->layout->render('html.phtml');
-		return parent::setBodyHtml($html, $charset, $encoding);
+		$this->layout->content = $html;
+		
+		return parent::setBodyHtml(
+			$this->layout->render('html.phtml'),
+			$charset,
+			$encoding
+		);
 	}
 	
 	public function setBodyView($viewName, $charset = null, $encoding = \Zend_Mime::ENCODING_QUOTEDPRINTABLE)
 	{		
-		$html = nl2br($this->view->render($viewName));
+		$html = $this->view->render($viewName);
 		$txt = strip_tags($html);
 		
 		$this->setBodyText($txt, $charset, $encoding);
