@@ -624,6 +624,7 @@ extends Action
 		$classMetadata = \Dope\Doctrine::getEntityManager()->getClassMetadata($className);
 	
 		$useOwnClassName = ($forceUseOwnClassName
+			OR empty($params)
 			OR !isset($classMetadata->discriminatorMap)
 			OR empty($classMetadata->discriminatorMap)
 		);
