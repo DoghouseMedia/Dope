@@ -84,12 +84,7 @@ class Entity extends _Base
 		parent::preConfigure();
 		
 		/* Should we populate the default values from the entity? */
-		$getDefaultValuesFromEntity = (
-			$this->hasController() AND
-			//!$this->getController()->getRequest()->isPut() AND
-			//!$this->getController()->getRequest()->isPost() AND
-			$this->hasEntity()
-		);
+		$getDefaultValuesFromEntity = ($this->hasController() AND $this->hasEntity());
 
 		if ($getDefaultValuesFromEntity) {
 			$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this->getEntity()));
