@@ -2,6 +2,8 @@
 
 namespace Dope\Form;
 
+use Dope\Entity\Definition;
+
 class Entity extends _Base
 {
 	/**
@@ -69,11 +71,11 @@ class Entity extends _Base
 	protected function getDefinition()
 	{
 		if ($this->hasEntity()) {
-			return new \Dope\Entity\Definition($this->getEntity());
+			return new Definition($this->getEntity());
 		}
 		
 		if ($this->hasController()) {
-			return new \Dope\Entity\Definition($this->getController()->getModelClassName());
+			return new Definition($this->getController()->getModelClassName());
 		}
 		
 		throw new \Exception("No way to determine entityName");
@@ -91,7 +93,7 @@ class Entity extends _Base
 		}
 		
 		/* Loop through fields and create form */  
-		foreach($this->getDefinition()->getFields() as $name => $field) {
+		foreach ($this->getDefinition()->getFields() as $name => $field) {
 			/* Add Element */
 			$this->addElement($field->type, $name, array_merge(array(
 				'label' => $field->label ?: ucfirst(str_replace('_', ' ', $name)),
@@ -103,17 +105,7 @@ class Entity extends _Base
 				$element = $this->getElement($name);
 				$value = $this->getEntity()->{$name};
 				
-				$isComboBox = (
-					$element instanceof \Zend_Dojo_Form_Element_ComboBox AND
-					(!$element->getStoreInfo() AND !$element->registerInArrayValidator()) AND
-					(count($element->getMultiOptions()) == 0)
-				);
-				
-				/* WTF ? */
-				if ($isComboBox) {
-					$element->addMultiOption($value)->setValue($value);
-				}
-				elseif ($value instanceof \DateTime) {
+				if ($value instanceof \DateTime) {
 					switch ($md->getTypeOfColumn($name)) {
 						case 'time':
 							$element->setValue($value->format('H:i:s'));
@@ -140,14 +132,6 @@ class Entity extends _Base
 				/* Create Display group */
 				if (! $this->getDisplayGroup($group->name)) {
 					$this->addDisplayGroup(array($name), $group->name, array('legend' => $group->label));
-					
-					$this->setDecorators(array(
-						'FormElements',
-						array('TabContainer', array('tabPosition'=>'left', 'region'=>'center')),
-						'Buttons',
-						'BorderContainer',
-						'EntityForm'
-					));
 				}
 				else {
 					$this->getDisplayGroup($group->name)->addElement($this->getElement($name));
@@ -174,10 +158,6 @@ class Entity extends _Base
 					\Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY,
 					\Doctrine\ORM\Mapping\ClassMetadata::MANY_TO_MANY
 				));
-				
-				//if ($isToManyAssociation) {
-				    //continue; // skip "*ToMany" associations
-				//}
 				
 				if ($this->hasElement($alias)) {
 					continue; // skip if form already has element by this name

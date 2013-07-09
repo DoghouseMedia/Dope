@@ -8,7 +8,7 @@ class Dope_Form_DisplayGroup extends Zend_Form_DisplayGroup
 	{
 		$this->setDecorators(array(
 			'FormElements',
-			'ContentPane'
+			'Fieldset'
 		));
 	}
 	

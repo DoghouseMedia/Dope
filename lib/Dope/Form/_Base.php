@@ -157,6 +157,7 @@ class _Base extends \Zend_Dojo_Form
 		/*
 		 * This is a ~kind of~ dirty hack to force forms that do not follow
 		 * our models (eg. the mailer) to include the senderId in the form if the sender param is present
+		 * @todo 2013-07-09 This might not be needed any more?
 		 */
 		if ($this->hasElement('sender') 										// form has sender
 			AND $this->getElement('sender')->getValue()							// sender has value (eg. candidate)
