@@ -19,15 +19,9 @@ extends Action\Model
 		));
 	}
 	
-	public function getModelClassName($params=array())
+	public function getModelClassName($params=array(), $forceUseOwnClassName=true)
 	{
-		/*
-		 * To force use of $useOwnClassName,
-		 * we set params to empty.
-		 * 
-		 * @todo, do this differently
-		 */
-		return parent::getModelClassName(array());
+		return parent::getModelClassName($params, $forceUseOwnClassName);
 	}
 	
 	public function browseAction()

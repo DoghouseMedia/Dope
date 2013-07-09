@@ -614,7 +614,7 @@ extends Action
 		));
 	}
 	
-	public function getModelClassName($params=array())
+	public function getModelClassName($params=array(), $forceUseOwnClassName=false)
 	{
 		if (! preg_match('|^(.*?)Controller$|', get_class($this), $matches)) {
 			throw new \Exception('Could not parse controller class name from ' . get_class($this));
@@ -623,7 +623,7 @@ extends Action
 		$className = Config::getOption('appnamespace') . '\\Entity\\' . $matches[1];
 		$classMetadata = \Dope\Doctrine::getEntityManager()->getClassMetadata($className);
 	
-		$useOwnClassName = (empty($params)
+		$useOwnClassName = ($forceUseOwnClassName
 			OR !isset($classMetadata->discriminatorMap)
 			OR empty($classMetadata->discriminatorMap)
 		);
