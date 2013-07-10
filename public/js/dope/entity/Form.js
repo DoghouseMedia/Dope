@@ -6,31 +6,9 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 	submitModifiers: [],
 	
 	validate: function() {
-		if (this.inherited(arguments)) {
-			dojo.forEach(dojo.query('.dijitTab.dopeTabError', this.domNode), function(tab) {
-				dojo.removeClass(tab, 'dopeTabError');
-			});
-		} else {
-			var totalErrors = 0;
-			var tabs = dojo.query('.dijitTab', this.domNode);
+		if (! this.inherited(arguments)) {
+			var totalErrors = dojo.query('.dijitError', this.domNode).length;
 			
-			if (tabs.length) {
-    			dojo.forEach(
-    				dojo.query('.dijitContentPane.dijitTabPane', this.domNode), 
-    				function(contentPane, i) {
-    					dojo.removeClass(tabs[i], 'dopeTabError');
-    				
-    					var numErrors = dojo.query('.dijitError', contentPane).length;
-	    				if (numErrors) {
-	    					totalErrors += numErrors;
-	    					dojo.addClass(tabs[i], 'dopeTabError');
-	    				}
-    				}
-    			);
-			} else {
-				totalErrors += dojo.query('.dijitError', this.domNode).length;
-			}
-
 			new dope.dialog.Dialog({
 				title: "Sorry, there's an error!",
 				content: snowwhite.nl2br(

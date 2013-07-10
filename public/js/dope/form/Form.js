@@ -34,19 +34,6 @@ dojo.declare('dope.form.Form', [
 			dojo.connect(child, 'onChange', dojo.hitch(this, 'onChildChange', child))
 		);
 	},
-	_setupChildOnCompleteCallback: function(child) {
-		/*
-		 * Some children have an 'onCompleteCallback'
-		 * stack that we need to add ourselves to.
-		 */
-	    //if (child.onCompleteCallbacks && !child.onCompleteCallbackSetup) {
-	    	
-	    	dojo.connect(child, 'onStoreComplete', dojo.hitch(this, 'onChildChangeComplete'));
-	    	
-	        //child.onCompleteCallbacks.push(dojo.hitch(this, 'onChildChangeComplete'));
-	       // child.onCompleteCallbackSetup = true;
-	    //}
-	},
 	onChildChange: function(changedChild, value) {
 		if (! changedChild.noisy) {
 			return;
@@ -61,35 +48,36 @@ dojo.declare('dope.form.Form', [
 				return;
 			}
 	        
-			this._setupChildOnCompleteCallback(child);
+			dojo.connect(child, 'onStoreComplete', dojo.hitch(this, 'onChildChangeComplete'));
+			
 		    this.childrenChanging++;
 			child.onFormFieldChange(changedChild, value);
 		}));
 	},
 	onChildChangeComplete: function() {
-	  if (this.childrenChanging > 0) {
-	    this.childrenChanging--;
-	  }
+		if (this.childrenChanging > 0) {
+			this.childrenChanging--;
+		}
 	  
-    if (this.submitAfterChangeComplete && !this.hasChildrenChanging()) {
-      this.submit();
-    }
+		if (this.submitAfterChangeComplete && !this.hasChildrenChanging()) {
+			this.submit();
+		}
     
-    return this;
-  },
+		return this;
+	},
 	hasChildrenChanging: function() {
 	  return (this.childrenChanging > 0);
 	},
 	onSubmit: function(e) {
-	  if (this.hasChildrenChanging()) {
-	    if (e) e.preventDefault();
+		if (this.hasChildrenChanging()) {
+			if (e) e.preventDefault();
 	    
-	    this.submitAfterChangeComplete = true;
+			this.submitAfterChangeComplete = true;
 	    
-	    return false;
-	  }
+			return false;
+		}
 	  
-	  this.submitAfterChangeComplete = false;
+		this.submitAfterChangeComplete = false;
 	  
 		this.inherited(arguments);
 		
@@ -120,4 +108,3 @@ dojo.declare('dope.form.Form', [
 		return this.inherited(arguments);
 	}
 });
-//@ sourceURL=/js/dojo/../dope/form/Form.js

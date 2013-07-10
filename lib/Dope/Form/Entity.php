@@ -132,6 +132,15 @@ class Entity extends _Base
 				/* Create Display group */
 				if (! $this->getDisplayGroup($group->name)) {
 					$this->addDisplayGroup(array($name), $group->name, array('legend' => $group->label));
+					
+					$this->setDecorators(array(
+						'FormElements',
+						array('ContentPane', array('region'=>'center')),
+						'Quicklinks',
+						'Buttons',
+						'BorderContainer',
+						'EntityForm'
+					));
 				}
 				else {
 					$this->getDisplayGroup($group->name)->addElement($this->getElement($name));

@@ -53,7 +53,41 @@ form .field {
 	padding: 8px !important;
 }
 
+/* ----- Quick links ----- */
+.dopeLayoutQuicklinks {
+	padding: 8px;
+}
+.dopeLayoutQuicklinks h3 {
+	margin: 0;
+	padding: 4px 8px;
+	background-color: #ccc;
+}
+.dopeLayoutQuicklinks ul {
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0 1px;
+	box-shadow: 1px 1px 3px #ccc;
+}
+.dopeLayoutQuicklinks li {
+	list-style-type: none;
+	margin: 0;
+}
+.dopeLayoutQuicklinks a {
+	display: block;
+	cursor: pointer;
+	padding: 4px 8px;
+	background-color: #f9f9f9;
+	border-bottom: 1px solid #ccc;
+	color: #222;
+}
+.dopeLayoutQuicklinks a:hover {
+	background-color: #f0f0f0;
+}
+.dopeLayoutQuicklinks a.active {
+	background-color: #e0e0e0;
+}
 
+/* ----- Quick Form ----- */
 .dopeFormQuick {
 	float: right;	
 }
@@ -86,28 +120,11 @@ form .field {
 
 
 
-.dopeTabError.dijitTabChecked .dijitTabInnerDiv {
-	background-color: #ff9999;
-}
-.dopeTabError .dijitTabInnerDiv .dijitTabContent {
-	border-color: #cc9999;
-	color: #cc0000;
-}
-.dopeTabError.dijitTabChecked .dijitTabInnerDiv .dijitTabContent {
-	border-color-top: #cc9999;
-	border-color-left: #cc9999;
-	border-color-bottom: #cc9999;
-}
-
-
-
 /*
+ * ----------------------------------------------------------------------------
  * NEEDS CLEANING FROM HERE ON...
+ * ----------------------------------------------------------------------------
  */
-
-
-
-
 
 
 /* ----- Related subforms ----- */
