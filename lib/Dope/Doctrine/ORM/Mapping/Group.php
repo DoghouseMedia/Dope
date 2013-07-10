@@ -13,4 +13,6 @@ final class Group implements Annotation
     public $name;
     /** @var string */
     public $label;
+    /** @var integer */
+    public $order;
 }

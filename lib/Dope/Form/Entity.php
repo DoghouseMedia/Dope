@@ -131,7 +131,11 @@ class Entity extends _Base
 			if ($group) {
 				/* Create Display group */
 				if (! $this->getDisplayGroup($group->name)) {
-					$this->addDisplayGroup(array($name), $group->name, array('legend' => $group->label));
+					$this->addDisplayGroup(
+						array($name),
+						$group->name,
+						array('legend' => $group->label)
+					);
 					
 					$this->setDecorators(array(
 						'FormElements',
@@ -141,6 +145,10 @@ class Entity extends _Base
 						'BorderContainer',
 						'EntityForm'
 					));
+					
+					if ($group->order) {
+						$this->getDisplayGroup($group->name)->setOrder($group->order);
+					}
 				}
 				else {
 					$this->getDisplayGroup($group->name)->addElement($this->getElement($name));
