@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+
+.dopeLayoutMenuCounter {
+	width: 32px;
+	height: 16px;
+	display: inline-block;
+	color: #333;
+	opacity: 0.8;
+}
+
+.dopeLayoutMenuCounter i {
+	position: absolute;
+	left: 8px;
+	font-size: 18px;
+	line-height: 18px;
+}
+
+.dopeLayoutMenuCounter span {
+	margin-left: 20px;
+}
+
+.dopeLayoutMenuCounter.dopeOperationSummary.active {
+	color: #0000BB;
+}
+.dopeLayoutMenuCounter.dopeNotificationsSummary.active {
+	color: #BB0000;
+}

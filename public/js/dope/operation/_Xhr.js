@@ -9,12 +9,14 @@ dojo.declare('dope.operation._Xhr', dope.operation._Base, {
 		
 		dojo.connect(xhr, 'onExecute', dojo.hitch(this, '_onExecute'));
 		dojo.connect(xhr, 'onComplete', dojo.hitch(this, '_onComplete'));
-		
-		this.runningXhr = xhr.execute();
 	},
 	buildRendering: function() {
 		this.inherited(arguments);
-		this.titleNode.innerHTML = this.title || this.url || 'Operation';
+		this.containerNode.innerHTML = this.title || this.url || 'Operation';
+	},
+	postCreate: function() {
+		this.inherited(arguments);
+		this.runningXhr = this.getXhr().execute();				
 	},
 	getXhr: function(options) {
 		if (! this.xhr) {

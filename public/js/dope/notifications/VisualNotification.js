@@ -1,7 +1,7 @@
 dojo.provide('dope.notifications.VisualNotification');
 dojo.require('dope.menu.Item');
 
-dojo.declare('dope.notifications.VisualNotification', [dope.menu.Item], {
+dojo.declare('dope.notifications.VisualNotification', dope.menu.Item, {
 	message: 'Notification message',
 	
 	postCreate: function() {
