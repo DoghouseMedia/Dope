@@ -1,0 +1,30 @@
+@CHARSET "UTF-8";
+
+.dopeGridTeaserList {
+	margin: 4px 0 0 0;
+	border-top: 1px solid #ccc;
+}
+
+.dopeGridTeaserList h3 {
+	background-color: #f9f9f9;
+	padding: 2px 4px;
+	margin: 0;
+}
+
+.dopeEntityTeaser {
+	padding: 4px;
+	clear: left;
+	border-top: 1px solid #EEE;
+	margin: 0;
+}
+
+.dopeEntityTeaser .remove .dijitButton {
+	margin: 0 0.3em !important;
+}
+
+.dopeEntityTeaser .remove .dijitButtonNode {
+	height: 1.2em;
+	padding: 0 !important;
+	line-height: 1em !important;
+	vertical-align: top;
+}
