@@ -10,12 +10,13 @@ extends Zend_Dojo_Form_Element_FilteringSelect
 		parent::init();
 		
 		$prefix = $this->getAttrib('storePrefix') ?: $this->getName();
+		$url = $this->getAttrib('storeUrl') ?: "/$prefix/autocomplete";
 		
 		$this
-			->setStoreId($prefix . 'Store')
 			->setStoreType('dope.data.ItemFileReadStore')
-			->setStoreParams(array('url' => '/' . $prefix . '/autocomplete'))
-			->setAutocomplete(false)
-			->setAttrib('storeController', $prefix);
+			->setAttrib('storeController', $prefix)
+			->setStoreParams(array('url' => $url))
+			->setStoreId($prefix . 'Store')
+			->setAutocomplete(false);
 	}
 }

@@ -23,13 +23,13 @@ dojo.declare('dope.search.form.FilterValue', [
 		
 		switch(this.params.type) {
 			case 'enum':
-				var storeUrl = new dope.utils.Url('/datastore/field', {
-					modelAlias: this.params.modelAlias,
-					fieldName: this.params.key
+				var storeUrl = new dope.utils.Url('/data/store/field', {
+					table: this.params.modelAlias,
+					field: this.params.key
 				});
 				break;
 			case 'yesno':
-				var storeUrl = new dope.utils.Url('/datastore/yesno');
+				var storeUrl = new dope.utils.Url('/data/store/yesno');
 				break;
 			default:
 				var storeUrl = new dope.utils.Url('/' + this.params.key + '/autocomplete');
