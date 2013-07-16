@@ -13,3 +13,13 @@
 .dopeUiFlashcard a {
     font-size: large;
 }
+
+.dopeUiFlashcard.disabled {
+	opacity: 0.5;
+	background-color: #eee;
+	color: #ccc;
+}
+.dopeUiFlashcard.disabled a,
+.dopeUiFlashcard.disabled a:visited {
+	color: #999;
+}

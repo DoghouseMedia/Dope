@@ -4,9 +4,14 @@ dojo.require('dijit._Templated');
 
 dojo.declare('dope.ui.Flashcard', [dijit._Widget], {
 	baseClass: 'dopeUiFlashcard',
+	enabled: true,
 	
 	startup: function() {
 		this.inherited(arguments);
+		
+		if (! this.enabled) {
+			dojo.addClass(this.domNode, 'disabled');
+		}
 		
 		this._adjustHeight();
 	},

@@ -10,6 +10,8 @@ abstract class _Base
     protected $timeStart;
     protected $timeEnd;
     
+    protected $enabled = true;
+    
     protected $memoryStart;
     protected $memoryEnd;
     
@@ -34,6 +36,15 @@ abstract class _Base
     {
         $this->setController($controller);
         $this->profileStart();    
+    }
+    
+    public function isEnabled($enabled=null)
+    {
+    	if (is_bool($enabled)) {
+    		$this->enabled = $enabled;
+    	}
+    	
+    	return $this->enabled;
     }
     
     public function addColumn(Column $column, $isDefaultSortColumn=false)
