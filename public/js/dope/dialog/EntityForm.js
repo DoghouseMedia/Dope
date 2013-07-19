@@ -2,7 +2,12 @@ dojo.provide('dope.dialog.EntityForm');
 dojo.require('dope.dialog.Dialog');
 
 dojo.declare('dope.dialog.EntityForm', dope.dialog.Dialog, {
-	startup: function() {
+  form: null,
+  
+  onFormReady: function() { /* Event */ },
+  onFormComplete: function(data) { /* Event */ },
+  
+  startup: function() {
 		this.inherited(arguments);
 		
 		/*
@@ -12,27 +17,12 @@ dojo.declare('dope.dialog.EntityForm', dope.dialog.Dialog, {
 		this.confirmButtonNode.destroy();
 	},
 	
-	onLoad: function() {
+	_onLoadHandler: function() {
 		this.inherited(arguments);
 		
 		this._moveButtonBar();
-		this._connectForm();
-		
-		/*
-		 * Fix Chrome's rendering bug.
-		 * 
-		 * To avoid getting ugly sidebars, we must:
-		 *  1. Set the size of the content pane to auto
-		 *  2. Set the size back to its original value
-		 */
-		var contentPane = dojo.query('.dijitContentPane', this.domNode)[0];
-		var height = dojo.style(contentPane, 'height');
-		dojo.style(contentPane, 'height', 'auto');
-		dojo.style(contentPane, 'height', height);
-	},
-	
-	onFormComplete: function(data) {
-		/* Event */
+		this._formSetup();
+		this._fixRenderingBugs();
 	},
 	
 	_onFormComplete: function(data, response) {
@@ -69,15 +59,31 @@ dojo.declare('dope.dialog.EntityForm', dope.dialog.Dialog, {
 		buttonBar.getParent().layout();
 	},
 	
-	_connectForm: function() {
-		var form = dijit.byNode(
+	_formSetup: function() {
+		this.form = dijit.byNode(
 			dojo.query('form', this.domNode)[0]
 		);
 		
 		dojo.connect(
-			form,
+			this.form,
 			'onComplete',
 			dojo.hitch(this, '_onFormComplete')
 		);
+		
+		this.onFormReady();
+	},
+	
+	_fixRenderingBugs: function() {
+	  /*
+     * Fix Chrome's rendering bug.
+     * 
+     * To avoid getting ugly sidebars, we must:
+     *  1. Set the size of the content pane to auto
+     *  2. Set the size back to its original value
+     */
+    var contentPane = dojo.query('.dijitContentPane', this.domNode)[0];
+    var height = dojo.style(contentPane, 'height');
+    dojo.style(contentPane, 'height', 'auto');
+    dojo.style(contentPane, 'height', height);
 	}
 });

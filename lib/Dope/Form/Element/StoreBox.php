@@ -19,12 +19,4 @@ extends Zend_Dojo_Form_Element_FilteringSelect
 			->setStoreId($prefix . 'Store')
 			->setAutocomplete(false);
 	}
-	
-	public function setStoreParams($params)
-	{
-		return parent::setStoreParams(array_merge(
-			$this->getStoreParams(),
-			$params
-		));
-	}
 }
