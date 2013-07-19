@@ -9,13 +9,16 @@ dojo.declare('dope.form.StoreBox', dijit.form.FilteringSelect, {
 	labelAttr: "__toString",
 	pageSize: 20,
 	noisy: true,
+	deaf: false,
 	
 	postCreate: function() {
 		this.inherited(arguments);
 		this.fetchStore();
 	},
 	onFormFieldChange: function(field, value) {
-	    this.setStoreParam(field.name, value);
+		if (! this.deaf) {
+			this.setStoreParam(field.name, value);
+		}
 	},
 	setStoreParam: function(key, val) {
 		var url = new dope.utils.Url(this.getStoreUrl());
