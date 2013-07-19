@@ -11,7 +11,7 @@ extends Dope_Form_Element_StoreBox
 	{
 		parent::init();
 		
-		$this->setStoreParams(array(
+		$this->setDijitParams(array(
 			'deaf' => 'true',
 			'noisy' => 'false'
 		));

@@ -13,11 +13,6 @@ dojo.declare('dope.menu.Item', dijit.MenuItem, {
 			focus: true
 		}]);
 	},
-	entityFormDialog: function(options) {
-		new dope.dialog.EntityForm({
-        	href: String(new dope.utils.Url(this.url, options))
-        });
-	},
 	closeAll: function() {
 		dojo.publish('/dope/layout/TabContainerMain/closeAll');
 	},

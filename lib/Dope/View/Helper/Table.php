@@ -1,5 +1,7 @@
 <?php
 
+use \Dope\Entity;
+
 class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 {
 	protected $rows = null;
@@ -121,7 +123,7 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 					$html .= $this->formatKey($key);
 					$html .= '</th>';
 				}
-				foreach($values as $value) {
+				foreach ($values as $value) {
 					$html .= '<td>';
 					$html .= $this->formatValue($key, $value);
 					$html .= '</td>';
@@ -153,17 +155,26 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 				->toHtml();
 		}
 		elseif ($this->testIsCollection($value)) {
-			return '#' . $value->count();
+			$html = array();
+			foreach ($value as $_entity) {
+				$html[] = '[' . $_entity->id . '] ' . $this->view
+					->modelUrl($_entity)
+					->toHtml();
+			}
+			return join("<br>", $html);
 		}
 		elseif ($this->testIsDateTime($value)) {
 			return $this->view->dateFormatter($value);
 		}
- 		elseif ($this->testIsJSON($value)) {
- 		    return $this->formatJSON($value);
+ 		elseif ($this->testIsBool($key)) {
+ 			return $this->formatJSON($value);
  		}
-// 		elseif ($this->testIsCurrency($key)) {
-// 		    return $this->view->currencyFormatter($value);
-// 		}
+		elseif ($this->testIsCurrency($key)) {
+		    return $this->view->currencyFormatter($value);
+		}
+		elseif ($this->testIsJSON($value)) {
+			return $this->formatJSON($value);
+		}
 		else {
 			return $this->view->fieldFormatter($value);
 		}
@@ -175,7 +186,7 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			return false;
 		}
 		
-		return ($this->getRows()->{$key} instanceof \Dope\Entity);
+		return ($this->getRows()->{$key} instanceof Entity);
 	}
 	
 	protected function testIsCollection($value)
@@ -185,34 +196,24 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function testIsBool($key)
 	{
-	    throw new \Exception("needs refactoring");
-	    
-		if (! $this->getRows() instanceof Core_Model) {
+	    if (! $this->getRows() instanceof Entity) {
 			return false;
 		}
 		
-		$colDef = $this->getRows()->getTable()->getColumnDefinition($key);
+		$type = $this->getRows()->getDefinition()->getColumnType($key);
 		
-		return ($colDef['type'] == 'boolean');
+		return ($type == 'boolean');
 	}
 	
 	protected function testIsCurrency($key)
 	{
-	    throw new \Exception("needs refactoring");
-	    
-		if (! $this->getRows() instanceof Core_Model) {
-			return false;
-		}
-	
-		$form = $this->getRows()->getTable()->getForm();
-		
-		if (!$form OR !$form->hasElement($key)) {
+		if (! $this->getRows() instanceof Entity) {
 			return false;
 		}
 		
-		$formElement = $form->getElement($key);
+		$field = $this->getRows()->getDefinition()->getField($key);
 		
-		return (bool) ($formElement instanceof Zend_Dojo_Form_Element_CurrencyTextBox);
+		return ($field AND ($field->type == 'CurrencyTextBox'));
 	}
 	
 	protected function testIsDateTime($value)
@@ -226,12 +227,12 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function testIsJSON($value)
 	{
-		if (! is_string($value)) {
+		if (ctype_alnum($value)) {
 			return false;
 		}
 		
 	    $decoded = json_decode($value);
-	    return (isset($decoded));	    
+	    return (isset($decoded));
 	}
 	
 	protected function formatJSON($value)
