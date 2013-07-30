@@ -295,7 +295,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		                break;
 		        }
 		    }
-		    elseif ($data[$key] instanceof \Doctrine\Common\Collections\Collection) {
+		    elseif ($forceShallow AND $withEntityIds AND $data[$key] instanceof \Doctrine\Common\Collections\Collection) {
 		        $_key = $key . '_ids';
 		        $array[$_key] = array();
 		        foreach ($data[$key] as $_entity) {
