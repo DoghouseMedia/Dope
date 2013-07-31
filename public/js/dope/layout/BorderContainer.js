@@ -33,5 +33,7 @@ dojo.declare('dope.layout.BorderContainer', [
 			
 			dojo.marginBox(this.domNode, {w: width, h: height});
 		}
+		
+		this.domNode.title = null;
 	}
 });
