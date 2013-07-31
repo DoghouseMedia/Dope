@@ -174,6 +174,9 @@ extends Action
 	{
 		/* Form */
 		$form = $this->getEntityForm();
+		$form->setDojoProp('title',
+		    'New ' . $form->getEntityRepository()->getDefinition()->getShortName()
+		);
 		
 		/* Process */
 		if ($this->getRequest()->isPost()) {
