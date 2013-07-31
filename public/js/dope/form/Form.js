@@ -47,10 +47,14 @@ dojo.declare('dope.form.Form', [
 			if (! child.onFormFieldChange) {
 				return;
 			}
+			
+			if (child.deaf) {
+			  return;
+			}
 	        
 			dojo.connect(child, 'onStoreComplete', dojo.hitch(this, 'onChildChangeComplete'));
 			
-		    this.childrenChanging++;
+		  this.childrenChanging++;
 			child.onFormFieldChange(changedChild, value);
 		}));
 	},
