@@ -18,7 +18,9 @@ dojo.declare('dope.layout.MenuCounter', dijit.PopupMenuBarItem, {
 	},
 	
 	onItemNew: function(item) {
-		this.popup.addChild(item);
+		if (this.popup) {
+			this.popup.addChild(item);
+		}
 		this.updateLabel();
 	},
 	
@@ -27,12 +29,14 @@ dojo.declare('dope.layout.MenuCounter', dijit.PopupMenuBarItem, {
 	},
 	
 	updateLabel: function() {
-		var count = this.popup.getChildren().length;
-		this.set('label', count);
-		if (count) {
-			dojo.addClass(this.domNode, 'active');
-		} else {
-			dojo.removeClass(this.domNode, 'active');
+		if (this.popup) {
+			var count = this.popup.getChildren().length;
+			this.set('label', count);
+			if (count) {
+				dojo.addClass(this.domNode, 'active');
+			} else {
+				dojo.removeClass(this.domNode, 'active');
+			}
 		}
 	}
 });

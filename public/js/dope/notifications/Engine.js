@@ -1,21 +1,24 @@
 dojo.provide('dope.notifications.Engine');
+dojo.require('dope.operation.xhrGet');
 dojo.require('dojo.io.script');
+dojo.require('dijit._Widget');
 dojo.require('dope.notifications.VisualNotification');
 
-dojo.declare('dope.notifications.Engine', null, {
+dojo.declare('dope.notifications.Engine', dijit._Widget, {
 	retryAfter: null, //minutes
 	authToken: null,
 	
-	constructor: function() {
+	postCreate: function() {
 		this.reset();
 		this.prepareConnect();
 	},
 	reset: function() {
 		this.retryAfter = 1;
+		//this.authToken = null;
 	},
 	prepareConnect: function() {
-		dope.operation.xhrGet({
-			url: '/auth/token',
+		new dope.operation.xhrGet({
+			url: '/app/auth/token',
 			load: dojo.hitch(this, 'onTokenReady')
 		});
 	},
