@@ -2,101 +2,219 @@
 
 namespace Dope\Service;
 
-class Drupal extends \Zend_Service_Abstract
+use Zend_Config as Config;
+
+class Drupal
 {
 	/**
 	 * Client
 	 *
-	 * @var \Dope\Json\Client
+	 * @var \Zend_Http_Client
 	 */
 	protected $client;
 	
-	protected $apiKey;
-	protected $apiDomain;
-	protected $apiUsername;
-	protected $apiPassword;
-	protected $apiSid;
+	/**
+	 * Config
+	 * 
+	 * @var \Zend_Config
+	 */
+	protected $config;
 	
+	/**
+	 * Mail defaults
+	 * 
+	 * @var array of email addresses to notify
+	 */
 	protected $mailDefaults = array();
 	
-	protected $isConnected = false;
+	/**
+	 * Drupal Login Response
+	 * 
+	 * @var stdClass
+	 */
+	protected $loginResponse;
 	
-	public function __construct($uri, $apiKey, $apiDomain, $username, $password, array $mailDefaults)
+	/**
+	 * Drupal Token Response
+	 *
+	 * @var stdClass
+	 */
+	protected $tokenResponse;
+	
+	/**
+	 * Boolean flag to control debugging
+	 * @var boolean
+	 */
+	protected $debug = false;
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param Config $config
+	 */
+	public function __construct(Config $config)
 	{
-		$this->client = new \Dope\Json\Client($uri);
-		$this->client->setSkipSystemLookup(true);
-		
-		$this->apiKey = $apiKey;
-		$this->apiDomain = $apiDomain;
-		$this->apiUsername = $username;
-		$this->apiPassword = $password;
-		
-		$this->mailDefaults = $mailDefaults;
+		$this->config = $config;
 	}
 	
-	public function notify($subject, $message)
+	/**
+	 * @param boolean $debug
+	 * @return boolean
+	 */
+	public function isDebug($debug = null)
 	{
-		$mail = new \Zend_Mail();
-		
-		foreach ($this->mailDefaults as $email) {
-			$mail->addTo($email);
+		if (is_bool($debug)) {
+			$this->debug = $debug;
 		}
 		
-		$mail->setSubject($subject);
-		$mail->setBodyText($message);
-			
-		return $mail->send();
+		return $this->debug;
 	}
 	
-	public function connect($force=false)
+	/**
+	 * Login
+	 * 
+	 * This method is stupid: it assumes that login worked.
+	 * If login is incorrect you'll learn about it on your next call.
+	 * 
+	 * @return \Dope\Service\Drupal
+	 */
+	public function login()
 	{
-		if (!$this->isConnected OR $force) {
-			/* Get session id */
-			$response = $this->client->call('system.connect');
-			$this->apiSid = $response['sessid'];
-			
-			if ($this->apiUsername AND $this->apiPassword) {
-				$params = $this->prepareParamsWithHash('user.login', array(
-					'username' => $this->apiUsername,
-					'password' => $this->apiPassword
-				));
-				
-				/* Login */
-				$response = $this->client->call('user.login', $params);
-				$this->apiSid = $response['sessid'];
-			}
+		if (! $this->loginResponse) {
+			$this->loginResponse = $this->post('user', 'login', array(
+				'username' => $this->config->username,
+				'password' => $this->config->password
+			));
 		}
 		
-		$this->isConnected = true;
+		return $this->loginResponse;
 	}
 	
-	public function __destruct()
+	/**
+	 * Token
+	 *
+	 * This method is stupid: it assumes that login worked.
+	 * If login is incorrect you'll learn about it on your next call.
+	 *
+	 * @return \Dope\Service\Drupal
+	 */
+	public function token()
 	{
-		//$this->call('user.logout', array());
+		if (! $this->tokenResponse) {
+			$this->tokenResponse = $this->post('user', 'token');
+		}
+	
+		return $this->tokenResponse;
 	}
 	
-	public function call($method, $params)
+	/**
+	 * 
+	 * @param string $resource
+	 * @param string $action
+	 * @param array $params
+	 * @return mixed
+	 */
+	public function post($resource, $action = null, array $params=array())
 	{
-		$this->connect();
-		
-		/* Create secure hash using your api key. */
-		$params = $this->prepareParamsWithHash($method, $params);
-		
-		return $this->client->call($method, $params);
+		return $this->call($resource, $action, $params, 'POST');
 	}
-
-	protected function prepareParamsWithHash($method, array $params=array())
+	
+	/**
+	 *
+	 * @param string $resource
+	 * @param string $action
+	 * @param array $params
+	 * @return mixed
+	 */
+	public function get($resource, $action = null, array $params=array())
 	{
-		$nonce = uniqid(rand(123,999), true);
-		$timestamp = (string) time();
+		return $this->call($resource, $action, $params, 'GET');
+	}
+	
+	/**
+	 *
+	 * @param string $resource
+	 * @param string $action
+	 * @param array $params
+	 * @return mixed
+	 */
+	public function delete($resource, $action = null, array $params=array())
+	{
+		return $this->call($resource, $action, $params, 'DELETE');
+	}
+	
+	/**
+	 * 
+	 * @param string $resource
+	 * @param string $action
+	 * @param array $params
+	 * @return mixed
+	 */
+	protected function call($resource, $action = null, array $params=array(), $method = 'GET')
+	{
+		$this->getClient()->setUri(
+			$this->config->baseurl . $this->buildPath($resource, $action)
+		);
 		
-		/* Prepend auth to beginning of params */
-		$params['hash'] = hash_hmac('sha256', $timestamp .';'. $this->apiDomain .';'. $nonce .';'. $method, $this->apiKey);
-		$params['domain_name'] = $this->apiDomain;
-		$params['domain_time_stamp'] = $timestamp;
-		$params['nonce'] = $nonce;
-		$params['sessid'] = $this->apiSid;
+		if ($this->loginResponse) {
+			$this->getClient()->setHeaders('Cookie', join('=', array(
+				$this->loginResponse->session_name,
+				$this->loginResponse->sessid
+			)));
+		}
 		
-		return $params;
+		if ($this->tokenResponse) {
+			$this->getClient()->setHeaders('X-CSRF-Token',
+				$this->tokenResponse->token
+			);
+		}
+		
+		$this->getClient()->setRawData(
+			json_encode($params),
+			'application/json'
+		);
+		
+		$this->getClient()->request($method);
+		
+		if ($this->isDebug()) {
+			var_dump($this->getClient()->getLastRequest());
+			var_dump($this->getClient()->getLastResponse());
+		}
+		
+		return json_decode(
+			$this->getClient()->getLastResponse()->getBody()
+		);
+	}
+	
+	/**
+	 *
+	 * @return \Zend_Http_Client
+	 */
+	public function getClient()
+	{
+		if (! $this->client instanceof \Zend_Http_Client) {
+			$this->client = new \Zend_Http_Client();
+		}
+	
+		return $this->client;
+	}
+	
+	/**
+	 * 
+	 * @param string $resource
+	 * @param string $action
+	 * @return string
+	 */
+	protected function buildPath($resource, $action = null)
+	{
+		$path = $this->config->endpoint . '/' . $resource;
+		
+		if ($action) {
+			$path .= '/' . $action;
+		}
+		
+		$path .= '.json';
+		
+		return $path;
 	}
 }
