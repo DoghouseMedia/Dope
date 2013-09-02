@@ -526,11 +526,11 @@ extends Action
 	 */
 	public function dndAction()
 	{
-		foreach($this->getData()->getParams() as $key => $val) {
-			$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(
-				$this->getModelClassName((array) $this->getData()->getParams())
-			);
-	
+		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(
+			$this->getModelClassName((array) $this->getData()->getParams())
+		);
+		
+		foreach ($this->getData()->getParams() as $key => $val) {
 			if ($md->hasAssociation($key)) {
 				$relatedAlias = $key;
 				$relatedModelAlias = strtolower($key);
@@ -553,7 +553,6 @@ extends Action
 		$this->view->relatedModelAlias = $relatedModelAlias;
 		$this->view->relatedId = $relatedId;
 	
-	
 		$search = new Search();
 		$search->setEntityRepository($this->getEntityRepository());
 		$search->setData($this->getData());
@@ -573,6 +572,12 @@ extends Action
 		$this->view->recordsUsed = array();
 		$this->view->recordsFree = array();
 	
+		/*
+		 * In order to get all available options,
+		 * we need to remove the entity filter.
+		 */
+		$this->getData()->removeParam($relatedModelAlias);
+		
 		$search = new Search();
 		$search->setEntityRepository($this->getEntityRepository());
 		$search->setData($this->getData());
