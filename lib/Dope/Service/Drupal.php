@@ -112,7 +112,7 @@ class Drupal
 	 * @param string $resource
 	 * @param string $action
 	 * @param array $params
-	 * @return mixed
+	 * @return \Zend_Http_Response
 	 */
 	public function post($resource, $action = null, array $params=array())
 	{
@@ -124,7 +124,19 @@ class Drupal
 	 * @param string $resource
 	 * @param string $action
 	 * @param array $params
-	 * @return mixed
+	 * @return \Zend_Http_Response
+	 */
+	public function put($resource, $action = null, array $params=array())
+	{
+		return $this->call($resource, $action, $params, 'PUT');
+	}
+	
+	/**
+	 *
+	 * @param string $resource
+	 * @param string $action
+	 * @param array $params
+	 * @return \Zend_Http_Response
 	 */
 	public function get($resource, $action = null, array $params=array())
 	{
@@ -136,7 +148,7 @@ class Drupal
 	 * @param string $resource
 	 * @param string $action
 	 * @param array $params
-	 * @return mixed
+	 * @return \Zend_Http_Response
 	 */
 	public function delete($resource, $action = null, array $params=array())
 	{
@@ -158,14 +170,14 @@ class Drupal
 		
 		if ($this->loginResponse) {
 			$this->getClient()->setHeaders('Cookie', join('=', array(
-				$this->loginResponse->session_name,
-				$this->loginResponse->sessid
+				$this->loginResponse->json->session_name,
+				$this->loginResponse->json->sessid
 			)));
 		}
 		
 		if ($this->tokenResponse) {
 			$this->getClient()->setHeaders('X-CSRF-Token',
-				$this->tokenResponse->token
+				$this->tokenResponse->json->token
 			);
 		}
 		
@@ -176,14 +188,16 @@ class Drupal
 		
 		$this->getClient()->request($method);
 		
-		if ($this->isDebug()) {
-			var_dump($this->getClient()->getLastRequest());
-			var_dump($this->getClient()->getLastResponse());
-		}
-		
-		return json_decode(
+		$this->getClient()->getLastResponse()->json = json_decode(
 			$this->getClient()->getLastResponse()->getBody()
 		);
+		
+		if ($this->isDebug()) {
+			print_r($this->getClient()->getLastRequest());
+			print_r($this->getClient()->getLastResponse());
+		}
+		
+		return $this->getClient()->getLastResponse();
 	}
 	
 	/**
