@@ -33,7 +33,11 @@ dojo.declare('dope.search.form.FilterAdd', dijit.form.Select, {
 		//		function.
 		var opts = this.options;
 		if(!opts){
-			opts = this.options = this.srcNodeRef ? dojo.query(">",
+			/*
+			 * Dope changed ">" to "> option" to fix a bug
+			 * @see https://bugs.dojotoolkit.org/ticket/17400
+			 */
+			opts = this.options = this.srcNodeRef ? dojo.query("> option",
 						this.srcNodeRef).map(function(node){
 							if(node.getAttribute("type") === "separator"){
 								return { value: "", label: "", selected: false, disabled: false };

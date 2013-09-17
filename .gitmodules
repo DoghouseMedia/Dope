@@ -19,3 +19,6 @@
 [submodule "public/js/dijit"]
 	path = public/js/dijit
 	url = git://github.com/dojo/dijit.git
+[submodule "public/js/dojox"]
+	path = public/js/dojox
+	url = https://github.com/dojo/dojox.git
