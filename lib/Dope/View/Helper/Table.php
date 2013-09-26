@@ -149,39 +149,44 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	
 	protected function formatValue($key, $value)
 	{
-		if ($this->testIsEntity($key)) {
-			return $this->view
-				->modelUrl($this->getRows()->{$key})
-				->toHtml();
-		}
-		elseif ($this->testIsCollection($value)) {
-			$html = array();
-			foreach ($value as $_entity) {
-				$html[] = '[' . $_entity->id . '] ' . $this->view
-					->modelUrl($_entity)
+		if ($key != 'dtype') {
+			if ($this->testIsEntity($key)) {
+				return $this->view
+					->modelUrl($this->getRows()->{$key})
 					->toHtml();
 			}
-			return join("<br>", $html);
-		}
-		elseif ($this->testIsDateTime($value)) {
-			return $this->view->dateFormatter($value);
-		}
- 		elseif ($this->testIsBool($key)) {
- 			return $this->formatJSON($value);
- 		}
-		elseif ($this->testIsCurrency($key)) {
-		    return $this->view->currencyFormatter($value);
-		}
-		elseif ($this->testIsJSON($value)) {
-			return $this->formatJSON($value);
-		}
-		else {
-			return $this->view->fieldFormatter($value);
-		}
+			elseif ($this->testIsCollection($value)) {
+				$html = array();
+				foreach ($value as $_entity) {
+					$html[] = '[' . $_entity->id . '] ' . $this->view
+						->modelUrl($_entity)
+						->toHtml();
+				}
+				return join("<br>", $html);
+			}
+			elseif ($this->testIsDateTime($value)) {
+				return $this->view->dateFormatter($value);
+			}
+	 		elseif ($this->testIsBool($key)) {
+	 			return $this->formatJSON($value);
+	 		}
+			elseif ($this->testIsCurrency($key)) {
+			    return $this->view->currencyFormatter($value);
+			}
+			elseif ($this->testIsJSON($value)) {
+				return $this->formatJSON($value);
+			}
+		}	
+		
+		return $this->view->fieldFormatter($value);
 	}
 	
 	protected function testIsEntity($key)
 	{
+		if ($key == 'dtype') {
+			return false;
+		}
+		
 		if (! isset($this->getRows()->{$key})) {
 			return false;
 		}
