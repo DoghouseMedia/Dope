@@ -143,9 +143,13 @@ class Service
 			return true;
 		}
 		
-		/* Load and release authinfo (probably session lock) */
+		/* Load */
 		static::loadUser();
-		static::release();
+		
+		/* Release authinfo (probably session lock) */
+		if (static::getAcl()->closeSession($resource, $privilege)) {
+			static::release();
+		}
 		
 		/* Ask auth service */
 		if (static::hasUser()) {
