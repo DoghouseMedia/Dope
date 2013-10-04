@@ -114,20 +114,28 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			
 			$html .= '<tbody>';
 			foreach ($this->getRows() as $key => $values) {
+				if ($this->testIsCollection($values)) {
+					continue;
+				}
+				
 				$html .= '<tr>';
+				
 				if (! is_array($values)) {
 					$values = array($values);
 				}
+				
 				if (!is_int($key) AND !ctype_digit($key)) {
 					$html .= '<th>';
 					$html .= $this->formatKey($key);
 					$html .= '</th>';
 				}
+				
 				foreach ($values as $value) {
 					$html .= '<td>';
 					$html .= $this->formatValue($key, $value);
 					$html .= '</td>';
 				}
+				
 				$html .= '</tr>';
 			}
 			$html .= '</tbody>';
