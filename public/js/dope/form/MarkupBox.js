@@ -28,19 +28,12 @@ dojo.declare('dope.form.MarkupBox', [dijit.form.NumberTextBox, dope._Contained],
 			return;
 		}
 		
-		var value = Math.round(
-			1000 / (
-				Number(this.fieldPay.get('value'))
-				/
-				Number(this.fieldCut.get('value'))
-			)
-		) / 10;
-		
-		if (value > 100) {
-			value -= 100;
-		}
+		var value = 0.01 * (100 / Math.round(
+			Number(this.fieldPay.get('value'))
+			/
+			Number(this.fieldCut.get('value'))
+		));
 		
 		this.set('value', value);
 	}
-	
 });
