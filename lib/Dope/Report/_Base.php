@@ -6,6 +6,7 @@ abstract class _Base
 {
     const FORM_CLASS = 'Dope\Report\Form';
     const DEFAULT_SORT_COLUMN = true;
+    const REQUIRED = true;
     
     protected $timeStart;
     protected $timeEnd;
@@ -64,7 +65,7 @@ abstract class _Base
         return $this;
     }
     
-    public function addFilter(Filter $filter)
+    public function addFilter(Filter $filter, $isRequired=true)
     {
         $filter->setReport($this);
         $this->filters[] = $filter;
@@ -137,6 +138,13 @@ abstract class _Base
         }
     
         return $this->form;
+    }
+    
+    public function isValid()
+    {
+    	return $this->getForm()->isValid(
+    		$this->getController()->getData()->toArray()
+    	);
     }
     
     public function getResults()
