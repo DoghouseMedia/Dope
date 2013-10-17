@@ -234,7 +234,9 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 							 * So we call revert
 							 */
 							row.grid.store.revert();
-						});
+						}, function() {
+                            alert("Couldn't delete. Try again or contact admins.");
+                        });
 					}
 				});
 				
