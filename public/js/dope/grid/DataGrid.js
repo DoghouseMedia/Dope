@@ -223,43 +223,22 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 						 * If you don't call delete() through hitch(), it conflicts with 
 						 * the core/native javascript delete() method in Webkit and IE browsers...
 						 */
-						dojo.hitch(row.grid.store.service, 'delete', item)();
+						var dfd = dojo.hitch(row.grid.store.service, 'delete', item)();
 						
-						/* Remove the item from the grid */
-						row.grid.store.deleteItem(item);
+						dfd.then(function() {
+							/* Remove the item from the grid */
+							//row.grid.store.deleteItem(item);
+							
+							/*
+							 * For some weird reason, Dojo is not updating the grid any more...
+							 * So we call revert
+							 */
+							row.grid.store.revert();
+						});
 					}
 				});
 				
 				return false;
-			}
-		});
-	},
-	btnRemoveFormatter: function(item, i, row) {
-		return new dijit.form.Button({
-			label: "Remove",
-			onClick: function(e) {
-				dojo.stopEvent(e);
-				
-				new dope.dialog.Confirm({
-					onExecute: function() {
-						var restUrl = new dope.utils.Url(row.grid.store.target, {
-							'id': item.id
-						});
-						restUrl.setAction('unlink');
-						restUrl.set(row.grid.query.sender, row.grid.query[row.grid.query.sender]);
-
-						new dope.operation.xhrPost({
-							title: 'Delete item from Grid',
-							url: restUrl,
-							load: function(){
-								/* Remove the item from the grid */
-								row.grid.store.deleteItem(item);
-							}
-						});
-					}
-				});
-				
-				return;
 			}
 		});
 	}
