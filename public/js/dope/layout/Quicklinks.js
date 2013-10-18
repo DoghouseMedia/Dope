@@ -21,6 +21,10 @@ dojo.declare('dope.layout.Quicklinks', dope.layout.ContentPane, {
 		this.titleNode = dojo.create('h3', {innerHTML: 'Quick links'}, this.domNode);
 		this.menuNode = dojo.create('ul', {}, this.domNode);
 		
+		if (! this.formPaneNode) {
+			return;
+		}
+		
 		this.yOffset = (dojo.position(this.formPaneNode).h - dojo.contentBox(this.formPaneNode).h) / 2;
 		
 		/* Setup legends */

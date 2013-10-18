@@ -19,8 +19,7 @@ class Entity extends _Base
 			'FormElements',
 			array('ContentPane', array('region'=>'center')),
 			'Buttons',
-			'BorderContainer',
-			'EntityForm'
+			'EntityFormContainer'
 		));
 	}
 	
@@ -142,8 +141,7 @@ class Entity extends _Base
 						array('ContentPane', array('region'=>'center')),
 						'Quicklinks',
 						'Buttons',
-						'BorderContainer',
-						'EntityForm'
+						'EntityFormContainer'
 					));
 					
 					if ($group->order) {
