@@ -25,7 +25,6 @@ class Analyzer
 		'another',
 		'any',
 		'are',
-		'area',
 		'arent',
 		'around',
 		'as',
