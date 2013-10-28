@@ -231,7 +231,7 @@ implements \IteratorAggregate
 
 		foreach ($keys as $key) {
 		    
-		    $key = rtrim($key, 's');
+		    $key = preg_replace('/s$/', '', $key);
 		    $keyPlural = $key . 's';
 		    $val = isset($array[$key]) ? $array[$key] : null;
 		    $valKeyPlural = isset($array[$keyPlural]) ? $array[$keyPlural] : $val;
