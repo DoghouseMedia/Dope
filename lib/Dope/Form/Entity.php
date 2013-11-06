@@ -11,6 +11,11 @@ class Entity extends _Base
 	 */
 	protected $entity;
 	
+	/**
+	 * @var \Doctrine\ORM\Mapping\ClassMetadata
+	 */
+	protected $entityClassMetadata;
+	
 	public function init()
 	{
 		parent::init();
@@ -86,10 +91,6 @@ class Entity extends _Base
 		
 		/* Should we populate the default values from the entity? */
 		$getDefaultValuesFromEntity = ($this->hasController() AND $this->hasEntity());
-
-		if ($getDefaultValuesFromEntity) {
-			$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this->getEntity()));
-		}
 		
 		/* Loop through fields and create form */  
 		foreach ($this->getDefinition()->getFields() as $name => $field) {
@@ -103,9 +104,9 @@ class Entity extends _Base
 			if ($getDefaultValuesFromEntity) {
 				$element = $this->getElement($name);
 				$value = $this->getEntity()->{$name};
-				
+
 				if ($value instanceof \DateTime) {
-					switch ($md->getTypeOfColumn($name)) {
+					switch ($this->getEntityClassMetadata()->getTypeOfColumn($name)) {
 						case 'time':
 							$element->setValue($value->format('H:i:s'));
 							break;
@@ -182,10 +183,8 @@ class Entity extends _Base
 					'decorators' => array('DijitElement')
 				));
 				
-				if ($isToManyAssociation) {
-    				if ($getDefaultValuesFromEntity AND
-    					$this->getEntity()->{$alias}
-    				) {
+				if ($getDefaultValuesFromEntity AND $this->getEntity()->{$alias}) {
+					if ($isToManyAssociation) {
     				    $ids = array();
     				    foreach ($this->getEntity()->{$alias} as $_entity) {
     				        $ids[] = $_entity->id;
@@ -194,16 +193,11 @@ class Entity extends _Base
     						join(',', $ids)
     					);
     				}
-				}
-				else {
-				    if ($getDefaultValuesFromEntity AND
-				            $this->getEntity()->{$alias} AND
-				            isset($this->getEntity()->{$alias}->id)
-				    ) {
+					elseif (isset($this->getEntity()->{$alias}->id)) {
 				        $this->getElement($alias)->setValue(
-				                $this->getEntity()->{$alias}->id
+			                $this->getEntity()->{$alias}->id
 				        );
-				    }
+					}
 				}
 			}
 		}
@@ -305,5 +299,16 @@ class Entity extends _Base
 		// 		}
 	
 		return $this;
+	}
+	
+	public function getEntityClassMetadata()
+	{
+		if (! $this->entityClassMetadata) {
+			$this->entityClassMetadata = \Dope\Doctrine::getEntityManager()->getClassMetadata(
+				get_class($this->getEntity())
+    		);
+		}
+		
+		return $this->entityClassMetadata;
 	}
 }
