@@ -29,6 +29,11 @@ extends Action
 	protected $entityForm;
 	
 	/**
+	 * @var \Dope\Entity\Search\Type\_Base
+	 */
+	protected $searchTypeInstance = null;
+	
+	/**
 	 * 
 	 * @param \Zend_Controller_Request_Abstract $request
 	 * @param \Zend_Controller_Response_Abstract $response
@@ -130,16 +135,32 @@ extends Action
 		
 		if (! $this->_helper->savedSearch($search)) {
 		    $search->setMode($mode);
-		    $search->setType($this->getData()->query
-	            ? new Search\Type\Query()
-	            : new Search\Type\Plain()
-		    );
+		    $search->setType($this->getSearchTypeInstance());
 		}
 		
 		$search->execute();
 		$search->improve();
 		
 		return $search;
+	}
+	
+	protected function getSearchTypeInstance()
+	{
+		if ($this->searchTypeInstance) {
+			return $this->searchTypeInstance;
+		}
+		elseif ($this->getData()->query) {
+			return new Search\Type\Query();
+		}
+		else {
+			return new Search\Type\Plain();
+		} 
+	}
+	
+	protected function setSearchTypeInstance(Search\Type\_Base $searchTypeInstance)
+	{
+		$this->searchTypeInstance = $searchTypeInstance;
+		return $this;
 	}
 	
 	/**
