@@ -2,7 +2,8 @@
 
 namespace Dope\Entity\Printer;
 
-use Dope\Entity;
+use Dope\Entity,
+	Doctrine\Common\Collections\Collection;
 
 class Template extends \Dope\Printer\Template
 {
@@ -18,6 +19,10 @@ class Template extends \Dope\Printer\Template
 	public function assignFromEntity(Entity $entity)
 	{
 		foreach ($entity as $key => $val) {
+			if ($val instanceof Collection) {
+				continue;
+			}
+			
 			$this->assign($key, $val);
 		}
 	}
