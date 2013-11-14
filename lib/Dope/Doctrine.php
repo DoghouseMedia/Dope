@@ -72,6 +72,10 @@ class Doctrine
 		if (static::isFlushing()) {
 			if ($entity) {
 				/* Compute Changes */
+				$em->getUnitOfWork()->recomputeSingleEntityChangeSet(
+					$em->getClassMetadata(get_class($entity)),
+					$entity
+				);
 				$em->getUnitOfWork()->computeChangeSet(
 					$em->getClassMetadata(get_class($entity)),
 					$entity
