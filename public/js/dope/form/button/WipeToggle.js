@@ -4,7 +4,7 @@ dojo.require('dope.form.Button');
 dojo.declare('dope.form.button.WipeToggle', dope.form.Button, {
 	href: '',
 	selector: '',
-	autoHide: false,
+	autoHide: true,
 	
 	postCreate: function() {
 		this.inherited(arguments);
