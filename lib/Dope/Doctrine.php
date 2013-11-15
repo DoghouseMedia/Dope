@@ -69,22 +69,23 @@ class Doctrine
 		$em = static::getEntityManager();
 		
 		/* Flush or compute */
-		if (static::isFlushing()) {
-			if ($entity) {
-				/* Compute Changes */
-				$em->getUnitOfWork()->recomputeSingleEntityChangeSet(
-					$em->getClassMetadata(get_class($entity)),
-					$entity
-				);
-				$em->getUnitOfWork()->computeChangeSet(
-					$em->getClassMetadata(get_class($entity)),
-					$entity
-				);
-			}
+		if (static::isFlushing() AND $entity) {
+			$metadata = $em->getClassMetadata(get_class($entity));
+			
+			/*
+			 * Compute Changes
+			 * 
+			 * I wish I knew why I had to call these in this order,
+			 * but different listeners break at different stages if I don't.
+			 * 
+			 * @todo Fix (re)computing of Doctrine Changesets (ask Doctrine if you have to)
+			 */
+			$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
+			$em->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $entity);
+			$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
 		}
 		else {
 			static::isFlushing(true);
-			/* Flush */
 			$em->flush();
 			static::isFlushing(false);
 		}
