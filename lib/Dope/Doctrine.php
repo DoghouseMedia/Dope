@@ -2,12 +2,10 @@
 
 namespace Dope;
 
-use \Doctrine\Common\EventManager;
+use Dope\Doctrine\Common\EventManager;
 
 class Doctrine
 {
-	static $eventManager;
-
 	/**
 	 * Is flushing?
 	 *
@@ -48,11 +46,7 @@ class Doctrine
 	 */
 	public static function getEventManager()
 	{
-		if (! static::$eventManager instanceof EventManager) {
-			static::$eventManager = new EventManager();
-		}
-		
-		return static::$eventManager;
+		return static::getEntityManager()->getEventManager();
 	}
 	
 	public static function isFlushing($isFlushing = null)
@@ -80,7 +74,10 @@ class Doctrine
 			 * 
 			 * @todo Fix (re)computing of Doctrine Changesets (ask Doctrine if you have to)
 			 */
+			//$em->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $entity);
+			//$em->getUnitOfWork()->computeChangeSets();
 			$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
+			//$em->getUnitOfWork()->scheduleForDirtyCheck($entity);
 			$em->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $entity);
 			$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
 		}

@@ -776,15 +776,7 @@ extends Action
 							    $this->view->updated = $entity->updated;
 							}
 						}
-	
-// 						if ($this->getData()->getParam('tab')) {
-// 							$this->view->tab = $this->getData()->getParam('tab');
-								
-// 							if ($this->getData()->getParam('parent_tab')) {
-// 								$this->view->parent_tab = $this->getData()->getParam('parent_tab');
-// 							}
-// 						}
-	
+
 						break;
 				}
 	
@@ -807,6 +799,10 @@ extends Action
 						break;
 				}
 	
+				break;
+			
+			case 'profile':
+				$this->view->debug = \Dope\Doctrine::getEventManager()->getDebug();
 				break;
 					
 			case 'html':
