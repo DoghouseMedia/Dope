@@ -2,10 +2,13 @@
 
 namespace Dope;
 
-class Debug
+use Doctrine\DBAL\Logging\SQLLogger;
+
+class Debug implements SQLLogger
 {
 	protected $punches;
 	protected $data;
+	protected $queries;
 	
 	public function __construct()
 	{
@@ -43,5 +46,42 @@ class Debug
 	public function getData()
 	{
 		return $this->data;
+	}
+	
+	public function getQueries()
+	{
+		return $this->queries;
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function startQuery($sql, array $params = null, array $types = null)
+	{
+		$this->queries[] = new ArrayObject(array(
+			'error' => false,
+			'sql' => $sql,
+			'params' => $params,
+			'types' => $types,
+			'microtime' => new ArrayObject(array(
+				'start' => microtime(true),
+				'end' => null
+			))
+		));
+		
+		return $this;
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function stopQuery($error=false)
+	{
+		$lastQuery = $this->queries[count($this->queries) - 1];
+		$lastQuery['microtime']['end'] = microtime(true);
+		
+		if ($error) {
+			$lastQuery['error'] = $error;
+		}
 	}
 }

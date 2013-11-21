@@ -200,7 +200,7 @@ extends Action
 		);
 		
 		/* Process */
-		if ($this->getRequest()->isPost()) {
+		if ($this->_allowHttpMethods(array('POST'))) {
 			/* Form was submitted. Get data */
 			$data = $this->getData($form->getValues(true));
 		
@@ -275,7 +275,7 @@ extends Action
 		}
 
 		/* Process */
-		if ($this->getRequest()->isPost() OR $this->getRequest()->isPut()) {
+		if ($this->_allowHttpMethods(array('POST', 'PUT'))) {
 			/* Form was submitted. Get data */
 			$data = $this->getData($form->getValues(true));
 	
@@ -750,6 +750,20 @@ extends Action
 		}
 	
 		return $this->entityForm;
+	}
+	
+	protected function _allowHttpMethods(array $allowedMethods)
+	{
+		if ($this->_helper->contextSwitch()->getCurrentContext() == 'profile') {
+			return true;
+		}
+		
+		foreach ($allowedMethods as $allowedMethod) {
+			if (strcasecmp($allowedMethod, $this->getRequest()->getMethod()) == 0) {
+				return true;
+			}
+		}
+		return false; 
 	}
 	
 	protected function respondOk(\Dope\Entity $entity=null, \Dope\Form\Entity $form=null)

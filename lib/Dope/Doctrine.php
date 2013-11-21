@@ -78,8 +78,8 @@ class Doctrine
 			//$em->getUnitOfWork()->computeChangeSets();
 			$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
 			//$em->getUnitOfWork()->scheduleForDirtyCheck($entity);
-			$em->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $entity);
-			$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
+			//$em->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $entity);
+			//$em->getUnitOfWork()->computeChangeSet($metadata, $entity);
 		}
 		else {
 			static::isFlushing(true);
