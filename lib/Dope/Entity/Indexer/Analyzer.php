@@ -277,12 +277,13 @@ class Analyzer
 	
 	public static function unaccent($text)
 	{
-		//setlocale(LC_CTYPE, 'en_US.utf8');
+        //setlocale(LC_CTYPE, 'en_US.utf8');
 		//$text = "Babí léto definitivně skončilo, zatáhne se a na horách začne sněžit";
 		$ascii = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-		if (!$ascii) {
+        if (! $ascii) {
 		    $ascii = @iconv('UTF-8', 'ASCII//IGNORE', $text);
 		}
-		return preg_replace(array('/[^\w*]/', '/-+/'), array('-', '-'), strtolower($ascii));
+        //return preg_replace(array('/[^\w*]/', '/-+/'), array('-', '-'), strtolower($ascii));
+		return preg_replace(array('/[^\w\s\+]+/', '/-+/'), array('-', '-'), strtolower($ascii));
 	}
 }
