@@ -24,6 +24,9 @@ dojo.declare('dope.Entity', [], {
 	load: function(id) {
 		if (id) {
 			this.id = id;
+            if (this.getStore().entities[id]) {
+                this.getStore().entities.splice(id); // force reload
+            }
 		}
 		return this.getStore().get(this.id).then(dojo.hitch(this, 'merge'));
 	},

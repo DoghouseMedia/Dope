@@ -173,19 +173,25 @@ extends Action
 			(int) $this->getRequest()->getParam('id')
 		);
 
-		/* Assign to view */
-		switch($this->getHelper('ContextSwitch')->getCurrentContext()) {
-			case 'json': $this->_helper->json($entity->toArray()); break;
-			case 'rest': $this->_helper->json($entity->toArray(false)); break;
-			case 'xml': $this->_helper->xml($entity->toArray()); break;
-			case 'csv': $this->_helper->csv($entity->toArray()); break;
-			case 'pdf': $this->_helper->pdf($entity); break;
-			case 'docx': $this->_helper->docx($entity); break;
-			default:
-			case 'html': $this->view->record = $entity; break;
-		}
-		
-		$this->view->form = $this->getEntityForm(array(), $entity);
+        if (!$entity) {
+            $this->getResponse()->setHttpResponseCode(404);
+            $this->getResponse()->sendResponse();
+            die; // stfu
+        }
+
+        /* Assign to view */
+        switch($this->getHelper('ContextSwitch')->getCurrentContext()) {
+            case 'json': $this->_helper->json($entity->toArray()); break;
+            case 'rest': $this->_helper->json($entity->toArray(false)); break;
+            case 'xml': $this->_helper->xml($entity->toArray()); break;
+            case 'csv': $this->_helper->csv($entity->toArray()); break;
+            case 'pdf': $this->_helper->pdf($entity); break;
+            case 'docx': $this->_helper->docx($entity); break;
+            default:
+            case 'html': $this->view->record = $entity; break;
+        }
+
+        $this->view->form = $this->getEntityForm(array(), $entity);
 	}
 	
 	/**
