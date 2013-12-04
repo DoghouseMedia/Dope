@@ -28,6 +28,7 @@ dojo.declare('dope.layout.TabContainer', [
 	selectChild: function(tab) {
 		var ret = this.inherited(arguments);
 		this.resize();
+        dojo.publish('/dope/layout/ContentPane/select', [tab]);
 		return ret;
 	},
 	closeAll: function() {

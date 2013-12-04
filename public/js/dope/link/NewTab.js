@@ -5,12 +5,20 @@ dojo.require('dope.utils.Url');
 dojo.declare('dope.link.NewTab', dope.link._Base, {
 	onClick: function(e) {
 		this.inherited(arguments);
-	
-		dojo.publish('/dope/layout/TabContainerMain/open', [{
-			href: this.href,
-			title: this.title || this.href,
-			focus: true
-		}]);
+
+        if (this.getPane()) {
+            dojo.publish('/dope/layout/TabContainerMain/open', [{
+                href: this.href,
+                title: this.title || this.href,
+                focus: true
+            }]);
+        }
+        else if (window.opener) {
+            window.opener.TRED.tabManager.createTab(this.href);
+        }
+        else {
+            alert("You closed the main app window, sorry!");
+        }
 		
 		return false;
 	}

@@ -17,6 +17,7 @@ use Dope\Controller\Action,
 
 abstract class Model
 extends Action
+implements \Dope\Controller\Action\_Interface\PushState
 {
 	/**
 	 * @var \Dope\Doctrine\ORM\EntityRepository
@@ -49,14 +50,14 @@ extends Action
 		
 		/* Saved Search */
 		HelperBroker::addHelper(new Helper\SavedSearch());
-		
+
 		/* Call parent constructor */
 		parent::__construct($request, $response, $invokeArgs);
 	}
 	
 	public function __call($methodName, $args)
 	{
-		$action = $this->getRequest()->getActionName();
+        $action = $this->getRequest()->getActionName();
 		
 		if ($action == 'index') {
 			return $this->_forward('rest');
@@ -783,7 +784,7 @@ extends Action
 					case 'POST':
 					case 'DELETE':
 					default:
-	
+
 						$this->view->status = true;
 	
 						if ($entity instanceof \Dope\Entity) {
@@ -809,7 +810,7 @@ extends Action
 					case 'PUT':
 					case 'POST':
 					case 'DELETE':
-	
+
 						$this->getResponse()->setBody( $entity instanceof \Dope\Entity ? $entity->id : true );
 						break;
 							
@@ -820,14 +821,14 @@ extends Action
 				}
 	
 				break;
-			
+
 			case 'profile':
 				$this->view->debug = \Dope\Doctrine::getEventManager()->getDebug();
 				break;
-					
+
 			case 'html':
 			default:
-	
+
 				$tryData = $form instanceof \Dope\Form\Entity ? $form->getValues(true) : array();
 	
 				$module = '';

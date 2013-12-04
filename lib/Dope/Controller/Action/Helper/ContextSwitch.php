@@ -5,6 +5,8 @@ namespace Dope\Controller\Action\Helper;
 class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 {
 	public static $_cachedContext=null;
+    protected static $_contextIsDeferred=false;
+    protected static $_requestIsFromClientApp=false;
 	
 	/**
      * Constructor (overriden)
@@ -109,6 +111,8 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 	public function init()
 	{
 		$this->_viewSuffixOrig = null;
+        $this->_contextIsDeferred=false;
+        $this->_requestIsFromClientApp=false;
 		return parent::init();
 	}
 	
@@ -125,11 +129,12 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 		$contexts = $this->getActionContexts();
 		if (empty($contexts)) {
 			$methodNames = get_class_methods($this->getActionController());
+            $contextKeys = array_keys($this->getContexts());
 			foreach($methodNames as $methodName) {
 				if (substr($methodName, -6) == 'Action') {
 					$this->addActionContext(
 						substr($methodName, 0, -6),
-						array_keys($this->getContexts())
+						$contextKeys
 					);
 				}
 			}
@@ -147,6 +152,8 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 	
 	protected function determineContext()
 	{
+        static::$_requestIsFromClientApp = (bool) $this->getRequest()->getHeader("X-Requested-With");
+
 		$cInt = static::$_cachedContext;
 		$cReq = $this->getRequest()->getContextName();
 
@@ -154,6 +161,7 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 		elseif ($cInt) return $cInt;
 		
 		/* Default to html */
+        static::$_contextIsDeferred = true;
 		return 'html';
 	}
 	
@@ -161,6 +169,16 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 	{
 		return (bool) $this->_currentContext;
 	}
+
+    public function isDeferred()
+    {
+        return (bool) static::$_contextIsDeferred;
+    }
+
+    public function isFromApp()
+    {
+        return (bool) static::$_requestIsFromClientApp;
+    }
 	
 	public function initContext($format = null)
 	{

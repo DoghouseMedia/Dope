@@ -156,8 +156,8 @@ dojo.declare('dope.layout.ContentPane', [
 		} else {
 			this.set('href', String(url));
 		}
-		
-		dojo.publish('/dope/layout/ContentPane/change', [this]);
+
+        this.publishChange();
 	},
 	getController: function() {
 		return this.getUrl().get('controller');
@@ -176,7 +176,8 @@ dojo.declare('dope.layout.ContentPane', [
 		dojo.publish('/dope/layout/TabContainerMain/open', [{
 			href: params.href,
 			title: params.title,
-			focus: !params.e.ctrlKey,
+            // ctrlKey for Win & Nix, metaKey for Mac
+			focus: !params.e.ctrlKey && !params.e.meteKey,
 			_data: this.getData()
 		}]);
 	}
