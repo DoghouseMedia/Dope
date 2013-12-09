@@ -50,7 +50,7 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 		if (data.status) {
 			if (this._canRedirect(data)) {
 				this.getPane().setUrl(
-					new dope.utils.Url(data.controller + '/' + data.id)
+					new dope.utils.Url('/' + data.controller + '/' + data.id)
 				);
 			}
 			dojo.publish('/dope/entity/form/add', [this]);
