@@ -13,7 +13,8 @@ use Dope\Controller\Action,
     Zend_Controller_Request_Abstract as Request,
     Zend_Controller_Response_Abstract as Response,
 	Zend_Controller_Action_HelperBroker as HelperBroker;
-        
+use Dope\Env;
+
 
 abstract class Model
 extends Action
@@ -216,8 +217,16 @@ implements \Dope\Controller\Action\_Interface\PushState
 				
 				/** @var \Dope\Entity $entity */
 				$entity = new $className();
-				$entity->saveFromArray((array) $data->getParams());
-		
+
+                try {
+                    $entity->saveFromArray((array) $data->getParams());
+                }
+                catch (\Exception $e) {
+                    if (! Env::isDebug()) {
+                        throw $e;
+                    }
+                }
+
 				/* Send response or redirect, based on context */
 				$this->respondOk($entity, $form);
 			}
@@ -288,17 +297,18 @@ implements \Dope\Controller\Action\_Interface\PushState
 	
 			if ($form->isValid($this->getRequest()->getParams())) {
 				/* Form is valid. Update entity with form values */
-				
-				$result = $entity->saveFromArray((array) $data->getParams());
-	
-				if ($result) {
-					/* Entity saved */
-					$this->respondOk($entity, $form);
-				}
-				else {
-					/* Entity has errors */
-					$errors = $entity->getErrorStack();
-				}
+
+                try {
+				    $entity->saveFromArray((array) $data->getParams());
+                }
+                catch (\Exception $e) {
+                    if (! Env::isDebug()) {
+                        throw $e;
+                    }
+                }
+
+                /* Entity saved */
+                $this->respondOk($entity, $form);
 			}
 			else {
 				/* Form has errors */
