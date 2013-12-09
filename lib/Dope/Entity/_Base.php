@@ -333,7 +333,14 @@ implements \IteratorAggregate
 	            $targetField = $mapping['mappedBy'];
 	            if ($targetField) {
 	                if (isset($targetRecord->{$targetField})) {
-	                    $targetRecord->{$targetField}[] = $this;
+                        if ($targetRecord->{$targetField} instanceof \Doctrine\Common\Collections\Collection) {
+                            if (! $targetRecord->{$targetField}->contains($this)) {
+                                $targetRecord->{$targetField}[] = $this;
+                            }
+                        }
+                        else {
+                            $targetRecord->{$targetField} = $this;
+                        }
 	                } else {
 	                    throw new \Exception("No field $targetField for $key on " . get_class($this));
 	                }
