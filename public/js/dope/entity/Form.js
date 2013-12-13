@@ -23,24 +23,6 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 		
 		return true;
 	},
-	onSubmit: function(e) {
-		/* Prevent the form from really submitting */
-		if (e) e.preventDefault();
-		
-		/* Stop execution if the parent returns false */
-		if (! this.inherited(arguments)) {
-			return false;
-		}
-		
-		/* Disable elements */
-		dojo.forEach(dojo.query('.dijitButton', this.domNode), function(btnNode) {
-			dijit.byNode(btnNode).set('disabled', true);
-		});
-		
-		dojo.forEach(this.submitModifiers, function(callback) {
-			callback();
-		});
-	},
 	onComplete: function(data, response) {
 		/* Enable elements */
 		dojo.forEach(dojo.query('.dijitButton', this.domNode), function(btnNode) {

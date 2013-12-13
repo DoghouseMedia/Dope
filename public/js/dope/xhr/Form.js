@@ -26,7 +26,11 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 			form: this.domNode,
 			load: dojo.hitch(this, 'onComplete')
 		};
-		
+
+        if (this.getPane()) {
+            this.getPane().deactivate();
+        }
+
 		switch (this.method.toLowerCase()) {
 			case 'get':
 				new dope.operation.xhrGet(params);
@@ -42,9 +46,10 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 				break;
 		}
 		
-		return false;
+		return true;
 	},
 	onComplete: function(data, response) {
+        this.getPane().activate();
 		this.inherited(arguments);
 		//console.log('FORM COMPLETE', arguments);
 	}
