@@ -87,7 +87,7 @@ class Indexer
 			}
 			else {
 				$qb->andWhere('i.field LIKE :field');
-				$qb->setParameter('field', $storageFieldname.'%');
+                $qb->setParameter('field', addcslashes($storageFieldname, '_').'%');
 			}
 			
 			$entities = $qb->getQuery()->execute();
