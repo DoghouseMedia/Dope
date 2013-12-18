@@ -50,8 +50,10 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 		return false;
 	},
 	onComplete: function(data, response) {
-        this.getPane().activate();
 		this.inherited(arguments);
+        if (this.getPane()) {
+            this.getPane().activate();
+        }
 		//console.log('FORM COMPLETE', arguments);
 	}
 });

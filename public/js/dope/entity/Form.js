@@ -45,6 +45,8 @@ dojo.declare('dope.entity.Form', dope.xhr.Form, {
 			console.log("Something went wrong!", data, response);
 			alert("Something went wrong!");
 		}
+
+        this.inherited(arguments);
 	},
 	_canRedirect: function(data) {
 		if (data.preventRedirect) {

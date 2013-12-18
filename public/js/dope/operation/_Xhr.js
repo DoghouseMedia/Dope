@@ -66,8 +66,7 @@ dojo.declare('dope.operation._Xhr', dope.operation._Base, {
 				case 500:
 					alert(
 						"ERROR!\n"
-						+ "This function may not have completed succesfully.\n"
-						+ "There may be data inconsistency.\n"
+						+ "This function may not have completed successfully.\n"
 						+ "Reload the page before trying anything else!\n"
 						+ "\n"
 					);
