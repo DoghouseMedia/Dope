@@ -27,7 +27,7 @@ class Search extends \Dope\Form\_Base
 		if ($this->hasController()) {
 			/* Action URL */
 			$this->setAction(
-				$this->getController()->getRequest()->getControllerName()
+				'/' . $this->getController()->getRequest()->getControllerName()
 			);
 		}
 	}

@@ -45,8 +45,9 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 				new dope.operation.xhrPost(params);
 				break;
 		}
-		
-		return true;
+
+        /* Prevent the form from really submitting */
+		return false;
 	},
 	onComplete: function(data, response) {
         this.getPane().activate();
