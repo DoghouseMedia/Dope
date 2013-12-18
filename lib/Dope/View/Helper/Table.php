@@ -142,7 +142,8 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			$html .= '</table>';
 		}
 		catch(Exception $e) {
-			$html = '<p class="error">' . $e->getMessage() . '</p>';
+			$html  = '<p class="error">' . $e->getMessage() . '</p>';
+            $html .= '<pre>' . $e->getTraceAsString() . '</pre>';
 		}
 		
 		return $html;
@@ -194,11 +195,11 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		if ($key == 'dtype') {
 			return false;
 		}
-		
-		if (! isset($this->getRows()->{$key})) {
-			return false;
-		}
-		
+
+        if (! isset($this->getRows()->{$key})) {
+            return false;
+        }
+
 		return ($this->getRows()->{$key} instanceof Entity);
 	}
 	
@@ -212,8 +213,13 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	    if (! $this->getRows() instanceof Entity) {
 			return false;
 		}
-		
-		$type = $this->getRows()->getDefinition()->getColumnType($key);
+
+        try {
+            $type = $this->getRows()->getDefinition()->getColumnType($key);
+        }
+        catch (\ReflectionException $e) {
+            return false;
+        }
 		
 		return ($type == 'boolean');
 	}
@@ -223,8 +229,13 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		if (! $this->getRows() instanceof Entity) {
 			return false;
 		}
-		
-		$field = $this->getRows()->getDefinition()->getField($key);
+
+        try {
+            $field = $this->getRows()->getDefinition()->getField($key);
+        }
+        catch (\ReflectionException $e) {
+            return false;
+        }
 		
 		return ($field AND ($field->type == 'CurrencyTextBox'));
 	}
