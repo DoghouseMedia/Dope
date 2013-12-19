@@ -294,12 +294,18 @@ implements \Dope\Controller\Action\_Interface\PushState
 		if ($this->_allowHttpMethods(array('POST', 'PUT'))) {
 			/* Form was submitted. Get data */
 			$data = $this->getData($form->getValues(true));
+
+            /* Merge data into entity data for validation */
+            $completeData = array_merge(
+                $entity->toArray(),
+                (array) $data->getParams()
+            );
 	
-			if ($form->isValid($this->getRequest()->getParams())) {
+			if ($form->isValid($completeData)) {
 				/* Form is valid. Update entity with form values */
 
                 try {
-				    $entity->saveFromArray((array) $data->getParams());
+				    $entity->saveFromArray($completeData);
                 }
                 catch (\Exception $e) {
                     if (! Env::isDebug()) {
