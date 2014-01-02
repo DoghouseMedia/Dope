@@ -39,6 +39,17 @@ class Indexer
 			$this->target->__load();
 		}
 	}
+
+    /**
+     * Gets the repository for an entity class.
+     *
+     * @param string $entityName The name of the entity.
+     * @return \Dope\Doctrine\ORM\EntityRepository The repository class.
+     */
+    public function getRepository()
+    {
+        return $this->indexRepository;
+    }
 	
 	public function add($fieldName, $value, $bulk=false)
 	{
@@ -71,7 +82,7 @@ class Indexer
 		return $this;
 	}
 	
-	public function remove($fieldName=null)
+	public function remove($fieldName=null, $bulk=false)
 	{
 		foreach ($this->getEntriesByTarget($fieldName) as $id => $storageFieldname) {
 			$this->debug("REMOVE $fieldName ($storageFieldname) BY ID $id");
@@ -89,16 +100,19 @@ class Indexer
 				$qb->andWhere('i.field LIKE :field');
                 $qb->setParameter('field', addcslashes($storageFieldname, '_').'%');
 			}
-			
+
 			$entities = $qb->getQuery()->execute();
 
 			foreach ($entities as $entity) {
 				Doctrine::getEntityManager()->remove($entity);
 			}
 		}
-		
-		Doctrine::isFlushing(false);
-		Doctrine::flush();
+
+        if (!$bulk) {
+            Doctrine::isFlushing(false);
+            Doctrine::flush();
+        }
+
 		return $this;
 	}
 	
