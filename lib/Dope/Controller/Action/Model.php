@@ -222,7 +222,7 @@ implements \Dope\Controller\Action\_Interface\PushState
                     $entity->saveFromArray((array) $data->getParams());
                 }
                 catch (\Exception $e) {
-                    if (! Env::isDebug()) {
+                    if (Env::isProduction() OR !Env::isDebug()) {
                         throw $e;
                     }
                 }
@@ -308,7 +308,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 				    $entity->saveFromArray($completeData);
                 }
                 catch (\Exception $e) {
-                    if (! Env::isDebug()) {
+                    if (Env::isProduction() OR !Env::isDebug()) {
                         throw $e;
                     }
                 }
