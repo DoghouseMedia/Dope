@@ -3,6 +3,7 @@
 namespace Dope\Entity;
 
 use Dope\Entity,
+    Dope\Doctrine,
 	Doctrine\ORM\Mapping as ORM,
 	Doctrine\ORM\EntityManager,
 	Dope\Config\Helper as Config,
@@ -26,7 +27,7 @@ implements \IteratorAggregate
 	 */
 	public function __construct()
 	{	
-		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+		$md = Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 		
 		/*
 		 * Doctrine requires you to instantiate a placeholder for
@@ -116,7 +117,7 @@ implements \IteratorAggregate
 	
 	public function getRepository()
 	{
-		return \Dope\Doctrine::getRepository(get_class($this));
+		return Doctrine::getRepository(get_class($this));
 	}
 	
 	/**
@@ -145,15 +146,9 @@ implements \IteratorAggregate
 	
 	public function getModifiedColumns()
 	{
-		$em = \Dope\Doctrine::getEntityManager();
-		$md = $em->getClassMetadata(get_class($this));
-		$uow = $em->getUnitOfWork();
-		
-		if ($uow->getEntityState($this) == \Doctrine\ORM\UnitOfWork::STATE_MANAGED) {
-			$uow->computeChangeSet($md, $this);
-		}
-		
-		return $uow->getEntityChangeSet($this);
+		return Doctrine::getEntityManager()
+            ->getUnitOfWork()
+            ->getEntityChangeSet($this);
 	}
 	
 	public function getIterator() {
@@ -177,13 +172,13 @@ implements \IteratorAggregate
 	public function save()
 	{
 		/* Entity Manager */
-		$em = \Dope\Doctrine::getEntityManager();
+		$em = Doctrine::getEntityManager();
 		
 		/* Persist */
 		$em->persist($this);
 		
 		/* Flush */
-		\Dope\Doctrine::flush($this);
+		Doctrine::flush($this);
 		
 		return $this;
 	}
@@ -222,7 +217,7 @@ implements \IteratorAggregate
 		$columns = array();
 		$relations = array();
 		
-		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+		$md = Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 		
 		$keys = array_merge(
 	        $md->getFieldNames(),
@@ -274,7 +269,7 @@ implements \IteratorAggregate
 	
 	protected function _assignFromField($key, $val)
 	{
-	    $md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+	    $md = Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 	    switch ($md->getTypeOfColumn($key)) {
 	        case 'time':
 	        case 'date':
@@ -292,7 +287,7 @@ implements \IteratorAggregate
 	
 	protected function _assignFromRelation($key, $val)
 	{
-	    $md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+	    $md = Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 	    $mapping = $md->getAssociationMapping($key);
 	    $typeIsCollection = in_array($mapping['type'], array(
             \Doctrine\ORM\Mapping\ClassMetadata::ONE_TO_MANY,
@@ -312,7 +307,7 @@ implements \IteratorAggregate
 	             * @todo Read up on owning side and shorten/simplify this.
 	             */
 	             
-	            $targetRecord = \Dope\Doctrine::getRepository($mapping['targetEntity'])->find($_val);
+	            $targetRecord = Doctrine::getRepository($mapping['targetEntity'])->find($_val);
 	             
 	            /* Skip duplicates */
 	            if ($this->{$key} instanceof \Doctrine\Common\Collections\Collection) {
@@ -348,14 +343,14 @@ implements \IteratorAggregate
 	        }
 	    }
         elseif ($val OR $val==="0" OR in_array($key, $md->getFieldNames())) {
-            $_val = $val ? \Dope\Doctrine::getRepository($mapping['targetEntity'])->find($val) : null;
+            $_val = $val ? Doctrine::getRepository($mapping['targetEntity'])->find($val) : null;
             $this->__set($key, $_val);
         }
     }
 	
 	public function unlinkFromArray(array $array)
 	{
-		$md = \Dope\Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+		$md = Doctrine::getEntityManager()->getClassMetadata(get_class($this));
 		
 		$keys = array_merge(
 		        $md->getFieldNames(),
@@ -382,7 +377,7 @@ implements \IteratorAggregate
 				 * @todo Figure out if we can simplify this.
 				 */
 				
-				$record = \Dope\Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
+				$record = Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
 					->find($valKeyPlural);
 				
 				/* Remove our side */
