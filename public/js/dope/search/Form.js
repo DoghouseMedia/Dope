@@ -46,38 +46,46 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		/*
 		 * @todo This should be written better and put somewhere else.
 		 */
-		var that = this;
-		this.waits=1;
+
+		this.waits = 1;
 		var formdata = this.getPane().getData('formdata');
 		dojo.forEach(this.getChildren(), function(child) {
 			if (child.name && formdata[child.name]) {
 				child.set('value', formdata[child.name]);
 			}
 		});
-		var formfilters = this.getPane().getData('formfilters');
-		dojo.forEach(formfilters, function(formfilter) {
-			that.waits++;
-			var _options = dojo.clone(formfilter.options); // make a copy so we don't pollute the filter's options
-			dojo.mixin(_options, {
-        _doNotAddValue: true,
-        params: formfilter.params
-      });
-			dojo.publish('/dope/search/form/filterAddRequest', [
-			    that,
-    			_options,
-    			dojo.hitch(that, 'trySubmit')
-    		]);
-		});
+
+		// form filters
+		dojo.forEach(
+            this.getPane().getData('formfilters'),
+            this._initFormFilters.bind(this)
+        );
 		
 		this.trySubmit();
 	},
+
+    _initFormFilters: function(formfilter) {
+        this.waits++;
+        // make a copy so we don't pollute the filter's options
+        var _options = dojo.clone(formfilter.options);
+        dojo.mixin(_options, {
+            _doNotAddValue: true,
+            params: formfilter.params
+        });
+
+        dojo.publish('/dope/search/form/filterAddRequest', [
+            this,
+            _options,
+            this.trySubmit.bind(this)
+        ]);
+    },
 	
 	trySubmit: function() {
-    this.waits--;
-    if (this.waits == 0) {
-      this.submit(); // submit the form
-    }
-  },
+        this.waits--;
+        if (this.waits == 0) {
+            this.submit(); // submit the form
+        }
+    },
 	
 	onSubmit: function(e) {
 		/* Prevent the form from really submitting */

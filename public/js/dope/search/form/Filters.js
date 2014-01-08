@@ -11,26 +11,33 @@ dojo.declare('dope.search.form.Filters', [dope._Contained, dijit.layout._LayoutW
 	_onInitCallbacks: [],
 	
 	constructor: function() {
+        this.filters = [];
 		dojo.subscribe('/dope/search/form/filterAddRequest', dojo.hitch(this, 'onFilterAddRequest'));
 		dojo.subscribe('/dope/search/form/store/beforeFetch', dojo.hitch(this, 'onBeforeStoreFetch'));
 	},
 	onFilterAddRequest: function(form, data, initCallback) {
-	  if (form.getPane() !== this.getPane()) {
-      return;
-    }
-	  
+	    if (form.getPane() !== this.getPane()) {
+            return;
+        }
+
 		this.add(data, initCallback);
 		return this;
 	},
 	onBeforeStoreFetch: function(form, storeUrl) {
+        // ignore old filters that are still attached
+        if (!dijit.byId(this.id)) {
+            return;
+        }
+
+        // only if the form is on the current pane
 		if (form.getPane() !== this.getPane()) {
 			return;
 		}
-		
+
 		if (this.getPane().prepareData) {
 			this.getPane().prepareData('formfilters', this.getSerialized());
 		}
-		
+
 		dojo.forEach(this.getAsParams(), function(param) {
 			storeUrl.set(param.key, param.value);
 		});
@@ -58,7 +65,7 @@ dojo.declare('dope.search.form.Filters', [dope._Contained, dijit.layout._LayoutW
 	},
 	getAsParams: function() {
 		var params = [];
-		
+
 		dojo.forEach(this.filters, function(filter, i) {
 			var filterParams = filter.getAsParams();
 			params.push(filterParams);
