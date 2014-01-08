@@ -16,14 +16,14 @@ class Template extends \Dope\Printer\Template
 		}
 	}
 	
-	public function assignFromEntity(Entity $entity)
+	public function assignFromEntity(Entity $entity, $prefix='')
 	{
 		foreach ($entity as $key => $val) {
 			if ($val instanceof Collection) {
 				continue;
 			}
-			
-			$this->assign($key, $val);
+
+			$this->assign($prefix . $key, $val);
 		}
 
         $entity->populatePrinterTemplate($this);
