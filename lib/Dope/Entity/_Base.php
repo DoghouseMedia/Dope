@@ -414,6 +414,11 @@ implements \IteratorAggregate
 			$this
 		);
 	}
+
+    public function populatePrinterTemplate(Printer\Template $template)
+    {
+        return $template;
+    }
 	
 	/** @ORM\postLoad */
 	public function postLoad() {}

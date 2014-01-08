@@ -25,5 +25,7 @@ class Template extends \Dope\Printer\Template
 			
 			$this->assign($key, $val);
 		}
+
+        $entity->populatePrinterTemplate($this);
 	}
 }
