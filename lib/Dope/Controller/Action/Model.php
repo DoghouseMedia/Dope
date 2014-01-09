@@ -384,7 +384,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 			$maxUpdated = strtotime($maxDates[0]['max_updated']);
 				
 			/* This will exit with 304 if conditions are met */
-			//$this->_helper->notModifiedSince(max($maxCreated,$maxUpdated));
+			$this->_helper->notModifiedSince(max($maxCreated,$maxUpdated));
 		}
 		
 		/*
