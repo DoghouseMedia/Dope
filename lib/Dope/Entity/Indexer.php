@@ -104,7 +104,15 @@ class Indexer
             $qb->where('i.id = :id');
             $qb->setParameter('id', $id);
 
-			$entities = $qb->getQuery()->execute();
+            try {
+			    $entities = $qb->getQuery()->execute();
+            }
+            catch(\Exception $e) {
+                echo $id, " - ";
+                echo $fieldName , " - ";
+                echo $qb->getQuery()->getSQL();
+                die;
+            }
 
 			foreach ($entities as $entity) {
 				Doctrine::getEntityManager()->remove($entity);
