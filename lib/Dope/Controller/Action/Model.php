@@ -384,7 +384,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 			$maxUpdated = strtotime($maxDates[0]['max_updated']);
 				
 			/* This will exit with 304 if conditions are met */
-			$this->_helper->notModifiedSince(max($maxCreated,$maxUpdated));
+			//$this->_helper->notModifiedSince(max($maxCreated,$maxUpdated));
 		}
 		
 		/*
@@ -418,25 +418,22 @@ implements \Dope\Controller\Action\_Interface\PushState
 		$search->setData($this->getData());
 		$search->execute();
 		$search->select($search->prefix($columns));
-		
-		
-		$records = $search->getQueryBuilder()
+
+		$arrays = $search->getQueryBuilder()
 			->getQuery()
 			->getResult(Query::HYDRATE_ARRAY);
-	
-		/** @var array $record */
-		foreach ($records as $record) {
-			$values = array();
-			$id = array_shift($record);
 
-			// Flatten data
-			$values = $this->getEntityRepository()->flatten($record, true);
-			
+		foreach ($arrays as $array) {
+			$id = array_shift($array);
+
 			// Remove empty values
-			$values = array_filter($values, 'strlen');
+            $array = array_filter($array, 'strlen');
+
+            // Trim
+            array_walk($array, 'trim');
 						
-			$matches[$id] = count($values)
-				? join(' ', $values)
+			$matches[$id] = count($array)
+				? join(' ', $array)
 				: $id;
 		}
 	
