@@ -63,9 +63,9 @@ dojo.declare('dope.form.Form', [
 			this.childrenChanging--;
 		}
 	  
-		if (this.submitAfterChangeComplete && !this.hasChildrenChanging()) {
-			this.submit();
-		}
+//		if (this.submitAfterChangeComplete && !this.hasChildrenChanging()) {
+//			this.submit();
+//		}
     
 		return this;
 	},
@@ -75,8 +75,9 @@ dojo.declare('dope.form.Form', [
 	onSubmit: function(e) {
 		if (this.hasChildrenChanging()) {
 			if (e) e.preventDefault();
-	    
-			this.submitAfterChangeComplete = true;
+
+            alert("Parts of the form are still loading. Try again in a few seconds.");
+//			this.submitAfterChangeComplete = true;
 	    
 			return false;
 		}
