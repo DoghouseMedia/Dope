@@ -88,9 +88,6 @@ class Indexer
 			$this->debug("REMOVE $fieldName ($storageFieldname) BY ID $id");
 			
 			$qb = $this->indexRepository->createQueryBuilder('i');
-			
-			$qb->where('i.id = :id');
-			$qb->setParameter('id', $id);
 
 			if ($fieldName) {
 				$qb->andWhere('i.field = :field');
@@ -100,6 +97,12 @@ class Indexer
 				$qb->andWhere('i.field LIKE :field');
                 $qb->setParameter('field', addcslashes($storageFieldname, '_').'%');
 			}
+
+            // this is here just to use the index better
+            $qb->where('i.position >= 0');
+
+            $qb->where('i.id = :id');
+            $qb->setParameter('id', $id);
 
 			$entities = $qb->getQuery()->execute();
 
