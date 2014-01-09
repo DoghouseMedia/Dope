@@ -449,6 +449,9 @@ implements \Dope\Controller\Action\_Interface\PushState
 			case 'json': $this->_helper->json($matches); break;
 			case 'xml': $this->_helper->xml($matches); break;
 			case 'html': $this->view->matches = $matches; break;
+            case 'profile':
+                $this->view->debug = \Dope\Doctrine::getEventManager()->getDebug();
+                break;
 		}
 	}
 	
