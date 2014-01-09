@@ -7,7 +7,8 @@ dojo.declare('dope.form.Editor', dijit.Editor, {
 		this.addStyleSheet('/css/font.css');
 		this.hiddenNode = dojo.create('input', {
 			type: 'hidden',
-			name: this.name
+			name: this.name,
+            value: this.value
 		});
 		dojo.place(this.hiddenNode, this.domNode);
 		this.watch('value', this.updateHiddenField.bind(this));
