@@ -99,21 +99,13 @@ class Indexer
 			}
 
             // this is here just to use the index better
-            $qb->where('i.position >= 0');
+            $qb->andWhere('i.position >= 0');
 
-            $qb->where('i.id = :id');
+            $qb->andWhere('i.id = :id');
             $qb->setParameter('id', $id);
 
-            try {
-			    $entities = $qb->getQuery()->execute();
-            }
-            catch(\Exception $e) {
-                echo $id, " - ";
-                echo $fieldName , " - ";
-                echo $qb->getQuery()->getSQL();
-                die;
-            }
-
+			$entities = $qb->getQuery()->execute();
+            
 			foreach ($entities as $entity) {
 				Doctrine::getEntityManager()->remove($entity);
 			}
