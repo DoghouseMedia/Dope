@@ -430,7 +430,7 @@ implements \Dope\Controller\Action\_Interface\PushState
             $array = array_filter($array, 'strlen');
 
             // Trim
-            array_walk($array, 'trim');
+            $array = array_map('trim', $array);
 						
 			$matches[$id] = count($array)
 				? join(' ', $array)
