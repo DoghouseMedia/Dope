@@ -1,6 +1,6 @@
 <?php
 
-require 'Dope/Form/Element/StoreBox.php';
+require_once 'Dope/Form/Element/StoreBox.php';
 
 class Dope_Form_Element_IndependentStoreBox
 extends Dope_Form_Element_StoreBox
