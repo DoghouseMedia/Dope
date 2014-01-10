@@ -23,6 +23,14 @@ class Template extends \Dope\Printer\Template
 				continue;
 			}
 
+            // convert datetimes to human readable
+            if ($entity->{$key} instanceof \DateTime) {
+                $this->assign(
+                    $prefix . $key . '_formatted_short',
+                    $entity->{$key}->format('d M Y')
+                );
+            }
+
 			$this->assign($prefix . $key, $val);
 		}
 
