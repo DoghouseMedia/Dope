@@ -2,6 +2,8 @@
 
 namespace Dope\Doctrine\DBAL;
 
+use Dope\Env;
+
 class Statement extends \Doctrine\DBAL\Statement
 {
 	/**
@@ -21,7 +23,7 @@ class Statement extends \Doctrine\DBAL\Statement
 			$stmt = $this->stmt->execute($params);
 		}
 		catch (\Exception $e) {
-			if (\Dope\Env::isDebug() AND $logger) {
+			if (!ENV::isProduction() AND Env::isDebug() AND $logger) {
 				$logger->stopQuery($e->getMessage());
 				return;
 			}
