@@ -102,7 +102,16 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 		if (! value) {
 			return;
 		}
-		
+
+        // avoid duplicates
+        var contactExists = this.contacts.some(function(contact) {
+           return (value == contact.value);
+        });
+        if (contactExists) {
+            return;
+        }
+
+        // create the contact box
 		var contact = new dope.form.EmailBox.Contact({
 			'value': value,
 			'emailBox': this
