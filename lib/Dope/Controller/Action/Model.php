@@ -641,16 +641,6 @@ implements \Dope\Controller\Action\_Interface\PushState
 		}
 	}
 	
-	public function dndaddAction()
-	{
-		$this->updateAction();
-	}
-	
-	public function dnddelAction()
-	{
-		$this->unlinkAction();
-	}
-	
 	/* ---------------| HELPER methods from here on |--------------- */
 	
 	public function getModelAlias()
