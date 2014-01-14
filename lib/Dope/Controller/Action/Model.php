@@ -297,7 +297,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 
             /* Merge data into entity data for validation */
             $completeData = array_merge(
-                $entity->toArray(),
+                $entity->toArray(false, false),
                 (array) $data->getParams()
             );
 	
