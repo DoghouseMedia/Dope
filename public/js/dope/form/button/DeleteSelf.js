@@ -14,7 +14,7 @@ dojo.declare('dope.form.button.DeleteSelf', dope.form.Button, {
 		
 		new dope.operation.xhrDelete({
 			title: 'Delete',
-			url: deleteUrl
+			url: String(deleteUrl)
 		});
 		
 		dojo.publish('/dope/model/delete', {
