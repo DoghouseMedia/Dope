@@ -6,6 +6,7 @@ abstract class _Base
 {
     const FORM_CLASS = 'Dope\Report\Form';
     const DEFAULT_SORT_COLUMN = true;
+    const REQUIRED = true;
     
     protected $timeStart;
     protected $timeEnd;
@@ -66,7 +67,9 @@ abstract class _Base
     
     public function addFilter(Filter $filter, $isRequired=true)
     {
+        $filter->isRequired($isRequired);
         $filter->setReport($this);
+
         $this->filters[] = $filter;
         return $this;
     }

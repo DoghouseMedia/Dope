@@ -23,6 +23,10 @@ class Date
 	public static function format($dateString, $format=self::FORMAT_DATE)
 	{
 		if ($dateString instanceof \DateTime) {
+            if ($dateString->getTimestamp() <= 0) {
+                return '';
+            }
+
 			return $dateString->format($format);
 		}
 		

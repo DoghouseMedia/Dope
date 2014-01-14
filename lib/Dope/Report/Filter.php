@@ -4,8 +4,6 @@ namespace Dope\Report;
 
 abstract class Filter
 {
-    const REQUIRED = true;
-
     private $alias = '';
     private $isRequired = false;
     
@@ -14,10 +12,9 @@ abstract class Filter
      */
     protected $report;
     
-    public function __construct($alias = '', $isRequired=false)
+    public function __construct($alias = '')
     {
         $this->setAlias($alias);
-        $this->isRequired($isRequired);
     }
     
     public function getAlias()
