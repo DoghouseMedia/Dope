@@ -11,5 +11,6 @@ extends Dope_Form_Element_ValidationTextBox
 	{
 		parent::init();
 		$this->setRegExp(static::REGEXP);
+        $this->setAttrib('placeholder', 'http://www.website.com');
 	}
 }

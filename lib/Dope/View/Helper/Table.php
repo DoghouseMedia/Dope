@@ -185,6 +185,9 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			elseif ($this->testIsJSON($value)) {
 				return $this->formatJSON($value);
 			}
+            elseif ($this->testIsURL($value)) {
+                return $this->formatURL($value);
+            }
 		}	
 		
 		return $this->view->fieldFormatter($value);
@@ -258,6 +261,15 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	    $decoded = json_decode($value);
 	    return (isset($decoded));
 	}
+
+    protected function testIsURL($value)
+    {
+        if (substr($value, 0, 4) == 'http') {
+            return true;
+        }
+
+        return false;
+    }
 	
 	protected function formatJSON($value)
 	{
@@ -265,4 +277,9 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 	    $replacement = array(",\n\t\"", "{\n\t", "\n}");	    	   
 	    return '<pre>' . print_r(json_decode($value), true) . '</pre>';  
 	}
+
+    protected function formatURL($value)
+    {
+        return '<a target="_blank" href="' . $value . '">' . $value . '</a>';
+    }
 }
