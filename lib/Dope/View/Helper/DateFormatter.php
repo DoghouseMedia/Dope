@@ -32,9 +32,10 @@ class Dope_View_Helper_DateFormatter extends Zend_View_Helper_Abstract
 		if (! $this->_date) {
 			return '';
 		}
-		
-		$months = Core_Form::getMonths();
-		return $months[str_pad($this->_date, 2, '0', STR_PAD_LEFT)];
+
+		return DateHelper::getMonths()->offsetGet(
+            str_pad($this->_date, 2, '0', STR_PAD_LEFT)
+        );
 	}
 	
 	public function iso()
