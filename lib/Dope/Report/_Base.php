@@ -6,7 +6,6 @@ abstract class _Base
 {
     const FORM_CLASS = 'Dope\Report\Form';
     const DEFAULT_SORT_COLUMN = true;
-    const REQUIRED = true;
     
     protected $timeStart;
     protected $timeEnd;

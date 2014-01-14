@@ -4,20 +4,20 @@ namespace Dope\Report;
 
 abstract class Filter
 {
-    protected $alias = '';
+    const REQUIRED = true;
+
+    private $alias = '';
+    private $isRequired = false;
     
     /**
      * @var \Dope\Report\_Base
      */
     protected $report;
     
-    public function __construct($alias = '', _Base $report = null)
+    public function __construct($alias = '', $isRequired=false)
     {
         $this->setAlias($alias);
-        
-        if ($report) {
-            $this->setReport($report);
-        }
+        $this->isRequired($isRequired);
     }
     
     public function getAlias()
@@ -30,7 +30,16 @@ abstract class Filter
         $this->alias = $alias;
         return $this;
     }
-    
+
+    public function isRequired($isRequired=null)
+    {
+        if (is_bool($isRequired)) {
+            $this->isRequired = $isRequired;
+        }
+
+        return (bool) $this->isRequired;
+    }
+
     /**
      * @return \Dope\Report\_Base
      */
