@@ -490,7 +490,9 @@ implements \Dope\Controller\Action\_Interface\PushState
 				(int) $this->getRequest()->getParam('id', false)
 			);
 				
-			$entity->unlinkFromArray((array) $this->getData()->getParams());
+			$entity
+                ->unlinkFromArray((array) $this->getData()->getParams())
+                ->save();
 			$this->view->status = true;
 		}
 	}

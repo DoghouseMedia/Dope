@@ -190,7 +190,26 @@ implements \IteratorAggregate
 	 */
 	public function delete()
 	{
-		$this->deleted = true;
+        $md = Doctrine::getEntityManager()->getClassMetadata(get_class($this));
+
+        foreach ($md->getAssociationMappings() as $alias => $mapping) {
+            // only for MANY_TO_MANY
+            if ($mapping['type'] != ORM\ClassMetadataInfo::MANY_TO_MANY) {
+                continue;
+            }
+
+            if ($mapping['isOwningSide']) {
+                $this->{$mapping['fieldName']}->clear();
+            }
+            else {
+                foreach ($this->{$mapping['fieldName']} as $entity) {
+                    $entity->{$mapping['mappedBy']}->removeElement($this);
+                }
+            }
+        }
+
+        $this->deleted = true;
+
 		return $this->save();
 	}
 	
@@ -376,22 +395,20 @@ implements \IteratorAggregate
 				 * so we save on both.
 				 * @todo Figure out if we can simplify this.
 				 */
-				
+
 				$record = Doctrine::getRepository($md->getAssociationTargetClass($keyPlural))
 					->find($valKeyPlural);
-				
+
 				/* Remove our side */
 				$this->$keyPlural->removeElement($record);
-				
+
 				/* Save other side */
 				$targetField = $md->getAssociationMappedByTargetField($keyPlural);
 				$record->{$targetField}->removeElement($this);
 			}
 		}
-		
-		$this->save();
-		
-		return true;
+
+		return $this;
 	}
 	
 	public function getPrinterTemplatePath()
