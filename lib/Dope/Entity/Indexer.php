@@ -89,6 +89,9 @@ class Indexer
 			
 			$qb = $this->indexRepository->createQueryBuilder('i');
 
+            $qb->andWhere('i.id = :id');
+            $qb->setParameter('id', $id);
+
 			if ($fieldName) {
 				$qb->andWhere('i.field = :field');
 				$qb->setParameter('field', $storageFieldname);
@@ -97,12 +100,6 @@ class Indexer
 				$qb->andWhere('i.field LIKE :field');
                 $qb->setParameter('field', addcslashes($storageFieldname, '_').'%');
 			}
-
-            // this is here just to use the index better
-            $qb->andWhere('i.position >= 0');
-
-            $qb->andWhere('i.id = :id');
-            $qb->setParameter('id', $id);
 
 			$entities = $qb->getQuery()->execute();
             
