@@ -298,6 +298,11 @@ implements \IteratorAggregate
 	                ? new \DateTime($val)
 	                : null;
 	            }
+                break;
+            case 'decimal':
+                if (is_string($val) AND strlen($val) == 0) {
+                    $val = null;
+                }
 	            break;
 	    }
 	    	
