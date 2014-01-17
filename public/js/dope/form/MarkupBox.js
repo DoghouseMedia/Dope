@@ -3,7 +3,6 @@ dojo.require('dijit.form.NumberTextBox');
 dojo.require('dope._Contained');
 
 dojo.declare('dope.form.MarkupBox', [dijit.form.NumberTextBox, dope._Contained], {
-	disabled: true,
 	fieldPay: null,
 	fieldCut: null,
 	
@@ -15,6 +14,11 @@ dojo.declare('dope.form.MarkupBox', [dijit.form.NumberTextBox, dope._Contained],
 			dojo.hitch(this, 'onDependencyChange')
 		);
 	},
+
+    onFocus: function() {
+        this.inherited(arguments);
+        alert("Do NOT edit this field directly");
+    },
 	
 	onDependencyChange: function(dependencyFormElement) {
 		if (dependencyFormElement.getPane() == this.getPane()) {

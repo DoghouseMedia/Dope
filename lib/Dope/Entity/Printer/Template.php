@@ -23,6 +23,10 @@ class Template extends \Dope\Printer\Template
 				continue;
 			}
 
+            if ($key == 'dtype') {
+                continue;
+            }
+
             // convert datetimes to human readable
             if ($entity->{$key} instanceof \DateTime) {
                 $this->assign(
