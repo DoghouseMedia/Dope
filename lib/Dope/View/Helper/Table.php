@@ -182,6 +182,9 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 			elseif ($this->testIsCurrency($key)) {
 			    return $this->view->currencyFormatter($value);
 			}
+            elseif ($this->testIsMarkup($key)) {
+                return $this->view->markupFormatter($value);
+            }
 			elseif ($this->testIsJSON($value)) {
 				return $this->formatJSON($value);
 			}
@@ -242,6 +245,22 @@ class Dope_View_Helper_Table extends Zend_View_Helper_Abstract
 		
 		return ($field AND ($field->type == 'CurrencyTextBox'));
 	}
+
+    protected function testIsMarkup($key)
+    {
+        if (! $this->getRows() instanceof Entity) {
+            return false;
+        }
+
+        try {
+            $field = $this->getRows()->getDefinition()->getField($key);
+        }
+        catch (\ReflectionException $e) {
+            return false;
+        }
+
+        return ($field AND ($field->type == 'MarkupBox'));
+    }
 	
 	protected function testIsDateTime($value)
 	{
