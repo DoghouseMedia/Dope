@@ -38,7 +38,8 @@ table:not([role]) tr:hover td {
 	background-color: #e0e0e0;
 }
 
-table:not([role]) thead th {
+table:not([role]) thead th,
+table:not([role]) tfoot th{
 	background-color: #d0d0d0;
 }
 

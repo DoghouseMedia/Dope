@@ -253,6 +253,15 @@ abstract class _Base
             $html[] = '</tr>';
         }
         $html[] = '</tbody>';
+        $html[] = '<tfoot>';
+        $html[] = '<tr>';
+        foreach ($this->columns as $column) {
+            $html[] = '<th>';
+            $html[] = $column->renderTotals($view);
+            $html[] = '</th>';
+        }
+        $html[] = '</tr>';
+        $html[] = '</tfoot>';
         $html[] = '</table>';
         
         return join(PHP_EOL, $html);

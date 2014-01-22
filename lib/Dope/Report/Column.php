@@ -9,6 +9,7 @@ abstract class Column
     protected $sortFields = array();
     protected $alias = '';
     protected $accessor = null;
+    protected $totals = array();
     
     public function __construct($alias = '', $accessor = null)
     {
@@ -80,4 +81,29 @@ abstract class Column
     }
     
     abstract public function render(\Dope\Entity $entity=null, \Zend_View $view);
+
+    public function renderTotals(\Zend_View $view)
+    {
+        $html = array();
+        foreach ($this->totals as $key => $value) {
+            $html[] = ucfirst($key) . ': ' . $value;
+        }
+
+        return join("<br>\n", $html);
+    }
+
+    protected function hasTotal($key)
+    {
+        if (!isset($this->totals[$key])) {
+            $this->totals[$key] = 0;
+        }
+        return $this;
+    }
+
+    protected function addTotal($key, $value)
+    {
+        $this->hasTotal($key);
+        $this->totals[$key] += (int) $value;
+        return $this;
+    }
 }
