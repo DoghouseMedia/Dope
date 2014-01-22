@@ -14,6 +14,7 @@ class Dope_View_Helper_SearchFilterAdd extends Zend_View_Helper_HtmlElement
 				<option value="' . $filter->getKey() . '-' . $filter->getType() .'-' . $this->view->modelAlias() . '"
 					data-key="' . $filter->getKey() . '"
 					data-type="' . $filter->getType() . '"
+					data-sort="' . $filter->getSort() . '"
 					data-title="' . $filter->getTitle() . '"
 					data-modelAlias="' . $this->view->modelAlias() . '">
 					' . $filter->getTitle() . '

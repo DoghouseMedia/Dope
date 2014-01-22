@@ -74,6 +74,7 @@ dojo.declare('dope.search.form.Filter', [
 			key: this.key,
 			modelAlias: this.modelAlias,
 			type: this.type,
+            sort: this.sort,
 			i: this.values.length,
 			_value: selectedValue 
 		});

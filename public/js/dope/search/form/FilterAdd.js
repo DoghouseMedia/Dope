@@ -52,6 +52,7 @@ dojo.declare('dope.search.form.FilterAdd', dijit.form.Select, {
 								key: node.getAttribute("data-key"),
 								type: node.getAttribute("data-type"),
 								title: node.getAttribute("data-title"),
+                                sort: node.getAttribute("data-sort"),
 								modelAlias: node.getAttribute("data-modelAlias"),
 								
 								value: (node.getAttribute("data-" + dojo._scopeName + "-value") || node.getAttribute("value")),

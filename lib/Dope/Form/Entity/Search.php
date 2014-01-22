@@ -57,14 +57,16 @@ class Search extends \Dope\Form\_Base
 		        $value = array(
 		            'name' => $mappings[$value]['fieldName'],
 	                'label' => ucfirst($mappings[$value]['fieldName']),
-	                'target' => $mappings[$value]['targetEntity']
+	                'target' => $mappings[$value]['targetEntity'],
+                    'sort' => isset($mappings[$value]['sort']) ? $mappings[$value]['sort'] : ''
 		        );
 		    }	
 		    	    
 			$filters[] = new Search\Filter(
 				$value['name'],
 				$value['label'],
-				$value['target']
+				$value['target'],
+                isset($value['sort']) ? $value['sort'] : ''
 			);
 		}
 	

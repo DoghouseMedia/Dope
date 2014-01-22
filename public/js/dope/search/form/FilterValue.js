@@ -32,7 +32,11 @@ dojo.declare('dope.search.form.FilterValue', [
 				var storeUrl = new dope.utils.Url('/data/store/yesno');
 				break;
 			default:
-				var storeUrl = new dope.utils.Url('/' + this.params.key + '/autocomplete');
+                var urlOptions = {};
+                if (this.params.sort) {
+                    urlOptions.sort = this.params.sort;
+                }
+				var storeUrl = new dope.utils.Url('/' + this.params.key + '/autocomplete', urlOptions);
 				break;
 		}
 		
