@@ -3,8 +3,9 @@ dojo.require('dijit.form.NumberTextBox');
 dojo.require('dope._Contained');
 
 dojo.declare('dope.form.MarkupBox', [dijit.form.NumberTextBox, dope._Contained], {
-	fieldPay: null,
-	fieldCut: null,
+	fieldSalary: null,
+    fieldRecoup: null,
+    fieldFee: null,
 	
 	postCreate: function() {
 		this.inherited(arguments);
@@ -28,17 +29,23 @@ dojo.declare('dope.form.MarkupBox', [dijit.form.NumberTextBox, dope._Contained],
 	},
 	
 	calculateMarkup: function() {
-		if (! this.fieldPay || ! this.fieldCut) {
-			return;
-		}
-		
-		var ratio = Math.round(100 / ( 
-			Number(this.fieldPay.get('value'))
-			/
-			Number(this.fieldCut.get('value'))
-		));
-		
-		var value = 0.01 * (ratio - 100);
+        if (! this.fieldSalary) {
+            return;
+        }
+
+        if (this.fieldRecoup) {
+            var includesSalary = true;
+            var fieldCut = this.fieldRecoup;
+        }
+        else if (this.fieldFee) {
+            var includesSalary = false;
+            var fieldCut = this.fieldFee;
+        }
+
+        var ratio = Math.round(100 / (
+            Number(this.fieldSalary.get('value')) / Number(fieldCut)
+        ));
+        var value = 0.01 * (ratio - (includesSalary ? 100 : 0));
 		
 		this.set('value', value);
 	}
