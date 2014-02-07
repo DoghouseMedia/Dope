@@ -7,7 +7,16 @@ class Definition extends \ReflectionClass
 	public function __construct($argument)
 	{
 		parent::__construct($argument);		
-		$this->reader = new \Doctrine\Common\Annotations\AnnotationReader();
+		//$this->reader = new \Doctrine\Common\Annotations\AnnotationReader();
+
+        $cache = \Dope\Doctrine::getEntityManager()
+            ->getConfiguration()
+            ->getMetadataCacheImpl();
+
+        $this->reader = new \Doctrine\Common\Annotations\CachedReader(
+            new \Doctrine\Common\Annotations\AnnotationReader(),
+            $cache
+        );
 	}
 
 	public function getAnnotation($annotationClassname, $property=null)
