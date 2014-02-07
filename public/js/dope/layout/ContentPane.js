@@ -26,6 +26,7 @@ dojo.declare('dope.layout.ContentPane', [
 	loadingMessage: '',
 	useIframe: false,
 	isTopPane: false,
+	activateOnLoad: true,
 	
 	constructor: function(options) {
 		if (!options._data) {
@@ -48,11 +49,14 @@ dojo.declare('dope.layout.ContentPane', [
 	},
 	onShow: function() {
 		this.inherited(arguments);
+		
 		if (this.isLoaded) {
 			this.activate();
 		} else {
 			this.deactivate();
 		}
+
+		this.trackUrl(this.getUrl());
 	},
 	onHide: function() {
 		this.inherited(arguments);
@@ -78,13 +82,20 @@ dojo.declare('dope.layout.ContentPane', [
 				this._loadingDisabler.hide();
 			}
 		}
-		
-		this.trackUrl(this.getUrl());
 	},
 	trackUrl: function(url) {
 		if (dojo.exists('_gaq')) {
 			/* "_trackEvent" is the pageview event */ 
 			_gaq.push(['_trackPageview', String(url)]);
+		}
+	},
+	onDownloadError: function(err) {
+		this.inherited(arguments);
+
+		if (err.status == 404) {
+			if (this.isTopPane) {
+				this.getParent().closeChild(this);
+			}
 		}
 	},
 	onLoad: function(data, xhr) {
@@ -98,7 +109,10 @@ dojo.declare('dope.layout.ContentPane', [
 			dojo.publish('/dope/layout/ContentPane/change', [this]);
 		}
 		
-		this.activate();
+		if (this.activateOnLoad) {
+			this.activate();
+		}
+
 		this.resize();
 		
 		if (this.getPane() instanceof dope.layout.ContentPane) {

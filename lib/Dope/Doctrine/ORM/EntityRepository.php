@@ -313,7 +313,7 @@ class EntityRepository extends \Doctrine\ORM\EntityRepository
 		        	$array[$key . '_id'] = (int) $data[$key]->id;
 		        }
 		    }
-		    else {
+		    elseif (! $data[$key] instanceof \Doctrine\ORM\PersistentCollection) {
 		        $array[$key] = is_string($data[$key]) ? trim($data[$key]) : $data[$key];
 		    }
 		}

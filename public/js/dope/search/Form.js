@@ -35,7 +35,9 @@ dojo.declare('dope.search.Form', dope.form.Form, {
 		/*
 		 * React to _data change after tab load
 		 */
-		this.getPane().watch('_data', this.onDataChange.bind(this));
+		if (this.getPane() && this.getPane().watch) {
+			this.getPane().watch('_data', this.onDataChange.bind(this));
+		}
 	},
 	onDomChange: function() {
 		if (this.getPane() && this.getPane().resize) {
