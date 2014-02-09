@@ -207,7 +207,20 @@ class Drupal
 	public function getClient()
 	{
 		if (! $this->client instanceof \Zend_Http_Client) {
-			$this->client = new \Zend_Http_Client();
+			$this->client = new \Zend_Http_Client(null, array(
+                'maxredirects'    => 5,
+                'strictredirects' => false,
+                'useragent'       => 'Zend_Http_Client',
+                'timeout'         => 60,
+                'adapter'         => 'Zend_Http_Client_Adapter_Socket',
+                'httpversion'     => \Zend_Http_Client::HTTP_1,
+                'keepalive'       => false,
+                'storeresponse'   => true,
+                'strict'          => true,
+                'output_stream'   => false,
+                'encodecookies'   => true,
+                'rfc3986_strict'  => false
+            ));
 		}
 	
 		return $this->client;
