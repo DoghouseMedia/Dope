@@ -6,12 +6,8 @@ dojo.declare('dope.link.NewTab', dope.link._Base, {
 	onClick: function(e) {
 		this.inherited(arguments);
 
-        if (this.getPane()) {
-            dojo.publish('/dope/layout/TabContainerMain/open', [{
-                href: this.href,
-                title: this.title || this.href,
-                focus: true
-            }]);
+        if (TRED.tabManager) {
+            TRED.tabManager.createTab(this.href);
         }
         else if (window.opener) {
             window.opener.TRED.tabManager.createTab(this.href);

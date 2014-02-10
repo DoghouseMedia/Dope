@@ -27,7 +27,7 @@ dojo.declare('dope.xhr.Form', dope.form.Form, {
 			load: dojo.hitch(this, 'onComplete')
 		};
 
-        if (this.getPane()) {
+        if (this.getPane() && this.getPane().deactivate) {
             this.getPane().deactivate();
         }
 
