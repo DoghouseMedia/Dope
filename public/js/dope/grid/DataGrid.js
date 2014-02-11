@@ -8,6 +8,12 @@ dojo.require('dope.dialog.Confirm');
 dojo.require("dojox.grid.EnhancedGrid");
 dojo.require("dope.grid.enhanced.plugins.OptionsBar");
 
+dojo.declare('dojox.grid.enhanced._FocusManager', dojox.grid.enhanced._FocusManager, {
+	_setActiveColHeader: function() {
+		return;
+	}
+});
+
 dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	baseClass: 'dopeGridDataGrid',
 	region: 'center',
@@ -59,7 +65,7 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	},
 	setStore: function(store) {
 		dojo.connect(store, 'onDelete', dojo.hitch(this, 'onStoreChange'));
-		
+		var p = this.getPane();
 		if (this.getPane() && this.getPane().count) {
 			this.getPane().count
 				.addUrl(store.target)
@@ -245,3 +251,5 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 		});
 	}
 });
+
+//@ sourceURL=/js/dojo/../dope/grid/DataGrid.js
