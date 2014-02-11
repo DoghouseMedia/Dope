@@ -42,11 +42,15 @@ dojo.declare('dope.form.MarkupBox', [dijit.form.NumberTextBox, dope._Contained],
             var fieldCut = this.fieldFee;
         }
 
-        var ratio = Math.round(100 / (
+        var ratio = 100 / (
             Number(this.fieldSalary.get('value')) / Number(fieldCut)
-        ));
+        );
+		
         var value = 0.01 * (ratio - (includesSalary ? 100 : 0));
 		
 		this.set('value', value);
 	}
 });
+//@ sourceURL=/js/dojo/../dope/form/MarkupBox.js
+//@ sourceURL=/js/dojo/../dope/form/MarkupBox.js
+//@ sourceURL=/js/dojo/../dope/form/MarkupBox.js

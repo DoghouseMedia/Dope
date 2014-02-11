@@ -9,5 +9,6 @@ extends Dope_Form_Element_Decimal
 	{
 		parent::init();
 		$this->setType('percent');
+		$this->setPlaces(2);
 	}
 }
