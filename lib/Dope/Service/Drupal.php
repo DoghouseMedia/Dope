@@ -162,12 +162,12 @@ class Drupal
 	 * @param array $params
 	 * @return mixed
 	 */
-	protected function call($resource, $action = null, array $params=array(), $method = 'GET')
+	public function call($resource, $action = null, array $params=array(), $method = 'GET')
 	{
 		$this->getClient()->setUri(
-			$this->config->baseurl . $this->buildPath($resource, $action)
+            $this->config->baseurl . $this->buildPath($resource, $action)
 		);
-		
+
 		if ($this->loginResponse) {
 			$this->getClient()->setHeaders('Cookie', join('=', array(
 				$this->loginResponse->json->session_name,
@@ -180,11 +180,16 @@ class Drupal
 				$this->tokenResponse->json->token
 			);
 		}
-		
-		$this->getClient()->setRawData(
-			json_encode($params),
-			'application/json'
-		);
+
+        if ($method == 'GET') {
+            $this->getClient()->setParameterGet($params);
+        }
+        else {
+            $this->getClient()->setRawData(
+                json_encode($params),
+                'application/json'
+            );
+        }
 		
 		$this->getClient()->request($method);
 		
