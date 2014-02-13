@@ -304,6 +304,9 @@ implements \IteratorAggregate
                     $val = null;
                 }
 	            break;
+            case 'boolean':
+                $val = (bool) $val;
+                break;
 	    }
 	    	
 	    $this->__set($key, $val);
