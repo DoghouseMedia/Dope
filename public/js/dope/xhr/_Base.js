@@ -11,7 +11,8 @@ dojo.declare('dope.xhr._Base', null, {
 		this.options = dojo.mixin({
 			handleAs: 'json',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+                'Dope-Rest-Token': TRED.user.token
 			},
 			timeout: '5000',
 			preventCache: true,

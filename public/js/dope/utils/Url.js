@@ -20,6 +20,7 @@ dojo.require("dope.dtl.filter.strings");
  */
 dojo.declare('dope.utils.Url', null, {
 	a: null,
+    noHost: false,
 	
 	constructor: function(href, parts) {
 		this.a = document.createElement('a');
@@ -191,32 +192,30 @@ dojo.declare('dope.utils.Url', null, {
 	},
 	
 	_removeHost: function(a) {
-		/* If hosts match, make url relative */
-		if (a.host == window.location.host) {
-			return a.pathname + a.search + a.hash;
-		}
-		else {
-			return a.href;
-		}
+		return a.pathname + a.search + a.hash;
 	},
 	
 	_getRandomHost: function() {
-		if (ajaxHosts.length) {
-			var index = Math.floor(Math.random()*ajaxHosts.length);
-			return window.location.protocol + '//' + ajaxHosts[index];
+		if (djConfig.hostShards.length) {
+			var index = Math.floor(Math.random()*djConfig.hostShards.length);
+			return window.location.protocol + '//' + djConfig.hostShards[index];
 		}
 		else {
 			return false;
 		}
 	},
+
+    noHost: function(noHost) {
+        this.noHost = noHost;
+    },
 	
 	toString: function() {
 		var url = this._removeHost(this.a);
-		//var randomHost = this._getRandomHost();
+		var randomHost = this._getRandomHost();
 		
-		//if (randomHost) {
-		//	url = randomHost + url;
-		//}
+		if (!this.noHost && randomHost) {
+			url = randomHost + url;
+		}
 		
 		return url;
 	}

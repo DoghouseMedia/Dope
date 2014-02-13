@@ -18,7 +18,12 @@ class RestTokenAuth extends \Zend_Controller_Plugin_Abstract
 		}
 
         $this->getResponse()->setHeader('Access-Control-Allow-Origin', '*');
-        $this->getResponse()->setHeader('Access-Control-Allow-Headers', 'Dope-Rest-Token,Range');
+        $this->getResponse()->setHeader('Access-Control-Allow-Headers', join(',', array(
+            'Dope-Rest-Token',
+            'Range',
+            'X-Requested-With',
+            'Content-type'
+        )));
 
         if ('OPTIONS' == strtoupper($request->getMethod())) {
             $this->getResponse()->sendHeaders();

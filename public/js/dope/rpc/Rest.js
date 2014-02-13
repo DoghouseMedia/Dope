@@ -107,7 +107,8 @@ define("dope/rpc/Rest", ["dojo", "dojox"], function(dojo, dojox) {
 					sync: dojox.rpc._sync,
 					headers: {
 						Accept: isJson ? 'application/json,application/javascript' : '*/*',
-						'Dope-Accept': service.useSavedSearch ? 'dope-search-id' : ''
+						'Dope-Accept': service.useSavedSearch ? 'dope-search-id' : '',
+                        'Dope-Rest-Token': TRED.user.token
 					}
 				};
 				if(service.headers){
