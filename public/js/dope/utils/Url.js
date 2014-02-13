@@ -20,10 +20,11 @@ dojo.require("dope.dtl.filter.strings");
  */
 dojo.declare('dope.utils.Url', null, {
 	a: null,
-    noHost: false,
+    _useHost: false,
 	
 	constructor: function(href, parts) {
 		this.a = document.createElement('a');
+        this._useHost = false;
 		
 		if (href) {
 			this.a.href = href;
@@ -205,15 +206,15 @@ dojo.declare('dope.utils.Url', null, {
 		}
 	},
 
-    noHost: function(noHost) {
-        this.noHost = noHost;
+    useHost: function(useHost) {
+        this._useHost = useHost;
     },
 	
 	toString: function() {
 		var url = this._removeHost(this.a);
 		var randomHost = this._getRandomHost();
 		
-		if (!this.noHost && randomHost) {
+		if (this._useHost && randomHost) {
 			url = randomHost + url;
 		}
 		

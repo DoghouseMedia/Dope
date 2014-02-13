@@ -22,7 +22,13 @@ class RestTokenAuth extends \Zend_Controller_Plugin_Abstract
             'Dope-Rest-Token',
             'Range',
             'X-Requested-With',
-            'Content-type'
+            'Content-type',
+            'Dope-Accept'
+        )));
+        $this->getResponse()->setHeader('Access-Control-Expose-Headers', join(',', array(
+            'Content-Range',
+            'Dope-Search-Id',
+            'Link'
         )));
 
         if ('OPTIONS' == strtoupper($request->getMethod())) {

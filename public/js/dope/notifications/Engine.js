@@ -29,7 +29,7 @@ dojo.declare('dope.notifications.Engine', dijit._Widget, {
 	connect: function() {
 		this.url = new dope.utils.Url('/dope');
 		this.url.set('port', 8181);
-        this.url.noHost(true);
+        this.url.useHost(false);
 		
 		dojo.io.script.get({
 			url : String(this.url) + '/client.js',

@@ -27,21 +27,30 @@ dojo.declare('dope.layout.ContentPane', [
 	useIframe: false,
 	isTopPane: false,
 	activateOnLoad: true,
+
+    ioArgs: {
+        headers: {}
+    },
+
 	
 	constructor: function(options) {
 		if (!options._data) {
 			this._data = {};
 		}
+
+        this.ioArgs.headers['Dope-Rest-Token'] = TRED.user.token;
 	},
 	startup: function() {
 		this.inherited(arguments);
 		
 		dojo.publish('/dope/layout/ContentPane/open', [this]);
-				
+
 		this.count = new dope.layout.pane.Count();
 		if (this.controlButton && !this.isTopPane && this.getUrl()) {
 			dojo.place(this.count.domNode, this.controlButton.containerNode);
-			this.count.addUrl(this.getUrl()).refresh();
+            setTimeout(dojo.hitch(this, function() {
+                this.count.addUrl(this.getUrl()).refresh();
+            }), 1000);
 		}
 		else {
 			this.count.setActive(false);

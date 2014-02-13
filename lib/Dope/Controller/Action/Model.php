@@ -170,7 +170,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 	 */
 	public function readAction()
 	{
-		/* Get record */
+        /* Get record */
 		$entity = $this->getEntityRepository()->find(
 			(int) $this->getRequest()->getParam('id')
 		);
@@ -189,6 +189,9 @@ implements \Dope\Controller\Action\_Interface\PushState
             case 'csv': $this->_helper->csv($entity->toArray()); break;
             case 'pdf': $this->_helper->pdf($entity); break;
             case 'docx': $this->_helper->docx($entity); break;
+            case 'profile':
+                $this->view->debug = \Dope\Doctrine::getEventManager()->getDebug();
+                // do NOT break !
             default:
             case 'html': $this->view->record = $entity; break;
         }
@@ -348,6 +351,9 @@ implements \Dope\Controller\Action\_Interface\PushState
 			case 'dojo':
 			case 'json': $this->_helper->json($search->getCount()); break;
 			case 'xml': $this->_helper->xml($search->getCount()); break;
+            case 'profile':
+                $this->view->debug = $search->getDebug();
+                // do NOT break !
 			case 'html': $this->view->recordsTotalCount = $search->getCount(); break;
 		}
 	}

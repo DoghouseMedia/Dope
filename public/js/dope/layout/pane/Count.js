@@ -45,7 +45,7 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 			
 			/* Reset counter */
 			this.total = 0;
-			
+
 			/* Fetch counts */
 			dojo.forEach(this.urls, dojo.hitch(this, '_fetch'));
 		}
@@ -57,6 +57,9 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 		return this;
 	},
 	_fetch: function(url) {
+        url = new dope.utils.Url(url);
+        url.useHost(true); // sharding
+
 		var op = new dope.operation.xhrGet({
 			title: 'Count',
 			url: String(url),
