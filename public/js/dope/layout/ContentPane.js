@@ -48,9 +48,7 @@ dojo.declare('dope.layout.ContentPane', [
 		this.count = new dope.layout.pane.Count();
 		if (this.controlButton && !this.isTopPane && this.getUrl()) {
 			dojo.place(this.count.domNode, this.controlButton.containerNode);
-            setTimeout(dojo.hitch(this, function() {
-                this.count.addUrl(this.getUrl()).refresh();
-            }), 1000);
+            this.count.addUrl(this.getUrl()).refresh();
 		}
 		else {
 			this.count.setActive(false);
@@ -128,6 +126,10 @@ dojo.declare('dope.layout.ContentPane', [
 			this.getPane().resize();
 		}
 	},
+    onUnload: function() {
+        this.inherited(arguments);
+        this.destroyAllChildWidgets();
+    },
 	onClose: function() {
 		dojo.publish('/dope/layout/ContentPane/close', [this]);
 		
@@ -136,13 +138,16 @@ dojo.declare('dope.layout.ContentPane', [
 		}
 		
 		if (this.isTopPane) {
-			dojo.forEach(this.getDescendants(), function(widget) {
-				widget.destroy();
-			});
+			this.destroyAllChildWidgets();
 		}
 		
 		return this.inherited(arguments);
 	},
+    destroyAllChildWidgets: function() {
+        dojo.forEach(this.getDescendants(), function(widget) {
+            widget.destroy();
+        });
+    },
 	getData: function(key) {
 		return key ? this._data[key] : this._data;
 	},

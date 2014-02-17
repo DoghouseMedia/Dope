@@ -10,12 +10,12 @@ dojo.declare('dope.notifications.Summary', dope.layout.MenuCounter, {
 		
 		dojo.subscribe(
 			'/dope/notifications/visualNotification/new', 
-			dojo.hitch(this, 'onItemNew')
+			dojo.hitch(this, 'addItem')
 		);
 		
 		dojo.subscribe(
 			'/dope/notifications/visualNotification/destroy', 
-			dojo.hitch(this, 'onItemDestroy')
+			dojo.hitch(this, 'removeItem')
 		);
 	}
 });

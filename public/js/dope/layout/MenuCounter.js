@@ -17,14 +17,14 @@ dojo.declare('dope.layout.MenuCounter', dijit.PopupMenuBarItem, {
 		this.popup._orient = {'BR':'TR'};
 	},
 	
-	onItemNew: function(item) {
+	addItem: function(item) {
 		if (this.popup) {
 			this.popup.addChild(item);
 		}
 		this.updateLabel();
 	},
 	
-	onItemDestroy: function() {
+	removeItem: function() {
 		this.updateLabel();
 	},
 	

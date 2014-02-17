@@ -1,8 +1,9 @@
 dojo.provide('dope.layout.pane.Count');
 dojo.require('dijit._Widget');
 dojo.require('dijit._Templated');
+dojo.require('dope._Contained');
 
-dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
+dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated, dope._Contained], {
 	urls: [],
 	operations: [],
 	total: 0,
@@ -14,10 +15,14 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 		this.urls = [];
 		this.operations = [];
 	},
+    destroy: function() {
+        this.cancelOperations();
+        this.inherited(arguments);
+    },
 	addUrl: function(url) {
 		var url = String(
 			new dope.utils.Url(String(url), {
-				action: 'count',
+				action: 'count.json',
 				sender: null
 			})
 		);
@@ -31,18 +36,13 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 		this.urls = [];
 		return this;
 	},
-	resetOperations: function() {
-		dojo.forEach(this.operations, function(operation) {
-			operation.cancel();
-		});
-		this.operations = [];
-		return this;
-	},
+    cancelOperations: function() {
+        dojo.forEach(this.operations, function(operation) {
+            operation.cancel();
+        });
+    },
 	refresh: function() {
 		if (this.active) {
-			/* Cancel running operations */
-			this.resetOperations();
-			
 			/* Reset counter */
 			this.total = 0;
 
@@ -57,18 +57,31 @@ dojo.declare('dope.layout.pane.Count', [dijit._Widget, dijit._Templated], {
 		return this;
 	},
 	_fetch: function(url) {
-        url = new dope.utils.Url(url);
+        var urlIsRunning = dojo.some(this.operations, function(operation) {
+            if (url == operation.url) {
+                return true
+            }
+            return false;
+        });
+
+        if (urlIsRunning) {
+            return;
+        }
+
+        var url = new dope.utils.Url(url);
         url.useHost(true); // sharding
 
 		var op = new dope.operation.xhrGet({
+            qos: 20,
 			title: 'Count',
 			url: String(url),
 			handleAs: "text",
-			load: dojo.hitch(this, '_onCount')
+			load: dojo.hitch(this, '_onCount', op)
 		});
 		this.operations.push(op);
 	},
-	_onCount: function(data, args) {
+	_onCount: function(operation, data, args) {
+        this.operations.splice(this.operations.indexOf(operation), 1);
 		var i = parseInt(data);
 		if (isNaN(i)) return;
 		this.total += i; 
