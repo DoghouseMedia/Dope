@@ -211,13 +211,17 @@ dojo.declare('dope.utils.Url', null, {
     },
 	
 	toString: function() {
-		var url = this._removeHost(this.a);
-		var randomHost = this._getRandomHost();
-		
-		if (this._useHost && randomHost) {
-			url = randomHost + url;
-		}
-		
+        if (this.getPort() == 80) {
+            var url = this._removeHost(this.a);
+            var randomHost = this._getRandomHost();
+            if (this._useHost && randomHost) {
+                url = randomHost + url;
+            }
+        }
+        else {
+            var url = String(this.a);
+        }
+	
 		return url;
 	}
 });
