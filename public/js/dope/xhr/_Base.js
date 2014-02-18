@@ -11,13 +11,15 @@ dojo.declare('dope.xhr._Base', null, {
 		this.options = dojo.mixin({
 			handleAs: 'json',
 			headers: {
-				'Accept': 'application/json',
-                'Dope-Rest-Token': TRED.user.token
+				'Accept': 'application/json'
 			},
 			timeout: '5000',
 			preventCache: true,
 			handle: dojo.hitch(this, '_onComplete')
 		}, options);
+		if (dojo.exists('TRED.user.token')) {
+			this.options.headers['Dope-Rest-Token'] = TRED.user.token;
+		}
 	},
 	_onComplete: function(data, xhr) {
 		this.onComplete(data, xhr);

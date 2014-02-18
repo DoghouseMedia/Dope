@@ -10,9 +10,11 @@ dojo.declare('dope.data.ItemFileReadStore', dojo.data.ItemFileReadStore, {
 	_headers: {},
 	constructor: function(/* Object */ keywordParameters){
 		this._headers = dojo.mixin({
-			'Accept': 'application/x-dojo-json',
-            'Dope-Rest-Token': TRED.user.token
+			'Accept': 'application/x-dojo-json'
 		}, keywordParameters.headers);
+		if (dojo.exists('TRED.user.token')) {
+			this._headers['Dope-Rest-Token'] = TRED.user.token;
+		}
 	},
 	_fetchItems: function(	/* Object */ keywordArgs,
 							/* Function */ findCallback,
