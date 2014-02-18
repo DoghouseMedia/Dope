@@ -38,7 +38,9 @@ dojo.declare('dope.layout.ContentPane', [
 			this._data = {};
 		}
 
-        this.ioArgs.headers['Dope-Rest-Token'] = TRED.user.token;
+        if (dojo.exists('TRED.user.token')) {
+            this.ioArgs.headers['Dope-Rest-Token'] = TRED.user.token;
+        }
 	},
 	startup: function() {
 		this.inherited(arguments);
