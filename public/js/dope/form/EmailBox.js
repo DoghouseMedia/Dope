@@ -23,12 +23,6 @@ dojo.declare('dope.form.EmailBox', dijit.form.ValidationTextBox, {
 		
 		this.reset();
 	},
-	_setDisabledAttr: function(value) {
-		if (!value) {
-			dojo.removeAttr(this.valueNode, 'disabled');
-		}
-		return this.inherited(arguments);
-	},
 	updateFormValue: function() {
 		this.valueNode.value = this.getContactsValue();
 	},
