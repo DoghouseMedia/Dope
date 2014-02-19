@@ -1,5 +1,7 @@
 @CHARSET "UTF-8";
 
+@import "/js/dojox/editor/plugins/resources/css/PasteFromWord.css";
+
 /* ----- Generic form elements ----- */
 
 label {

@@ -1,7 +1,10 @@
 dojo.provide('dope.form.Editor');
 dojo.require('dijit.Editor');
+dojo.require('dojox.editor.plugins.PasteFromWord');
 
 dojo.declare('dope.form.Editor', dijit.Editor, {
+    extraPlugins: ['pastefromword'],
+
 	postCreate: function() {
 		this.inherited(arguments);
 		this.addStyleSheet('/css/font.css');
