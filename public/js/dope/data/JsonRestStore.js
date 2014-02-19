@@ -4,7 +4,7 @@ dojo.require('dope.rpc.Rest');
 dojo.require('dope.rpc.JsonRest');
 
 
-dojo.declare('dope.data.JsonRestStore', dojox.data.ServiceStore, {
+dojo.declare('dope.data.JsonRestStore', dojox.data.JsonRestStore, {
     //allowNoTrailingSlash: true,
 	constructor: function(options) {
         dojo.connect(dope.rpc.Rest._index,"onUpdate",this,function(obj,attrName,oldValue,newValue){
@@ -26,7 +26,7 @@ dojo.declare('dope.data.JsonRestStore', dojox.data.ServiceStore, {
             }
         }
 
-        dope.rpc.JsonRest.registerService(this.service, options.target, this.schema);
+        dojox.rpc.JsonRest.registerService(this.service, options.target, this.schema);
         this.schema = this.service._schema = this.schema || this.service._schema || {};
         // wrap the service with so it goes through JsonRest manager
         this.service._store = this;
