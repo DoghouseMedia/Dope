@@ -20,7 +20,7 @@ dojo.declare('dope.data.JsonRestStore', dojox.data.ServiceStore, {
         if(typeof options.target == 'string'){
             options.target = options.target.match(/\/$/) || this.allowNoTrailingSlash ? options.target : (options.target + '/');
             if(!this.service){
-                this.service = dope.rpc.JsonRest.services[options.target] ||
+                this.service = dojox.rpc.JsonRest.services[options.target] ||
                     dope.rpc.Rest(options.target, true);
                 // create a default Rest service
             }
@@ -355,7 +355,7 @@ dojo.declare('dope.data.JsonRestStore', dojox.data.ServiceStore, {
 
 
 });
-dojox.data.JsonRestStore.getStore = function(options, Class){
+dope.data.JsonRestStore.getStore = function(options, Class){
     //	summary:
     //		Will retrieve or create a store using the given options (the same options
     //		that are passed to JsonRestStore constructor. Returns a JsonRestStore instance
