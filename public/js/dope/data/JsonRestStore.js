@@ -5,7 +5,6 @@ dojo.require('dope.rpc.JsonRest');
 
 
 dojo.declare('dope.data.JsonRestStore', dojox.data.JsonRestStore, {
-    //allowNoTrailingSlash: true,
 	constructor: function(options) {
         dojo.connect(dope.rpc.Rest._index,"onUpdate",this,function(obj,attrName,oldValue,newValue){
             var prefix = this.service.servicePath;
@@ -54,7 +53,7 @@ dojo.declare('dope.data.JsonRestStore', dojox.data.JsonRestStore, {
     // 		Allow no trailing slash on target paths. This is generally discouraged since
     // 		it creates prevents simple scalar values from being used a relative URLs.
     // 		Disabled by default.
-    allowNoTrailingSlash: false,
+    allowNoTrailingSlash: true,
     //Write API Support
     newItem: function(data, parentInfo){
         // summary:
