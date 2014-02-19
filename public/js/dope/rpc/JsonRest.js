@@ -1,6 +1,6 @@
-define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dojox/rpc/Rest"], function(dojo, dojox) {
+define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dope/rpc/Rest"], function(dojo, dojox) {
 	var dirtyObjects = [];
-	var Rest = dojox.rpc.Rest;
+	var Rest = dope.rpc.Rest;
 	var jr;
 	function resolveJson(service, deferred, value, defaultId){
 		var timeStamp = deferred.ioArgs && deferred.ioArgs.xhr && deferred.ioArgs.xhr.getResponseHeader("Last-Modified");
@@ -27,8 +27,8 @@ define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dojox/rpc/Rest"
 		dojox.json.ref.refAttribute  = "$ref";
 		return value;
 	}
-	jr = dojox.rpc.JsonRest={
-		serviceClass: dojox.rpc.Rest,
+	jr = dope.rpc.JsonRest={
+		serviceClass: dope.rpc.Rest,
 		conflictDateHeader: "If-Unmodified-Since",
 		commit: function(kwArgs){
 			// summary:
@@ -142,7 +142,7 @@ define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dojox/rpc/Rest"
 			};
 			for(i =0; i < actions.length;i++){ // iterate through the actions to execute
 				var action = actions[i];
-				dojox.rpc.JsonRest._contentId = action.content && action.content.__id; // this is used by OfflineRest
+				dope.rpc.JsonRest._contentId = action.content && action.content.__id; // this is used by OfflineRest
 				var isPost = action.method == 'post';
 				timeStamp = action.method == 'put' && Rest._timeStamps[action.content.__id];
 				if(timeStamp){
@@ -150,7 +150,7 @@ define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dojox/rpc/Rest"
 					Rest._timeStamps[action.content.__id] = (new Date()) + '';
 				}
 				// send the content location to the server
-				contentLocation = isPost && dojox.rpc.JsonRest._contentId;
+				contentLocation = isPost && dope.rpc.JsonRest._contentId;
 				var serviceAndId = jr.getServiceAndId(action.target.__id);
 				var service = serviceAndId.service;
 				var dfd = action.deferred = service[action.method](
@@ -289,7 +289,7 @@ define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dojox/rpc/Rest"
 			// 		Creates or gets a constructor for objects from this service
 			if(typeof service == 'string'){
 				var servicePath = service;
-				service = new dojox.rpc.Rest(service,true);
+				service = new dope.rpc.Rest(service,true);
 				this.registerService(service, servicePath, schema);
 			}
 			if(service._constructor){
@@ -448,6 +448,6 @@ define("dope/rpc/JsonRest", ["dojo", "dojox", "dojox/json/ref", "dojox/rpc/Rest"
 		
 	};
 
-	return dojox.rpc.JsonRest;
+	return dope.rpc.JsonRest;
 });
 
