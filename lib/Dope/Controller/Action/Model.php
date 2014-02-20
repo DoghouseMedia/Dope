@@ -221,7 +221,14 @@ implements \Dope\Controller\Action\_Interface\PushState
 				/** @var \Dope\Entity $entity */
 				$entity = new $className();
 
-                $entity->saveFromArray((array) $data->getParams());
+                try {
+                    $entity->saveFromArray((array) $data->getParams());
+                }
+                catch (\Exception $e) {
+                    if ('profile' != $this->_helper->contextSwitch()->getCurrentContext()) {
+                        throw $e;
+                    }
+                }
 
 				/* Send response or redirect, based on context */
 				$this->respondOk($entity, $form);
@@ -300,7 +307,14 @@ implements \Dope\Controller\Action\_Interface\PushState
 			if ($form->isValid($completeData)) {
 				/* Form is valid. Update entity with form values */
 
-                $entity->saveFromArray($completeData);
+                try {
+				    $entity->saveFromArray($completeData);
+                }
+                catch (\Exception $e) {
+                    if ('profile' != $this->_helper->contextSwitch()->getCurrentContext()) {
+                        throw $e;
+                    }
+                }
 
                 /* Entity saved */
                 $this->respondOk($entity, $form);
