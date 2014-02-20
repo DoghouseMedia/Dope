@@ -221,14 +221,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 				/** @var \Dope\Entity $entity */
 				$entity = new $className();
 
-                try {
-                    $entity->saveFromArray((array) $data->getParams());
-                }
-                catch (\Exception $e) {
-                    if (Env::isProduction() OR !Env::isDebug()) {
-                        throw $e;
-                    }
-                }
+                $entity->saveFromArray((array) $data->getParams());
 
 				/* Send response or redirect, based on context */
 				$this->respondOk($entity, $form);
@@ -307,14 +300,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 			if ($form->isValid($completeData)) {
 				/* Form is valid. Update entity with form values */
 
-                try {
-				    $entity->saveFromArray($completeData);
-                }
-                catch (\Exception $e) {
-                    if (Env::isProduction() OR !Env::isDebug()) {
-                        throw $e;
-                    }
-                }
+                $entity->saveFromArray($completeData);
 
                 /* Entity saved */
                 $this->respondOk($entity, $form);
