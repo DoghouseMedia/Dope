@@ -187,14 +187,10 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 		if ($format) {
 			static::$_cachedContext = $format;
 		}
-		
-		$return = parent::initContext($format);
 
-        if (Env::isCLI()) {
-            $this->getResponse()->clearAllHeaders();
+        if (! Env::isCLI()) {
+		    parent::initContext($format);
         }
-
-        return $return;
 	}
 	
 	public function currentContextAllowsRecordFetching()
