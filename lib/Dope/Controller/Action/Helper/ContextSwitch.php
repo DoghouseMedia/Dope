@@ -2,6 +2,8 @@
 
 namespace Dope\Controller\Action\Helper;
 
+use Dope\Env;
+
 class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 {
 	public static $_cachedContext=null;
@@ -186,7 +188,13 @@ class ContextSwitch extends \Zend_Controller_Action_Helper_ContextSwitch
 			static::$_cachedContext = $format;
 		}
 		
-		return parent::initContext($format);
+		$return = parent::initContext($format);
+
+        if (Env::isCLI()) {
+            $this->getResponse()->clearAllHeaders();
+        }
+
+        return $return;
 	}
 	
 	public function currentContextAllowsRecordFetching()
