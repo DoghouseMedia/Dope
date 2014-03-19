@@ -12,13 +12,8 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
 			return parent::render($action, $name, $noController);
     	}
     	catch (\Zend_View_Exception $e) {
-            if (Env::isCLI()) {
-                throw $e;
-            }
-            else {
-                $noController = ! $noController;
-                return parent::render($action, $name, $noController);
-            }
+            $noController = ! $noController;
+            return parent::render($action, $name, $noController);
     	}
     	catch (\Exception $e) {
     		throw $e;
