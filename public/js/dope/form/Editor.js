@@ -52,18 +52,17 @@ dojo.declare('dope.form.Editor', dijit.Editor, {
     },
 
     _cleanHtml: function(dom) {
-        dojo.forEach(dom.attributes, dojo.hitch(this, function(attr, i) {
-            if (attr.localName != 'href') {
-                dom.attributes.removeNamedItem(attr.localName);
-            }
-        }));
+		for (var i=0; i < dom.attributes.length; i++) {
+			var attr = dom.attributes[i];
+			
+			if (attr.localName != 'href') {
+				dom.attributes.removeNamedItem(attr.localName);
+				i--;
+			}
+		}
 		
 		for (var i=0; i < dom.childNodes.length; i++) {
 			var tag = dom.childNodes[i];
-			
-			if (tag.textContent == 'Construction and operations phase') {
-				console.log('MOFO', tag);
-			}
 			
             if (!tag.tagName) {
 				tag.textContent = tag.textContent.replace(/[\n\r\t]/mg, '');
@@ -180,6 +179,7 @@ dojo.declare('dope.form.Editor', dijit.Editor, {
         }
     },
 });
+//@ sourceURL=/js/dojo/../dope/form/Editor.js
 //@ sourceURL=/js/dojo/../dope/form/Editor.js
 //@ sourceURL=/js/dojo/../dope/form/Editor.js
 //@ sourceURL=/js/dojo/../dope/form/Editor.js
