@@ -55,19 +55,59 @@ implements \Dope\Controller\Action\_Interface\PushState
 		/* Call parent constructor */
 		parent::__construct($request, $response, $invokeArgs);
 	}
-	
+
+    /**
+     * REST implementation
+     *
+     * We are NOT using the Zend_Rest_* classes for multiple reasons:
+     *  1. We are still refactoring (Feb 2012) and it would be too big a change for now
+     *  2. We prefer mapping the HTTP methods to BREAD actions in our controllers
+     * When the time comes, we will implement our own route by extending Zend_Rest_Route
+     * and Zend_Rest_Controller, and mapping the HTTP methods to BREAD controller methods.
+     *
+     * @throws Exception
+     */
 	public function __call($methodName, $args)
 	{
         $action = $this->getRequest()->getActionName();
-		
-		if ($action == 'index') {
-			return $this->_forward('rest');
-		}
-		
-		elseif (ctype_digit($action)) {
-			$this->getRequest()->setParam('id', $action);
-			return $this->_forward('rest');
-		}
+
+        if (ctype_digit($action)) {
+            $this->getRequest()->setParam('id', $action);
+        }
+
+        /* This would be invoked by a URL like '/:controller' */
+        if ($action == 'index') {
+            switch(strtoupper($this->getRequest()->getMethod())) {
+                default:
+                case 'GET': $this->_forward('browse'); break;
+                case 'POST': $this->_forward('add'); break;
+
+                case 'PUT':
+                case 'DELETE':
+                case 'HEAD':
+                case 'TRACE':
+                case 'OPTIONS':
+                    throw new \Exception("Not implemented");
+                    break;
+            }
+        }
+
+        /* This would be invoked by a URL like '/:controller/:id' */
+        elseif ($this->getRequest()->getParam('id')) {
+            switch(strtoupper($this->getRequest()->getMethod())) {
+                default:
+                case 'GET': $this->_forward('read'); break;
+                case 'PUT': $this->_forward('edit'); break;
+                case 'POST': $this->_forward('update'); break;
+                case 'DELETE': $this->_forward('delete'); break;
+
+                case 'HEAD':
+                case 'TRACE':
+                case 'OPTIONS':
+                    throw new \Exception("Not implemented");
+                    break;
+            }
+        }
 		
 		/* Default to parent implementation */
 		else {
@@ -102,7 +142,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 			$search->getRangeEnd(),
 			$search->getCount()
 		);
-		
+
 		/* Respond */
 		switch ($this->_helper->contextSwitch()->getCurrentContext()) {
 			case 'dojo': $this->_helper->autoCompleteDojo($search->getRecords()); break;
@@ -516,60 +556,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 		$this->respondOk($replica);
 		return $replica;
 	}
-	
-	/**
-	 * REST implementation
-	 *
-	 * We are NOT using the Zend_Rest_* classes for multiple reasons:
-	 *  1. We are still refactoring (Feb 2012) and it would be too big a change for now
-	 *  2. We prefer mapping the HTTP methods to BREAD actions in our controllers
-	 * When the time comes, we will implement our own route by extending Zend_Rest_Route
-	 * and Zend_Rest_Controller, and mapping the HTTP methods to BREAD controller methods.
-	 *
-	 * @throws Exception
-	 */
-	public function restAction()
-	{
-		/*
-		 * This should be matching url parts (using the router)
-		 * but since we're still refactoring, the old codebase sets the 'id'
-		 * parameter in call() if it's present.
-		 *
-		 * This would be invoked by a URL like '/:controller/:id'
-		 */
-		if ($this->getRequest()->getParam('id')) {
-			switch(strtoupper($this->getRequest()->getMethod())) {
-			    default:
-				case 'GET': $this->_forward('read'); break;
-				case 'PUT': $this->_forward('edit'); break;
-				case 'POST': $this->_forward('update'); break;
-				case 'DELETE': $this->_forward('delete'); break;
-	
-				case 'HEAD':
-				case 'TRACE':
-				case 'OPTIONS':
-					throw new \Exception("Not implemented");
-					break;
-			}
-		}
-		/* This would be invoked by a URL like '/:controller' */
-		else {
-			switch(strtoupper($this->getRequest()->getMethod())) {
-			    default:
-				case 'GET': $this->_forward('browse'); break;
-				case 'POST': $this->_forward('add'); break;
-				
-				case 'PUT':
-				case 'DELETE':
-			    case 'HEAD':
-			    case 'TRACE':
-			    case 'OPTIONS':
-					throw new \Exception("Not implemented");
-					break;
-			}
-		}
-	}
-	
+
 	/**
 	 * Controller action for managing the drag and drop interface,
 	 * used for assigning multiple items from a list to a record (many to many relationship)
