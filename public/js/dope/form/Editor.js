@@ -65,7 +65,8 @@ dojo.declare('dope.form.Editor', dijit.Editor, {
 			var tag = dom.childNodes[i];
 			
             if (!tag.tagName) {
-				tag.textContent = tag.textContent.replace(/[\n\r\t]/mg, '');
+				tag.textContent = tag.textContent.replace(/[\n\r\t]/mg, ' ');
+                tag.textContent = tag.textContent.replace('&nbsp;', ' ');
 				
 				if (tag.textContent.length) {
 					tag.textContent = tag.textContent.replace(/[^ a-zA-Z0-9\!\@\#\$%\^\&\*\(\)\[\]\{\}\'\"\:\;\/\?\.\,\>\<\`\~\_\+\=\n]*/, '');	
