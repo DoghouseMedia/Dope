@@ -3,6 +3,7 @@
 namespace Dope\Controller\Plugin;
 
 use Dope\Auth\Service as Auth;
+use Dope\Env;
 
 class RestTokenAuth extends \Zend_Controller_Plugin_Abstract
 {
@@ -16,6 +17,10 @@ class RestTokenAuth extends \Zend_Controller_Plugin_Abstract
 		if (!$request instanceof \Zend_Controller_Request_Http) {
 			return;
 		}
+
+        if (Env::isCLI()) {
+            return;
+        }
 
         $this->getResponse()->setHeader('Access-Control-Allow-Origin', '*');
         $this->getResponse()->setHeader('Access-Control-Allow-Headers', join(',', array(

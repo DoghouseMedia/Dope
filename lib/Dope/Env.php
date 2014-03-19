@@ -31,4 +31,9 @@ class Env
     {
         return (bool) (static::getEnv() == static::ENV_PRODUCTION);
     }
+
+    public static function isCLI()
+    {
+        return (php_sapi_name() == 'cli');
+    }
 }
