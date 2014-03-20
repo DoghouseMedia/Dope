@@ -12,6 +12,9 @@ extends Zend_Dojo_Form_Element_ComboBox
 		
 		asort($countries);
 		
-		$this->setMultiOptions($countries);
+		$this->setMultiOptions(array_combine(
+            $countries,
+            $countries
+        ));
 	}
 }
