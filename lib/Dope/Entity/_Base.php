@@ -335,6 +335,13 @@ implements \IteratorAggregate
 	             */
 	             
 	            $targetRecord = Doctrine::getRepository($mapping['targetEntity'])->find($_val);
+
+                /*
+                 * Sometimes proxies aren't fully loaded. Go figure.
+                 */
+                if ($targetRecord instanceof \Doctrine\ORM\Proxy\Proxy) {
+                    $targetRecord->__load();
+                }
 	             
 	            /* Skip duplicates */
 	            if ($this->{$key} instanceof \Doctrine\Common\Collections\Collection) {
