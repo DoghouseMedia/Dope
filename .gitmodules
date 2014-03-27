@@ -22,3 +22,6 @@
 [submodule "public/js/dojox"]
 	path = public/js/dojox
 	url = https://github.com/dojo/dojox.git
+[submodule "public/js/moment"]
+	path = public/js/moment
+	url = https://github.com/moment/moment.git
