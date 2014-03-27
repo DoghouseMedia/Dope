@@ -20,27 +20,60 @@ dojo.declare('dope.utils.Queue', null, {
 		);
 	},
 
-	exists: function(item) {
-		var keys = Object.keys(item);
-		
-		return dojo.some(this.items, function(_item) {
+    findItemByItem: function(item) {
+        var keys = Object.keys(item);
+        var itemInQueue = null;
+
+		dojo.some(this.items, function(_item) {
 			if (_item.isRunning) {
 				return false;
 			}
 
-			return dojo.every(keys, function(key) {
+			var isMatching = dojo.every(keys, function(key) {
 				return (item[key] === _item[key]);
 			});
+
+            if (isMatching) {
+                itemInQueue = _item;
+                return true;
+            }
+            else {
+                return false;
+            }
 		});
+
+        return itemInQueue;
 	},
 
 	add: function(item, callback) {
-		this.items.push(item);
+        var itemInQueue = this.findItemByItem(item);
 
-		if (dojo.isFunction(callback)) {
-			this.callbacks.push(callback);
-		}
+        if (itemInQueue && !itemInQueue.isRunning) {
+            /**
+             * The item exists in the queue AND isn't running. We can safely add our callback to this item.
+             */
+            this.addCallback(itemInQueue, callback);
+        }
+        else {
+            /**
+             * Either:
+             *
+             * 1. There is no similar item in queue
+             * 2. The similar item in queue is running and we can't expect it will satisfy our dependencies
+             */
+            this.items.push(item)
+            this.addCallback(item, callback);
+        }
 	},
+
+    addCallback: function(item, callback) {
+        if (dojo.isFunction(callback)) {
+            if (! item.callbacks) {
+                item.callbacks = [];
+            }
+            item.callbacks.push(callback);
+        }
+    },
 
 	run: function() {
 		if (! this.timer) {
@@ -57,10 +90,15 @@ dojo.declare('dope.utils.Queue', null, {
 			return;
 		}
 
-		this.isRunning = true;
-		this.items[0].isRunning = true;
-		this.options.onRun.call(null, this.items[0]);
-		this.items.splice(0,1);
+        var item = this.items[0];
+        item.isRunning = true;
+        dojo.forEach(item.callbacks, dojo.hitch(this, function(callback) {
+            this.callbacks.push(callback)
+        }));
+
+        this.isRunning = true;
+        this.options.onRun.call(null, this.items[0]);
+        this.items.splice(0,1);
 	},
 
 	end: function() {
