@@ -24,7 +24,13 @@ dojo.declare('dope.dialog.Confirm', [dope.dialog.Dialog, dijit._Templated], {
 	
 	startup: function() {
 		this.inherited(arguments);
-		dojo.connect(dijit.byId(this.cancelButtonNode.id), 'onClick', dojo.hitch(this, '_onCancel'));
+        if (this.cancelButtonNode) {
+            dojo.connect(
+                dijit.byId(this.cancelButtonNode.id),
+                'onClick',
+                dojo.hitch(this, '_onCancel')
+            );
+        }
 	},
 	_onCancel: function(e) {
 		this.onCancel(e);
