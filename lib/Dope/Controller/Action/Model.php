@@ -263,6 +263,9 @@ implements \Dope\Controller\Action\_Interface\PushState
 
                 try {
                     $entity->saveFromArray((array) $data->getParams());
+                    if (! $entity->id) {
+                        throw new \Exception("Not saved!");
+                    }
                 }
                 catch (\Exception $e) {
                     if ('profile' != $this->_helper->contextSwitch()->getCurrentContext()) {
