@@ -81,16 +81,19 @@ dojo.declare('dope.grid.DataGrid', [dojox.grid.EnhancedGrid, dope._Contained], {
 	},
 	onEntityAdd: function(form) {
 		if (form.getPane() == this.getPane()) {
-			/*
-			 * Refresh the grid
-			 * 
-			 * We're using an internal dojo method (see the underscore?) which might break
-			 * or not be backward-compatible with a future release. For now, it works fine.
-			 */
-			this._refresh();
-			this.onStoreChange();
+			this.refresh();
 		}
 	},
+    refresh: function() {
+        /*
+         * Refresh the grid
+         *
+         * We're using an internal dojo method (see the underscore?) which might break
+         * or not be backward-compatible with a future release. For now, it works fine.
+         */
+        this._refresh();
+        this.onStoreChange();
+    },
 	_onRowClick: function(e) {
 		var item = this.getItem(e.rowIndex);
 		var url = new dope.utils.Url(this.store.target);
