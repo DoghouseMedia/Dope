@@ -51,11 +51,13 @@ extends Entity\_Base
 			foreach ($this->getDefinition()->getToStringColumnNames() as $columnName) {
 				$values[] = $this->{$columnName};
 			}
-			return (string) join(' ', $values);
+			$string = trim((string) join(' ', $values));
+            if (strlen($string)) {
+                return $string;
+            }
 		}
-		else {
-			return ucfirst($this->getEntityKey()) . ' ' . $this->id;
-		}
+
+		return ucfirst($this->getEntityKey()) . ' ' . $this->id;
 	}
 	
 	public function prePersist()
