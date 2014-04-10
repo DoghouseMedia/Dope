@@ -160,7 +160,6 @@ class Analyzer
 		'system',
 		't',
 		'take',
-		'than',
 		'that',
 		'the',
 		'their',
