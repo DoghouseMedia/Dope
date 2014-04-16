@@ -426,11 +426,11 @@ implements \IteratorAggregate
 		return $this;
 	}
 	
-	public function getPrinterTemplatePath()
+	public function getPrinterTemplatePath($path=null)
 	{
 		return join('/', array(
 			Config::getOption('file.mailmerge.path'), 
-			$this->getEntityKey() . '.docx'
+            ($path ?: $this->getEntityKey()) . '.docx'
 		));
 	}
 	
@@ -439,10 +439,10 @@ implements \IteratorAggregate
 		return file_exists($this->getPrinterTemplatePath());
 	}
 	
-	public function getPrinterTemplate()
+	public function getPrinterTemplate($path=null)
 	{
 		return new Printer\Template(
-			$this->getPrinterTemplatePath(),
+			$this->getPrinterTemplatePath($path),
 			$this
 		);
 	}

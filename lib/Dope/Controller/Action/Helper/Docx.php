@@ -16,29 +16,28 @@ class Docx extends \Zend_Controller_Action_Helper_Abstract
     /**
      * Create Docx response
      *
-     * @param  Dope\Entity $entity
-     * @param  boolean $keepLayouts
+     * @param  \Dope\Entity $entity
      * @throws \Zend_Controller_Action_Helper_Xml
      * @return string
      */
-    public function getDocx(Entity $entity, $keepLayouts = false)
+    public function getDocx(Entity $entity)
     {
-        if (!$keepLayouts) {
-            HelperBroker::getStaticHelper('viewRenderer')->setNoRender(true);
-        }
+        HelperBroker::getStaticHelper('viewRenderer')->setNoRender(true);
 
-        return $entity->getPrinterTemplate()->toDocx($this->getRequest());
+        $template = $entity->getPrinterTemplate(
+            $this->getRequest()->getParam('mailMergeDocumentTemplatePath')
+        );
+
+        return $template->toDocx();
     }
 
-    public function sendDocx(Entity $entity, $keepLayouts = false)
+    public function sendDocx(Entity $entity)
     {
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         $response->setHeader('Content-Disposition', 'attachment');
-//         ; filename='
-//         	. $entity->getMailMergeDocumentTemplateName($this->getRequest()) . '.docx'
-//         );
-        $response->setBody($this->getDocx($entity, $keepLayouts));
+
+        $response->setBody($this->getDocx($entity));
 
         if (! $this->suppressExit) {
             $response->sendResponse();
