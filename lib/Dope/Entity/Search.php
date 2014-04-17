@@ -534,11 +534,15 @@ class Search
 						$value = "'" . $value . "'";
 					} else {
 						// this is a filter
-						list($opSign, $joinBool, $value) = explode(':', $value);
-						$opSign = (bool) ($opSign=='has');
+						list($opSignOrig, $joinBool, $value) = explode(':', $value);
+						$opSign = (bool) ($opSignOrig=='has');
 						$joinBool = strtoupper($joinBool);
-						
-						if (strpos($value, ',')) {
+
+                        if ($opSignOrig == 'null') {
+                            $searchOperator = 'IS NULL';
+                            $value = '';
+                        }
+						elseif (strpos($value, ',')) {
 							$searchOperator = $opSign ? 'IN' : 'NOT IN';
 							$value = "('" . join("','", explode(',', $value)) . "')";
 						} else {
