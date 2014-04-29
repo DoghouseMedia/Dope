@@ -11,21 +11,35 @@ dojo.declare('dope.form.Uploader', dojox.form.Uploader, {
 	multiple: false,
 	
 	postCreate: function() {
+        /*
+         * Make the form aware of the uploader
+         */
 		dijit.byNode(this.getForm()).uploader = this;
-		
-		this.filenameNode = dojo.create('span', {
-			innerHTML: 'No file selected',
-			className: 'dopeFileName'
-		});
-		dojo.place(this.filenameNode, this.domNode, 'first');
-		
 		this.inherited(arguments);
 	},
+
 	onChange: function(fileArray) {
 		this.inherited(arguments);
 		this.setLabel(fileArray[0].name);
 	},
+
+    reset: function() {
+        this.setLabel(null);
+        return this.inherited(arguments);
+    },
+
 	setLabel: function(label) {
+        /*
+         * Create and inject the filename SPAN if it doesn't exist
+         */
+        if (!this.filenameNode) {
+            this.filenameNode = dojo.create('span', {
+                innerHTML: 'No file selected',
+                className: 'dopeFileName'
+            });
+            dojo.place(this.filenameNode, this.domNode, 'last');
+        }
+
 		this.label = label;
 		this.filenameNode.innerText = label;
 		return this;
@@ -42,6 +56,7 @@ dojo.declare('dope.form.Uploader', dojox.form.Uploader, {
 			return this.name;
 		}
 	},
+
 	uploadWithFormData: function(/* Object */data){
 		// summary
 		// 		Used with WebKit and Firefox 4+
@@ -67,6 +82,7 @@ dojo.declare('dope.form.Uploader', dojox.form.Uploader, {
 		var xhr = this.createXhr();
 		xhr.send(fd);
 	},
+
 	createXhr: function(){
 		var xhr = new XMLHttpRequest();
 		var timer;
@@ -88,7 +104,7 @@ dojo.declare('dope.form.Uploader', dojox.form.Uploader, {
 				this.onComplete(xhr.responseText);
 				// Dope
 				dijit.byNode(this.getForm()).onComplete(
-					dojo.fromJson(xhr.responseText), 
+					dojo.fromJson(xhr.responseText),
 					xhr
 				);
 			}
@@ -106,9 +122,10 @@ dojo.declare('dope.form.Uploader', dojox.form.Uploader, {
 
 		// Dope
 		xhr.setRequestHeader('Accept', 'application/json');
-		
+
 		return xhr;
 	},
+
 	_buildRequestBody : function(data, boundary) {
 		var EOL  = "\r\n";
 		var part = "";
