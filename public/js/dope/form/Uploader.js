@@ -9,7 +9,6 @@ dojo.declare('dope.form.Uploader', dojox.form.Uploader, {
 	label: 'Select file',
 	filenameNode: null,
 	multiple: false,
-	//name: 'form[filename]',
 	
 	postCreate: function() {
 		dijit.byNode(this.getForm()).uploader = this;
