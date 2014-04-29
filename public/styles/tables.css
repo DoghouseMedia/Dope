@@ -58,6 +58,10 @@ table.vertical:not([role]) td {
 	width: 100%;
 }
 
+table.collapse:not([role]) {
+    width: auto;
+}
+
 /* Tables in forms */
 
 form table:not([role]) th,
