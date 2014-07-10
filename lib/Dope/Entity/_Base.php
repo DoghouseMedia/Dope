@@ -110,6 +110,8 @@ implements \IteratorAggregate
 		 * end() expects a reference, so we can't "chain" the calls but are forced to assign
 		 * the output of explode() to avariable first
 		 * @see http://stackoverflow.com/questions/4636166/only-variables-should-be-passed-by-reference
+		 *
+		 * @todo This slightly duplicates functionality in \Dope\Controller\Action\Model::getModelAlias
 		 */
 	    $classParts = explode('\\', get_class($this));
 		return strtolower(end($classParts));

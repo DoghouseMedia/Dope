@@ -640,8 +640,14 @@ implements \Dope\Controller\Action\_Interface\PushState
 	}
 	
 	/* ---------------| HELPER methods from here on |--------------- */
-	
-	public function getModelAlias()
+
+    /**
+     * * @todo This slightly duplicates functionality in \Dope\Entity\_Base
+     *
+     * @return string
+     * @deprecated
+     */
+    public function getModelAlias()
 	{
 		$classMetadata = \Dope\Doctrine::getEntityManager()->getClassMetadata(
 			$this->getModelClassName()
@@ -685,7 +691,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 				$mappings->associationMappings,
 				$mappings->fieldMappings
 			);
-				
+
 			$propertiesInCommon = array_intersect_key($properties, $params);
 				
 			$countPropertiesInCommon = count($propertiesInCommon);
@@ -777,7 +783,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 		return false; 
 	}
 	
-	protected function respondOk(\Dope\Entity $entity=null, \Dope\Form\Entity $form=null)
+	protected function respondOk(\Dope\Entity $entity=null, \Dope\Form\_Base $form=null)
 	{
 		switch($this->_helper->contextSwitch()->getCurrentContext()) {
 		    case 'rest':
@@ -793,7 +799,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 	
 						if ($entity instanceof \Dope\Entity) {
 							$this->view->id = $entity->id;
-							$this->view->controller = $this->getModelAlias();
+							$this->view->controller = $entity->getEntityKey();
 							$this->view->title = (string) $entity;
 							$this->view->messages = array(); //$model->getMessages();
 							
@@ -833,7 +839,7 @@ implements \Dope\Controller\Action\_Interface\PushState
 			case 'html':
 			default:
 
-				$tryData = $form instanceof \Dope\Form\Entity ? $form->getValues(true) : array();
+				$tryData = $form instanceof \Dope\Form\_Base ? $form->getValues(true) : array();
 	
 				$module = '';
 				$params = array();
